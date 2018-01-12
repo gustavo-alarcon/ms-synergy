@@ -1,0 +1,65 @@
+
+  <div class="w3-animate-top">
+      <div class="w3-container w3-border-bottom w3-border-black">
+          <h3 mat-button class="meraki-font-s5">Crear nuevo paquete</h3>
+      </div>
+      <br>
+      
+      <div class="w3-white w3-card-4 w3-padding">
+            <h4>Paquete</h4>
+            <mat-form-field color="accent" class="meraki-fill">
+                <mat-select #Alm placeholder="Almacen" (change)="filtrarProductos(Alm.value)">
+                    <mat-option class="w3-indigo w3-hover-gray" *ngFor="let almacen of almacenes"
+                                [value]="almacen.Nombre">{{ almacen.Nombre }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field color="accent" class="meraki-fill">
+                <input matInput (input)="pack = $event.target.value" type="text"  placeholder="Nombre">
+            </mat-form-field> 
+
+            <button mat-raised-button
+                    color="primary"
+                    (click)="agregarItem()">
+                Agregar item
+            </button>
+
+            <br>
+            <br>
+            <div class="w3-row" *ngFor="let item of items; let i = index">
+                <div class="w3-third">
+                    <mat-form-field color="accent" class="meraki-fill">
+                        <mat-select #Prod (change)="setProduct(Prod.value, i)" placeholder="Producto">
+                            <mat-option class="w3-indigo w3-hover-gray" *ngFor="let producto of productos_filtrado"
+                                        [value]="producto">{{ producto.Nombre }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="w3-third">
+                    <mat-form-field color="accent" class="meraki-fill">
+                        <input matInput (input)="items[i]['Cantidad'] = $event.target.value" type="number"  placeholder="Cantidad">
+                    </mat-form-field>
+                    <br>
+                </div>
+
+                <div class="w3-third">
+                    <mat-form-field color="accent" class="meraki-fill">
+                        <input matInput (input)="items[i]['PrecioUnitario'] = $event.target.value" type="number"  placeholder="Precio unitario" [value]="Prod.value === undefined ? '':Prod.value.Venta">
+                    </mat-form-field>
+                    <br>
+                </div>
+            </div>
+
+      </div>
+      <br>
+      <button mat-raised-button
+              color="warn"
+              routerLink="../../productos">CANCELAR</button>
+      <button mat-raised-button
+              (click)="guardarPaquete()"
+              color="primary"
+              >CREAR</button>
+      
+  
+  </div>
+  

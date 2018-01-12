@@ -1,0 +1,39 @@
+<div class="w3-animate-top">
+    <div class="w3-container w3-border-bottom w3-border-black">
+        <h3 mat-button class="meraki-font-s5">Crear nuevo grupo</h3>
+    </div>
+    <br>
+    <form [formGroup]="crearGruposForm" (ngSubmit)="onSubmit()" autocomplete="off">
+        <div class="w3-white w3-card-4 w3-padding">
+            <h4>Grupo</h4>
+
+            <mat-form-field color="accent" style="width:100%">
+                <input #nombre matInput type="text" formControlName="Nombre" (input)="checkByNombre(nombre.value)" placeholder="Nombre">
+                <mat-error *ngIf="!crearGruposForm.valid">
+                    Nombre <strong>requerido</strong> *
+                </mat-error>
+                <mat-hint *ngIf="nombreExist">
+                    El nombre ya existe.
+                </mat-hint>
+            </mat-form-field> 
+
+            <mat-form-field color="accent" style="width:100%">
+              <input matInput type="text" formControlName="Detalles" placeholder="Detalles">
+              <mat-error *ngIf="!crearGruposForm.valid">
+                  Nombre <strong>requerido</strong> *
+              </mat-error>
+            </mat-form-field>
+
+        </div>
+        <br>
+        <button mat-raised-button
+                color="warn"
+                routerLink="../../grupos">CANCELAR</button>
+        <button mat-raised-button
+                type="submit"
+                color="primary"
+                [disabled]="!crearGruposForm.valid"
+                >CREAR</button>
+    </form>
+
+</div>

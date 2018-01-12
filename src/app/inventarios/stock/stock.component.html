@@ -1,0 +1,120 @@
+<div class="w3-row w3-animate-left">
+  <div class="w3-container w3-border-bottom">
+    <span class="meraki-spacer"></span>
+    <h3 class="meraki-font-s5 w3-right">Stock</h3>
+  </div>
+  <br>
+  <div class="w3-row">
+    <form [formGroup]="stockForm" (ngSubmit)="onSubmit()">
+      <div class="w3-container w3-white w3-card-4">
+        <br>
+        <div class="w3-row-padding">
+
+          <div class="w3-col s12 m4 l4">
+
+            <mat-form-field class="meraki-fill">
+              <mat-select formControlName="Almacen" aria-placeholder="Almacen" placeholder="Almacen">
+                <mat-option class="w3-indigo w3-hover-gray" *ngFor="let almacen of almacenes"
+                            [value]="almacen.Nombre">{{ almacen.Nombre }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="!stockForm.valid">
+                Almacen <strong>requerido</strong> *
+              </mat-error>
+            </mat-form-field>
+            <br>
+            <mat-form-field class="meraki-fill">
+              <mat-select #filtro (change)="filtrarStock(filtro.value)" aria-placeholder="Filtro" placeholder="Filtrar resultado">
+                <mat-option class="w3-indigo w3-hover-gray"
+                            value="TODOS">TODOS</mat-option>
+                <mat-option class="w3-indigo w3-hover-gray"
+                            value="OK">OK</mat-option>
+                <mat-option class="w3-indigo w3-hover-gray"
+                            value="ALERTA">ALERTA</mat-option>
+                <mat-option class="w3-indigo w3-hover-gray"
+                            value="EMERGENCIA">EMERGENCIA</mat-option>
+              </mat-select>
+              <mat-error *ngIf="!stockForm.valid">
+                Almacen <strong>requerido</strong> *
+              </mat-error>
+            </mat-form-field>
+            <br>
+            <button mat-raised-button
+            type="submit"
+            color="primary"
+            [disabled]="!stockForm.valid">Generar consulta</button><br>
+          </div>
+
+          <div class="w3-col s12 m8 l8">
+
+            <mat-form-field>
+              <mat-select #sepcel (change)="configExportSep(sepcel.value)" [(value)]="separador" aria-placeholder="Filtro" placeholder="Separador celdas">
+                <mat-option class="w3-indigo w3-hover-gray"
+                            value=",">( , ) Coma</mat-option>
+                <mat-option class="w3-indigo w3-hover-gray"
+                            value=";">( ; ) Punto y coma</mat-option>
+                <mat-option class="w3-indigo w3-hover-gray"
+                            value="\t">( t ) Tabulador</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <br>
+            <mat-form-field>
+              <mat-select #sepdec (change)="configExportDec(sepdec.value)" [(value)]="separadorDecimal" aria-placeholder="Filtro" placeholder="Separador decimal">
+                <mat-option class="w3-indigo w3-hover-gray"
+                            value=",">( , ) Coma</mat-option>
+                <mat-option class="w3-indigo w3-hover-gray"
+                            value=".">( . ) Punto</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <br>
+            <button mat-raised-button
+            type="button"
+            color="primary"
+            (click)="exportData()"
+            [disabled]="!queryDone"
+            >Exportar</button><br>
+          </div>
+          
+        </div>
+        <br>
+      </div>
+    </form>
+  </div>
+
+  <br>
+  <div *ngIf="consulta" class="w3-responsive w3-card-4" style="max-height:100vh">
+    <table class="w3-table-all">
+      <thead>
+        <tr>
+          <th>N°</th>
+          <th>Producto</th>
+          <th>Unidad </th>
+          <th class="w3-center">Stock</th>
+          <th class="w3-center">Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of _stock; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ item.Nombre }}</td>
+          <td>{{ item.Unidad }}</td>
+          <td style="text-align:right">{{ item.Stock_actual | number:'.2-2' }}</td>
+          <!--td style="text-align:center">
+              <mat-icon *ngIf="item.Stock_actual > item.Stocka" class="w3-text-green">check_circle</mat-icon>
+              <mat-icon *ngIf="item.Stock_actual > item.Stocke && item.Stock_actual <= item.Stocka" class="w3-text-amber">warning_octagram</mat-icon>
+              <mat-icon *ngIf="item.Stock_actual <= item.Stocke" class="w3-text-red">new_releases</mat-icon>
+          </td-->
+          <td style="text-align:center">
+              <mat-icon *ngIf="item.Estado === 'OK'" class="w3-text-green">check_circle</mat-icon>
+              <mat-icon *ngIf="item.Estado === 'ALERTA'" class="w3-text-amber">warning</mat-icon>
+              <mat-icon *ngIf="item.Estado === 'EMERGENCIA'" class="w3-text-red">error</mat-icon>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <br>
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+  <div *ngIf="!consulta" class="w3-container w3-padding-large meraki-empty-bg w3-card-2">
+    <h2 class="w3-margin w3-center meraki-font-s2">{{ mensajeKardex }}</h2>
+  </div>
+</div>

@@ -1,0 +1,113 @@
+<div class="w3-row w3-animate-left">
+  <div class="w3-row w3-border-bottom">
+    <h3 class="meraki-font-s5 w3-right">Terceros</h3>
+  </div>
+  <br>
+  <div class="w3-row">
+    <button mat-raised-button
+            color="primary"
+            *ngIf="perms[0]['ter_b_crear']"
+            routerLink="crear-tercero"
+            style="display:inline-block">Crear nuevo</button>
+    <mat-form-field floatPlaceholder="never">
+      <input matInput type="text" (input)="filterData($event.target.value)" placeholder="filtrar contenido" autocomplete="off">
+      <mat-hint>
+        Escribe una palabra
+      </mat-hint>
+    </mat-form-field>
+  </div>
+  <router-outlet></router-outlet>
+  <br>
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+  <div class="w3-responsive" style="max-height:50vh">
+    <table class="w3-table-all">
+      <thead>
+        <tr>
+          <th>N°</th>
+          <th>Tipo</th>
+          <th>Doc.Identi.</th>
+          <th>Num.</th>
+          <th>Nombre</th>
+          <th *ngIf="perms[0]['ter_t_direccion']">Dirección</th>
+          <th *ngIf="perms[0]['ter_t_contacto']">Contacto</th>
+          <th *ngIf="perms[0]['ter_t_mail']">Mail</th>
+          <th *ngIf="perms[0]['ter_t_telefono']">Teléfono</th>
+          <th *ngIf="perms[0]['ter_b_editar']" class="w3-center">Editar</th>
+        </tr>
+      </thead>
+      <tbody class="meraki-font-s5">
+        <tr *ngFor="let row of tercerosFiltrados; let i = index">
+          <td *ngIf="!edit[i]['value']">{{i + 1}}</td>
+          <td *ngIf="!edit[i]['value']">{{row.TerceroClass}}</td>
+          <td *ngIf="!edit[i]['value']">{{row.IdentiClass}}</td>
+          <td *ngIf="!edit[i]['value']">{{row.Identi}}</td>
+          <td *ngIf="!edit[i]['value']">{{row.Nombre}}</td>
+          <td *ngIf="!edit[i]['value'] && perms[0]['ter_t_direccion']">{{row.Direccion}}</td>
+          <td *ngIf="!edit[i]['value'] && perms[0]['ter_t_contacto']">{{row.Contacto}}</td>
+          <td *ngIf="!edit[i]['value'] && perms[0]['ter_t_mail']">{{row.Mail}}</td>
+          <td *ngIf="!edit[i]['value'] && perms[0]['ter_t_telefono']">{{row.Telefono}}</td>
+          <td *ngIf="!edit[i]['value'] && perms[0]['ter_b_editar']" style="text-align: center"><button mat-mini-fab
+                                                                  color="accent"
+                                                                  *ngIf="perms[0]['ter_b_editar']"
+                                                                  class="w3-animate-zoom"
+                                                                  (click)="editAction(i)"><mat-icon>edit</mat-icon></button></td>
+          <td *ngIf="edit[i]['value']">{{i + 1}}</td>
+          <td *ngIf="edit[i]['value']">
+            <!--input class="w3-input" type="text" (input)="modData['TerceroClass'] = $event.target.value" [value]="row.TerceroClass" [placeholder]="row.TerceroClass"-->
+            
+            <select #terceroTipo class="w3-input" (change)="modData['TerceroClass'] = terceroTipo.value" [value]="row.TerceroClass">
+                <option *ngFor="let tipo of tipos"
+                            [value]="tipo.nombre">{{ tipo.nombre }}</option>
+            </select>
+          </td>
+          <td *ngIf="edit[i]['value']">
+            <input class="w3-input" type="text" (input)="modData['IdentiClass'] = $event.target.value" [value]="row.IdentiClass" [placeholder]="row.IdentiClass">
+          </td>
+          <td *ngIf="edit[i]['value']">
+            <input class="w3-input" type="text" (input)="modData['Identi'] = $event.target.value" [value]="row.Identi" [placeholder]="row.Identi">
+          </td>
+          <td *ngIf="edit[i]['value']">
+            <input class="w3-input" type="text" (input)="modData['Nombre'] = $event.target.value" [value]="row.Nombre" [placeholder]="row.Nombre">
+          </td>
+          <td *ngIf="edit[i]['value'] && perms[0]['ter_t_direccion']">
+            <input class="w3-input" type="text" (input)="modData['Direccion'] = $event.target.value" [value]="row.Direccion" [placeholder]="row.Direccion">
+          </td>
+          <td *ngIf="edit[i]['value'] && perms[0]['ter_t_contacto']">
+            <input class="w3-input" type="text" (input)="modData['Contacto'] = $event.target.value" [value]="row.Contacto" [placeholder]="row.Contacto">
+          </td>
+          <td *ngIf="edit[i]['value'] && perms[0]['ter_t_mail']">
+            <input class="w3-input" type="text" (input)="modData['Mail'] = $event.target.value" [value]="row.Mail" [placeholder]="row.Mail">
+          </td>
+          <td *ngIf="edit[i]['value'] && perms[0]['ter_t_telefono']">
+            <input class="w3-input" type="text" (input)="modData['Telefono'] = $event.target.value" [value]="row.Telefono" [placeholder]="row.Telefono">
+          </td>
+          <td *ngIf="edit[i]['value']" class="w3-padding-small" style="text-align: center"><button  mat-mini-fab
+                                                                                                    color="primary"
+                                                                                                    *ngIf="perms[0]['ter_b_guardar']"
+                                                                                                    class="w3-animate-zoom"
+                                                                                                    style="margin:1px"
+                                                                                                    (click)="saveAction(i)"><mat-icon>save</mat-icon></button>
+                                                                                            <button mat-mini-fab
+                                                                                                    color="warn"
+                                                                                                    *ngIf="perms[0]['ter_b_borrar']"
+                                                                                                    class="w3-animate-zoom"
+                                                                                                    style="margin:1px"
+                                                                                                    (click)="borrarAction('terceros',row.ID)"><mat-icon>delete</mat-icon></button>
+                                                                                            <button mat-mini-fab
+                                                                                                    color="accent"
+                                                                                                    class="w3-animate-zoom"
+                                                                                                    style="margin:1px"
+                                                                                                    (click)="cancelAction(i)"><mat-icon>cancel</mat-icon></button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div *ngIf="loading" class="w3-container w3-padding-large meraki-empty-bg" style="width:100%">
+    <h2 class="w3-margin w3-center meraki-font-s2"><mat-icon class="w3-margin" style="font-size: 36px">people</mat-icon>Cargando ...</h2>
+  </div>
+  <div *ngIf="data_.length == 0 && !loading" class="w3-container w3-padding-large meraki-empty-bg" style="width:100%">
+      <h2 class="w3-margin w3-center meraki-font-s2"><mat-icon class="w3-margin" style="font-size: 36px">people</mat-icon>No hay terceros en la tabla</h2>
+  </div>
+  <br>
+  <div style="height:25vh;"><p></p></div>
+</div>

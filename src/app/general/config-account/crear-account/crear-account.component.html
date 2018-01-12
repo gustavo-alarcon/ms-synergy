@@ -1,0 +1,49 @@
+<div class="w3-animate-top">
+  <div class="w3-container w3-border-bottom w3-border-black">
+      <h3 mat-button class="meraki-font-s5">Crear nueva cuenta</h3>
+  </div>
+  <br>
+  <form [formGroup]="crearCuentaForm" (ngSubmit)="onSubmit()" autocomplete="off"> 
+    <div class="w3-white w3-card-4 w3-padding">
+
+      <mat-form-field class="meraki-fill">
+        <input #nombre matInput formControlName="Nombre" color="accent" type="text" (input)="checkByUser(nombre.value,apellido.value)" placeholder="Nombre">
+        <mat-error *ngIf="!crearCuentaForm.valid">
+          Nombre <strong>requerido</strong> *
+        </mat-error>
+        <mat-hint *ngIf="userExist">
+          Este nombre ya existe.
+        </mat-hint>
+      </mat-form-field>
+
+      <mat-form-field class="meraki-fill">
+        <input #apellido matInput formControlName="Apellido" color="accent" type="text" (input)="checkByUser(nombre.value,apellido.value)" placeholder="Apellido">
+        <mat-error *ngIf="!crearCuentaForm.valid">
+          Apellido <strong>requerido</strong> *
+        </mat-error>
+        <mat-hint *ngIf="userExist">
+          Este apellido ya existe.
+        </mat-hint>
+      </mat-form-field>
+
+      <mat-form-field class="meraki-fill">
+        <input matInput formControlName="Correo" color="accent" type="mail" placeholder="Correo">
+        <mat-error *ngIf="!crearCuentaForm.valid">
+          Correo <strong>requerido</strong> *
+        </mat-error>
+      </mat-form-field>
+
+    </div>
+    <br>
+    <button mat-raised-button
+            type="button"
+            color="warn"
+            routerLink="../../config"
+            >CANCELAR</button>
+    <button mat-raised-button
+            type="submit"
+            color="primary"
+            [disabled]="!crearCuentaForm.valid"
+            >CREAR</button>
+  </form>
+</div>

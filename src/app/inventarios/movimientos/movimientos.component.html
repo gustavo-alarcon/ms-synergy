@@ -1,0 +1,322 @@
+<div class="w3-row w3-animate-left">
+  <div class="w3-row w3-border-bottom">
+    <span class="meraki-spacer"></span>
+    <h3 class="meraki-font-s5 w3-right">Registro de Movimientos</h3>
+  </div>
+  <br>
+  <form [formGroup]="movimientoForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="w3-row w3-card-4 w3-white w3-padding">
+
+      <div class="w3-row w3-margin">
+        
+        <div class="w3-col s12 m2 l2">
+          <mat-form-field color="accent" class="meraki-fill">
+            <input matInput [matDatepicker]="picker" placeholder="Fecha" [value]="now" [max]="timeLimit">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error *ngIf="!movimientoForm.valid">
+              Fecha <strong>requerida</strong> *
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="w3-col s12 m3 l3">
+          <mat-form-field color="accent" class="meraki-fill">
+            <mat-select #doc formControlName="Documento" placeholder="Documento" (change)="filtrarTerceros(doc.value['Tipo'], doc.value['Naturaleza'], doc.value['Correlativo_actual'])">
+                <mat-option class="w3-indigo w3-hover-gray" *ngFor="let documento of documentos"
+                            [value]="documento">{{ documento.Nombre }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="!movimientoForm.valid">
+              Documento <strong>requerido</strong> *
+            </mat-error>
+          </mat-form-field> 
+        </div>
+
+        <div class="w3-col s12 m3 l3">
+          <mat-form-field color="accent" class="meraki-fill" *ngIf="tipoMovimiento != 'ENTRADA'">
+            <mat-select formControlName="Serie" placeholder="N°Serie">
+                <mat-option class="w3-indigo w3-hover-gray" *ngFor="let serie of numerosSerie"
+                            [value]="serie">{{ serie }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="!movimientoForm.valid">
+              Numero de Serie <strong>requerido</strong> *
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field color="accent" class="meraki-fill" *ngIf="tipoMovimiento === 'ENTRADA'">
+            <input matInput formControlName="SerieCompra" type="number" placeholder="N°Serie" min="0">
+            <mat-error *ngIf="!movimientoForm.valid && movimientoForm.touched">
+              Número de Serie <strong>requerido</strong> *
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="w3-col s12 m3 l3">
+          <mat-form-field color="accent" class="meraki-fill">
+            <input #Numdoc matInput formControlName="Correlativo" type="number" min="0" placeholder="N°Doc" >
+            <mat-error *ngIf="!movimientoForm.valid && movimientoForm.touched">
+              Número correlativo <strong>requerido</strong> *
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="w3-col s12 m1 l1 meraki-fill" style="text-align: center">
+          <button mat-mini-fab type="button" color="primary" (click)="addDoc(doc.value, Numdoc.value)"><mat-icon>add</mat-icon></button>
+        </div>
+      </div>
+    
+      <div class="w3-row w3-margin" *ngFor="let docItem of docList; let i = index">
+
+        <div class="w3-col s12 m3 l3">
+          <mat-form-field color="accent" style="width:100%">
+            <input matInput type="text" value="{{ docItem.Nombre }}" placeholder="Documento" disabled>
+          </mat-form-field>
+        </div>
+
+        <div class="w3-col s12 m4 l4">
+          <mat-form-field color="accent" style="width:100%">
+            <input matInput type="text" value="{{ docItem.Serie }}" placeholder="N°Serie" disabled>
+          </mat-form-field>
+        </div>
+
+        <div class="w3-col s12 m4 l4">
+          <mat-form-field color="accent" style="width:100%">
+            <input matInput type="text" value="{{ docItem.Correlativo }}" placeholder="N°Doc" disabled>
+          </mat-form-field>
+        </div>
+
+        <div class="w3-col s12 m1 l1 meraki-fill" style="text-align:center" >
+          <button mat-button style="width:100%" type="button" color="warn" (click)="removeDoc(i)"><mat-icon>delete</mat-icon></button>
+        </div>
+      </div>
+
+      <div class="w3-row w3-margin">
+        <mat-form-field color="accent" class="meraki-fill">
+          <mat-select formControlName="Tercero" placeholder="Tercero">
+              <mat-option class="w3-indigo w3-hover-gray" *ngFor="let tercero of terceros_filtrado"
+                          [value]="tercero.Nombre">{{ tercero.Nombre }}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="!movimientoForm.valid">
+            Tercero <strong>requerido</strong> *
+          </mat-error>
+        </mat-form-field>
+    </div>
+
+    <div class="w3-row w3-margin">
+      <mat-form-field color="accent" class="meraki-fill">
+        <mat-select #almOrigen formControlName="AlmacenOrigen" (change)="filtrarProductos(almOrigen.value)" [placeholder]="tipoMovimiento === 'TRANSFERENCIA'? 'Almacen de origen':'Almacen'">
+            <mat-option class="w3-indigo w3-hover-gray" *ngFor="let almacen of almacenes"
+                        [value]="almacen.Nombre">{{ almacen.Nombre }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="!movimientoForm.valid && tipoMovimiento === 'TRANSFERENCIA'">
+          Almacen de origen <strong>requerido</strong> *
+        </mat-error>
+        <mat-error *ngIf="!movimientoForm.valid && tipoMovimiento !== 'TRANSFERENCIA'">
+          Almacen <strong>requerido</strong> *
+        </mat-error>
+      </mat-form-field>  
+    </div>
+
+    <div class="w3-row w3-margin" [ngStyle]="{'display': tipoMovimiento === 'TRANSFERENCIA' ? 'block':'none'}">
+      <mat-form-field color="accent" class="meraki-fill">
+        <mat-select #almDestino formControlName="AlmacenDestino" placeholder="Almacen de destino">
+            <mat-option class="w3-indigo w3-hover-gray" *ngFor="let almacen_d of almacenes"
+                        [value]="almacen_d.Nombre">{{ almacen_d.Nombre }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="!movimientoForm.valid">
+          Almacen de destino <strong>requerido</strong> *
+        </mat-error>
+      </mat-form-field>  
+    </div>
+
+    <div class="w3-row w3-margin">
+        <mat-tab-group>
+          <mat-tab label="Productos">
+
+            <div class="w3-row w3-padding">
+              <div class="w3-quarter">
+                <mat-form-field color="accent" style="width:100%">
+                  <mat-select #prod formControlName="Producto" placeholder="Producto" (change)="prodActual(prod.value)">
+                      <mat-option class="w3-indigo w3-hover-gray" *ngFor="let producto of productos_filtrado"
+                                  [value]="producto">{{ producto.Nombre }}</mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="!movimientoForm.valid">
+                    Producto <strong>requerido</strong> *
+                  </mat-error>
+                  <!--input #prod matInput formControlName="Producto" (change)="prodActual(prod.value)" type="text" placeholder="Producto" [matAutocomplete]="auto"-->
+                    
+                </mat-form-field>
+                <!--AGREGADO/ TEST-->
+                <!--mat-autocomplete #auto="matAutocomplete">
+                  <mat-option *ngFor="let option of productos_filtrado" [value]="option">
+                    {{ option.Nombre }}
+                  </mat-option>
+                </mat-autocomplete-->
+              </div>
+              <div class="w3-quarter">
+                <mat-form-field color="accent" style="width:100%">
+                  <input matInput type="text" value="{{ prod.value === undefined ? '':prod.value['Stock_actual'] }}" placeholder="Stock" disabled>
+                  <mat-hint>
+                    <strong>{{ prod.value === undefined ? '':prod.value['Unidad'] }}</strong>
+                  </mat-hint> 
+                </mat-form-field>
+              </div>
+              <div class="w3-quarter">
+                <mat-form-field color="accent" style="width:100%" *ngIf="perms[0]['reg_t_prodPrecioCompra']">
+                  <input matInput type="text" value="{{ prod.value === undefined ? '':prod.value['Compra'] }}" placeholder="Compra" disabled>
+                  <mat-hint>
+                    <strong>{{ prod.value === undefined ? '':prod.value['Moneda'] }}</strong>
+                  </mat-hint> 
+                </mat-form-field>
+              </div>
+              <div class="w3-quarter">
+                <mat-form-field color="accent" style="width:100%">
+                  <input matInput type="text" value="{{ prod.value === undefined ? '':prod.value['Venta'] }}" placeholder="Venta" disabled>
+                  <mat-hint>
+                    <strong>{{ prod.value === undefined ? '':prod.value['Moneda'] }}</strong>
+                  </mat-hint> 
+                </mat-form-field>
+              </div>
+              
+            </div>
+            
+          </mat-tab>
+          <mat-tab label="Paquetes">
+
+            <div>
+              <mat-form-field color="accent" class="meraki-fill">
+                <mat-select #packNombre formControlName="Paquete" (change)="packActual(packNombre.value)" placeholder="Paquete">
+                    <mat-option class="w3-indigo w3-hover-gray" *ngFor="let pack of pack_nombre"
+                                [value]="pack">{{ pack }}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="!movimientoForm.valid">
+                  Paquete <strong>requerido</strong> *
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="w3-row" *ngFor="let item of lista_items_paquete">
+              <div class="w3-quarter">
+                <mat-form-field color="accent" style="width:100%">
+                  <input matInput type="text" [value]="item.Producto" placeholder="Producto" disabled>
+                  <mat-hint>
+                    <strong>{{ item.Unidad }}</strong>
+                  </mat-hint> 
+                </mat-form-field>
+              </div>
+              <div class="w3-quarter">
+                <mat-form-field color="accent" style="width:100%" *ngIf="perms[0]['reg_t_paqPrecioCompra']">
+                  <input matInput type="text" [value]="item.Compra" placeholder="Compra" disabled>
+                  <mat-hint>
+                    <strong>{{ item.Moneda }}</strong>
+                  </mat-hint> 
+                </mat-form-field>
+              </div>
+              <div class="w3-quarter">
+                <mat-form-field color="accent" style="width:100%">
+                  <input matInput type="text" [value]="item.PrecioUnitario" placeholder="Venta" disabled>
+                  <mat-hint>
+                    <strong>{{ item.Moneda }}</strong>
+                  </mat-hint> 
+                </mat-form-field>
+              </div>
+              <div class="w3-quarter">
+                <mat-form-field color="accent" style="width:100%">
+                  <input matInput type="text" [value]="item.Cantidad" placeholder="Cantidad" disabled>
+                  <mat-hint>
+                    <strong>{{ item.Unidad }}</strong>
+                  </mat-hint> 
+                </mat-form-field>
+              </div>
+            </div>
+
+          </mat-tab>
+        </mat-tab-group>
+          
+    </div>
+
+    <div class="w3-row w3-margin">
+
+      <div class="w3-half">
+        <mat-form-field color="accent" class="meraki-fill">
+          <input matInput #qty formControlName="Cantidad" (input)="precio(qty.value)" type="number" placeholder="Cantidad" min="0">
+          <mat-error *ngIf="!movimientoForm.valid">
+            Cantidad <strong>requerida</strong> *
+          </mat-error> 
+        </mat-form-field>
+      </div> 
+
+      <div class="w3-half">
+        <mat-form-field color="accent" class="meraki-fill">
+          <input  matInput type="number" min="0" step="0.01"
+                  formControlName="Precio"
+                  [placeholder]="precioPlaceholder">
+          <span matSuffix style="margin-right:8px" *ngIf="precioPlaceholder !== 'Movimiento interno'">{{ prod.value === undefined ? '':prod.value['Moneda']}}</span> 
+        </mat-form-field>
+      </div>
+
+    </div>
+    
+
+    </div>
+
+    <br>
+    <button type="submit"
+            mat-raised-button
+            color="primary"
+            [disabled]="!movimientoForm.valid">Añadir a resumen</button>
+  </form>
+  <div class="w3-row">
+    <span class="example-spacer"><p></p></span>
+    <h1 class="w3-pink w3-padding w3-card-4 w3-round-large meraki-font-s5">Total: {{ montoTotal | number: '.2-2' }} {{ prod.value === undefined ? '':prod.value['Moneda'] }} </h1>
+  </div>
+  
+  <br>
+  <br>
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+  <div class="w3-responsive w3-card-4" style="max-height:100vh">
+    <table class="w3-table-all meraki-font-s5">
+      <thead>
+        <tr>
+          <th>N°</th>
+          <th>Movimiento</th>
+          <th>Paquete</th>
+          <th>Producto</th>
+          <th>P. Unitario</th>
+          <th>Cantidad</th>
+          <th>Total</th>
+          <th style="text-align:center">Editar</th>
+        </tr>
+      </thead>
+      <tbody class="meraki-font-s5">
+        <tr *ngFor="let producto of listaResumen; let i = index">
+          <td *ngIf="true">{{i + 1}}</td>
+          <td *ngIf="true">{{producto.Movimiento}}</td>
+          <td *ngIf="true">{{producto.Paquete}}</td>
+          <td *ngIf="true">{{producto.Producto}}</td>
+          <td *ngIf="true">{{producto.Movimiento === 'ENTRADA'? (producto.Compra | number:'.2-2'): (producto.Venta | number:'.2-2') }}</td>
+          <td *ngIf="true">{{producto.Cantidad}}</td>
+          <td *ngIf="true">{{producto.Movimiento === 'ENTRADA'? ((producto.Compra * producto.Cantidad) | number:'.2-2'): ((producto.Venta * producto.Cantidad) | number:'.2-2')}} {{ producto.Moneda }}</td>
+          <td *ngIf="true">
+            <button mat-mini-fab color="primary" (click)="sumarCantidad(i)" style="margin:1px"><mat-icon>add</mat-icon></button>
+            <button mat-mini-fab color="primary" (click)="restarCantidad(i)" style="margin:1px"><mat-icon>remove</mat-icon></button>
+            <button mat-mini-fab color="warn"    (click)="borrarItem(i)" style="margin:1px"><mat-icon>delete</mat-icon></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div *ngIf="listaResumen.length < 1" class="w3-container w3-padding-large meraki-empty-bg w3-card-2" style="width:100%">
+    <h2 class="w3-margin w3-center meraki-font-s2">Lista vacía</h2>
+  </div>
+  <br>
+  <button mat-raised-button
+          color="warn"
+          (click)="limpiarLista()">Limpiar lista</button>
+  <button mat-raised-button
+          color="primary"
+          (click)="regMovimiento()">Registrar movimiento</button>
+
+
+  <div class="w3-container" style="height:50vh"><p></p></div>
+</div>  

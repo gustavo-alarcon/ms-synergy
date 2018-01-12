@@ -1,0 +1,161 @@
+<div class="w3-animate-top">
+  <div class="w3-container w3-border-bottom w3-border-black">
+      <h3 mat-button class="meraki-font-s5">Crear nuevo producto</h3>
+  </div>
+  <br>
+  <form [formGroup]="crearProductoForm" (ngSubmit)="onSubmit()" autocomplete="off">
+        <div class="w3-white w3-card-4 w3-padding">
+            <h4>Producto</h4>
+
+            <mat-form-field color="accent" style="width:49%">
+                <input #nombre matInput type="text" formControlName="Nombre" (input)="checkByNombre(nombre.value)" placeholder="Nombre*">
+                <mat-error *ngIf="!crearProductoForm.valid">
+                    Nombre <strong>requerido</strong> *
+                </mat-error>
+                <mat-hint *ngIf="nombreExist">
+                    El nombre ya existe.
+                </mat-hint>
+            </mat-form-field>
+
+            <mat-form-field color="accent" style="width:49%">
+                <input #codigo matInput type="text" formControlName="Codigo" (input)="checkByCodigo(codigo.value)"placeholder="Código*">
+                <mat-error *ngIf="!crearProductoForm.valid">
+                    Código <strong>requerido</strong> *
+                </mat-error>
+                <mat-hint *ngIf="codigoExist">
+                    El código ya existe ({{ nombreCodigo }})
+                </mat-hint>
+            </mat-form-field>
+
+            <mat-form-field color="accent" style="width:100%">
+                <mat-select formControlName="Grupo" placeholder="Grupo/Categoría*">
+                    <mat-option class="w3-indigo w3-hover-gray" *ngFor="let grupo of grupos"
+                                [value]="grupo.Nombre">{{ grupo.Nombre }}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="!crearProductoForm.valid">
+                    <strong>Seleccionar</strong> un grupo *
+                </mat-error>
+                <mat-hint>
+                    Grupo/Categoría al que pertenece
+                </mat-hint>
+            </mat-form-field>
+
+            <mat-form-field color="accent" style="width:100%">
+                <mat-select #almacen formControlName="Zona" (mouseup)="checkDuplicates(nombre.value,codigo.value,almacen.value)" placeholder="Almacen*">
+                    <mat-option class="w3-indigo w3-hover-gray" *ngFor="let almacen of almacenes"
+                                [value]="almacen.Nombre">{{ almacen.Nombre }}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="!crearProductoForm.valid">
+                    <strong>Seleccionar</strong> un almacen *
+                </mat-error>
+                <mat-hint>
+                    Donde se encuentra fisicamente el producto
+                </mat-hint>
+            </mat-form-field>
+        </div>
+        <br>  
+        <div class="w3-white w3-card-4 w3-padding">
+            <h4>Propiedades</h4>
+
+            <mat-form-field color="accent" style="width:100%">
+                <input matInput type="text" formControlName="Unidad" placeholder="Unidad de medida*">
+                <mat-error *ngIf="!crearProductoForm.valid">
+                    Unidad <strong>requerida</strong> *
+                </mat-error>
+            </mat-form-field>
+
+            <h5>Stock</h5>
+            <mat-form-field color="accent" style="width:23%">
+                <input matInput type="number" formControlName="Stock_inicial" placeholder="Inicial">
+                <mat-error *ngIf="!crearProductoForm.valid">
+                    <strong>requerido</strong> *
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field color="accent" style="width:23%">
+                <input matInput type="number" formControlName="Stocke" placeholder="Emergencia">
+                <mat-error *ngIf="!crearProductoForm.valid">
+                    <strong>requerido</strong> *
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field color="accent" style="width:23%">
+                <input matInput type="number" formControlName="Offset_stocka" (input)="calcAlarma()" placeholder="Porcentaje" min="0" max="100">
+                <span matPrefix>(%)</span>
+                <mat-error *ngIf="!crearProductoForm.valid">
+                    Porcentaje <strong>requerido</strong> *
+                </mat-error>
+                <mat-hint>
+                    0 - 100
+                </mat-hint>
+            </mat-form-field>
+            <mat-form-field color="accent" style="width:23%">
+                <input matInput type="number" [value]="stockA" placeholder="Alarma" disabled>
+                <mat-hint *ngIf="!crearProductoForm.valid">
+                    Stock de alarma.
+                </mat-hint>
+            </mat-form-field>
+
+            <mat-form-field color="accent" style="display:none;">
+                <input matInput type="number" [value]="stockA" placeholder="Alarma">
+                <mat-hint *ngIf="!crearProductoForm.valid">
+                    Stock de alarma.
+                </mat-hint>
+            </mat-form-field>
+
+            <!--mat-form-field color="accent" style="width:100%">
+                <mat-select #Padre formControlName="Padre" placeholder="Pertenece a un paquete ?">
+                    <mat-option class="w3-indigo w3-hover-gray" *ngFor="let producto of productos"
+                                [value]="producto.ID">{{ producto.Nombre }}</mat-option>
+                </mat-select>
+                <mat-hint>
+                    Seleccione una opción, si el producto es parte de un paquete.
+                </mat-hint>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="Padre.value != null" color="accent" style="width:100%">
+                <input matInput type="number" formControlName="CantidadPaq" placeholder="Cuantos elementos pertenecen al paquete ?">
+                <mat-hint *ngIf="!crearProductoForm.valid">
+                    Cantidad de elementos
+                </mat-hint>
+            </mat-form-field-->
+
+            <mat-form-field color="accent" style="width:100%">
+                <mat-select #Currency color="primary" formControlName="Moneda" placeholder="Tipo de moneda*">
+                    <mat-option class="w3-indigo w3-hover-gray" *ngFor="let moneda of monedas"
+                                [value]="moneda.value">{{ moneda.value }}</mat-option>
+                </mat-select>
+                <mat-hint>
+                    Moneda de comercio
+                </mat-hint>
+            </mat-form-field>
+
+            <mat-form-field color="accent" style="width:100%">
+                <input matInput type="number" formControlName="Compra" placeholder="Precio de compra*" min="0" step="0.01">
+                <mat-error *ngIf="!crearProductoForm.valid">
+                    Precio <strong>requerido</strong> *
+                </mat-error>
+                <span matPrefix style="margin-right: 10px">{{ Currency.value }} </span>
+            </mat-form-field>
+
+            <mat-form-field color="accent" style="width:100%">
+                <input matInput type="number" formControlName="Venta" placeholder="Precio de venta*" min="0" step="0.01">
+                <mat-error *ngIf="!crearProductoForm.valid">
+                    Precio <strong>requerido</strong> *
+                </mat-error>
+                <span matPrefix style="margin-right: 10px">{{ Currency.value }} </span>
+            </mat-form-field>
+
+
+        </div>
+        <br>
+        <button mat-raised-button
+                color="warn"
+                routerLink="../../productos">CANCELAR</button>
+        <button mat-raised-button
+                type="submit"
+                color="primary"
+                (change)="checkDuplicates(nombre.value,codigo.value,almacen.value)"
+                [disabled]="!crearProductoForm.valid"
+                    >CREAR</button>
+    </form>
+</div>
+
