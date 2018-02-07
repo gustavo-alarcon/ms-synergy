@@ -10,8 +10,35 @@ import {FormControl, Validators, FormGroup, FormBuilder} from '@angular/forms';
 })
 export class CrearProductoComponent implements OnInit {
 
+  inputFile = {
+    selectButton: {
+      "background-color": "#fff",
+      "border-radius": "10px",
+      "color": "#000"
+    },
+    clearButton: {
+      "background-color": "#FFF",
+      "border-radius": "10px",
+      "color": "#000",
+      "margin-left": "10px"
+    },
+    layout: {
+      "background-color": "#e7d0e7",
+      "border-radius": "25px",
+      "color": "rgb(133, 81, 81)",
+      "font-size": "10px",
+      "margin": "15px",
+    },
+    previewPanel: {
+      "background-color": "rgb(188, 142, 188)",
+      "border-radius": "0 0 10px 10px",
+      "display" : "flex",
+      "justify-content": "center"
+    }
+  }
+
   crearProductoForm: FormGroup;
-  
+  images:any;
   grupos: any[] = [];
   almacenes: any[] = [];
   productos: any[] = [];
@@ -85,6 +112,10 @@ export class CrearProductoComponent implements OnInit {
     this.crearProductoForm.patchValue({
       Stocka: this.stockA
     });
+  }
+
+  imageFinishedUploading(file) {
+    this.images = file;
   }
 
   checkByNombre(target:string) {

@@ -1,0 +1,61 @@
+<div mat-dialog-content>
+    <h1 mat-dialog-title>Ingrese los datos del nuevo cliente</h1>
+    <hr>
+    <form [formGroup]="clientForm">
+      <div class="loadingSpinner" *ngIf="isLoadingResults">
+        <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+      </div>
+      <mat-form-field class="full-width">
+          <input matInput placeholder="Nombre y Apellidos" formControlName="name" [(ngModel)]="client.name">
+          <mat-icon matSuffix>account_circle</mat-icon> 
+          <mat-error *ngIf="!clientForm.controls['name'].valid && clientForm.controls['name'].touched">
+            El nombre tiene que estar y no puede contener numeros
+          </mat-error>           
+      </mat-form-field>
+      <br/>
+      <mat-form-field class="full-width">
+          <input matInput type="email" placeholder="Email" formControlName="mail" [(ngModel)]="client.mail">
+          <mat-icon matSuffix>email</mat-icon> 
+          <mat-error *ngIf="!clientForm.controls['mail'].valid && clientForm.controls['mail'].touched">
+            El email tiene que estar y tiene que tener el formato
+          </mat-error>           
+      </mat-form-field>
+      <br/>
+      <mat-form-field class="full-width">
+          <input matInput type="tel" placeholder="Telefono" formControlName="phone" [(ngModel)]="client.phone" maxlength="9">
+          <mat-icon matSuffix>phone_iphone</mat-icon>   
+          <mat-error *ngIf="!clientForm.controls['phone'].valid && clientForm.controls['phone'].touched">
+            El telefono tiene que estar, sin letras y como minimo deben ser 6 numeros y como maximo 9
+          </mat-error>         
+      </mat-form-field>
+      <br/>
+      <mat-form-field class="full-width">
+          <input matInput placeholder="Lugar" formControlName="place" [(ngModel)]="client.place">
+          <mat-icon matSuffix>place</mat-icon>
+          <mat-error *ngIf="!clientForm.controls['place'].valid && clientForm.controls['place'].touched">
+            El lugar tiene que estar
+          </mat-error>             
+      </mat-form-field>
+      <br/>
+      <mat-form-field class="full-width">
+        <mat-select placeholder="Seleccione el tipo de cliente" formControlName="type" [(ngModel)]="client.type" ngDefaultControl>
+          <mat-option value="1">Franquicia</mat-option>
+          <mat-option value="2">Promociones</mat-option>
+        </mat-select>
+        <mat-error *ngIf="!clientForm.controls['type'].valid && clientForm.controls['type'].touched">
+          Tiene que escoger algun tipo de cliente
+        </mat-error>  
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <input matInput [matDatepicker]="picker" placeholder="Ponga la fecha de nacimiento" [formControl]="date" required>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker touchUi="true" #picker ngDefaultControl></mat-datepicker>
+      </mat-form-field>
+    </form>
+    <div mat-dialog-actions>
+      <button mat-raised-button color="accent" (click)="onNoClick()" >Cancelar</button>
+      <button mat-raised-button color="primary" [disabled]="clientForm.invalid" (click)="addClient()">Confirmar</button>
+    </div>
+  </div>
+  
+  

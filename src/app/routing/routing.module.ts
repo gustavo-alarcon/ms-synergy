@@ -28,49 +28,54 @@ import { DashboardComponent } from './../inventarios/dashboard/dashboard.compone
 import { TercerosComponent } from './../inventarios/terceros/terceros.component';
 import { CrearTerceroComponent } from "./../inventarios/terceros/crear-tercero/crear-tercero.component";
 import { CrearAccountComponent } from '../general/config-account/crear-account/crear-account.component';
-
+import { PuntoVentaComponent } from '../punto-venta/punto-venta.component';
+import { Auth2Guard } from '../guards/auth2.guard';
+import { AuthLoginGuard } from '../guards/auth-login.guard';
+import { MsTextComponent } from '../ms-text/mstext/mstext.component';
 
 const appRoutes: Routes = [
-    { path: 'welcome', component: WelcomeComponent },
-    { path: 'login', component: LoginComponent },
-    { path: 'landing', canActivate: [AuthGuard], component: LandingComponent},
-    { path: 'config', canActivate: [AuthGuard], component: ConfigAccountComponent,
+    { path: 'welcome', component: WelcomeComponent, data: { animation: 'welcome' }},
+    { path: 'login', component: LoginComponent, data: { animation: 'login' } },
+    { path: 'landing',canActivate: [AuthGuard], component: LandingComponent, data: { animation: 'landing' }},
+    { path: 'config', canActivate: [AuthGuard], component: ConfigAccountComponent, data: { animation: 'config' },
       children: [
-        { path: 'crear-account', component: CrearAccountComponent },
+        { path: 'crear-account', component: CrearAccountComponent , data: { animation: 'crear-account' }},
       ]
     },
-    { path: 'inventarios', canActivate: [AuthGuard], component: InventariosComponent,
+    { path: 'inventarios',canActivate: [AuthGuard], component: InventariosComponent, data: { animation: 'inventarios' },
       children: [
-        { path: '', component: DashboardComponent },
-        { path: 'dashboard', component: DashboardComponent },
-        { path: 'almacenes', component: AlmacenesComponent,
+        { path: '', component: DashboardComponent , data: { animation: 'init' }},
+        { path: 'dashboard', component: DashboardComponent , data: { animation: 'dashboard' }},
+        { path: 'almacenes', component: AlmacenesComponent, data: { animation: 'almacenes' },
           children: [
-            { path: 'crear-almacen', component: CrearAlmacenComponent }
+            { path: 'crear-almacen', component: CrearAlmacenComponent, data: { animation: 'crear-almacen' } }
           ] },
-        { path: 'terceros', component: TercerosComponent,
+        { path: 'terceros', component: TercerosComponent, data: { animation: 'terceros' },
           children: [
-            { path: 'crear-tercero', component: CrearTerceroComponent }
+            { path: 'crear-tercero', component: CrearTerceroComponent , data: { animation: 'crear-terceros' }}
           ] },
-        { path: 'documentos', component: DocumentosComponent,
+        { path: 'documentos', component: DocumentosComponent, data: { animation: 'documentos' },
         children: [
-            { path: 'crear-documento', component: CrearDocumentoComponent }
+            { path: 'crear-documento', component: CrearDocumentoComponent , data: { animation: 'crear-documentos' }}
           ] },
-        { path: 'grupos', component: GruposComponent,
+        { path: 'grupos', component: GruposComponent, data: { animation: 'grupos' },
           children: [
-              { path: 'crear-grupo', component: CrearGrupoComponent }
+              { path: 'crear-grupo', component: CrearGrupoComponent , data: { animation: 'crear-grupos' }}
             ] },
-        { path: 'productos', component: ProductosComponent,
+        { path: 'productos', component: ProductosComponent, data: { animation: 'productos' },
           children: [
-              { path: 'crear-producto', component: CrearProductoComponent },
-              { path: 'crear-paquete', component: CrearPaqueteComponent }
+              { path: 'crear-producto', component: CrearProductoComponent, data: { animation: 'crear-producto' } },
+              { path: 'crear-paquete', component: CrearPaqueteComponent, data: { animation: 'crear-paquete' } }
             ] },
-        { path: 'movimientos', component: MovimientosComponent },
-        { path: 'kardex', component: KardexComponent },
-        { path: 'stock', component: StockComponent },
-        { path: 'reportemov', component: ReportemovComponent },
+        { path: 'movimientos', component: MovimientosComponent, data: { animation: 'movimientos' } },
+        { path: 'kardex', component: KardexComponent, data: { animation: 'kardex' } },
+        { path: 'stock', component: StockComponent , data: { animation: 'stock' }},
+        { path: 'reportemov', component: ReportemovComponent, data: { animation: 'reportemov' } },
       ] },
-    { path: '', component: WelcomeComponent },
-    { path: '**', component: WelcomeComponent }
+    { path: 'puntoVenta', component: PuntoVentaComponent, data: { animation: 'puntoVenta' }}, 
+    { path: 'ms-text',component: MsTextComponent, data: { animation: 'ms-text' }},
+    { path: '', component: WelcomeComponent , data: { animation: 'primera' }},
+    { path: '**', component: WelcomeComponent, data: { animation: 'random' } }
   ];
  
 @NgModule({

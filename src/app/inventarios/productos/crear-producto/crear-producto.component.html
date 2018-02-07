@@ -6,7 +6,6 @@
   <form [formGroup]="crearProductoForm" (ngSubmit)="onSubmit()" autocomplete="off">
         <div class="w3-white w3-card-4 w3-padding">
             <h4>Producto</h4>
-
             <mat-form-field color="accent" style="width:49%">
                 <input #nombre matInput type="text" formControlName="Nombre" (input)="checkByNombre(nombre.value)" placeholder="Nombre*">
                 <mat-error *ngIf="!crearProductoForm.valid">
@@ -52,6 +51,17 @@
                     Donde se encuentra fisicamente el producto
                 </mat-hint>
             </mat-form-field>
+            <br />
+            <div class="image">
+                <image-upload
+                [buttonCaption]="'Suba la imagen de su producto'"
+                [dropBoxMessage]="'Arraste la imagen de su producto'"
+                [clearButtonCaption]="'Borrar'"
+                [style]="inputFile" 
+                [max]="1"  
+                (uploadFinished)="imageFinishedUploading($event)"
+                ></image-upload>
+            </div>
         </div>
         <br>  
         <div class="w3-white w3-card-4 w3-padding">

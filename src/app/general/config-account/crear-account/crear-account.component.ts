@@ -64,7 +64,6 @@ export class CrearAccountComponent implements OnInit {
     this.message = '';
 
     if (!this.userExist) {
-      console.log(this.crearCuentaForm.value)
       this.loginService.createAccount(this.crearCuentaForm.value);
     }else if (this.userExist){
 

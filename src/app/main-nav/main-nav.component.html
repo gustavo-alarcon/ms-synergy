@@ -1,13 +1,13 @@
 
 <mat-toolbar class="w3-ana-502">
-    <span class="meraki-font-s5">Meraki Solutions | Synergy</span>
+    <span class="meraki-font-s5" style="font-size: 20px">Meraki Solutions | Synergy</span>
     <span class="example-spacer w3-center"></span>
     <button mat-button [matMenuTriggerFor]="appMenu" class="meraki-font-s5"><mat-icon>menu</mat-icon> Menu</button>
 </mat-toolbar>
 
 <mat-menu #appMenu="matMenu" class="w3-row" style="padding-top:0px;padding-bottom:0px;">
     <button mat-menu-item class="meraki-font-s5" routerLink="/login" *ngIf="!isAuth" style="min-width:155px"><mat-icon>account_box</mat-icon>Iniciar sesión</button>
-    <button mat-menu-item class="meraki-font-s5 w3-border-bottom w3-border-gray" *ngIf="isAuth"><mat-icon>account_box</mat-icon>{{ currentUser[0]['Name'] }}, {{ currentUser[0]['Lastname'] }} </button>
+    <button mat-menu-item class="meraki-font-s5 w3-border-bottom w3-border-gray" *ngIf="isAuth"><mat-icon>account_box</mat-icon>{{ currentUser[0]['Name'] }} {{ currentUser[0]['Lastname'] }} </button>
     <button mat-menu-item class="meraki-font-s5" routerLink="/landing" *ngIf="isAuth"><mat-icon>arrow_back</mat-icon>Módulos</button>
     <button mat-menu-item class="meraki-font-s5" routerLink="/config" *ngIf="isAuth && (currentUser[0]['Type'] === '1')"><mat-icon>settings_box</mat-icon>Configuración</button>
     <button mat-menu-item class="meraki-font-s5" (click)="logout()" routerLink="/welcome" *ngIf="isAuth"><mat-icon>exit_to_app</mat-icon>Cerrar sesión</button>

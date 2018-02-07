@@ -13,9 +13,118 @@
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   <link href="https://fonts.googleapis.com/css?family=Antic+Slab|Raleway|Great+Vibes|Playfair+Display+SC|Poiret+One|Lato:400" rel="stylesheet">
   <!--script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Intl.~locale.en"></script-->
+  <link href="http://hayageek.github.io/jQuery-Upload-File/4.0.11/uploadfile.css" rel="stylesheet">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script src="http://hayageek.github.io/jQuery-Upload-File/4.0.11/jquery.uploadfile.min.js"></script>
+  <link href='//fonts.googleapis.com/css?family=Lato:900,400' rel='stylesheet' type='text/css'>  
 </head>
 <body>
-  <app-root></app-root>
+  <app-root>
+    <style>
+      body,html {
+  height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  background-color: #1B101F;
+}
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: url('./assets/loaderBackground.jpeg') 50% 50% no-repeat;
+  background-size: cover;
+  opacity: 0.25;
+}
+
+.loader,
+.loader__figure {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.loader {
+  overflow: visible;
+  padding-top: 2em;
+  height: 0;
+  width: 2em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+
+.loader__label {
+  float: left;
+  font-size: 2.5em;
+  letter-spacing: 0.1em;
+  line-height: 1.5em;
+  color: rgb(206,170,81);
+  white-space: nowrap;
+  -webkit-animation: loader-label 2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+  -moz-animation: loader-label 2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+  animation: loader-label 2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+@media screen and (max-width: 500px){
+  .loader__label{
+    font-size: 2em;
+  }
+}
+
+img{
+  width: 200px;
+  opacity: 0.8;
+}
+@-webkit-keyframes loader-label {
+  0% {
+    opacity: 0.25;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.25;
+  }
+}
+@-moz-keyframes loader-label {
+  0% {
+    opacity: 0.25;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.25;
+  }
+}
+@keyframes loader-label {
+  0% {
+    opacity: 0.25;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.25;
+  }
+}
+
+</style>
+
+<div class="loader">
+    <img src="./assets/meraki-shield-alpha.png" alt="">
+    <p class="loader__label">Meraki Solutions</p>
+  </div>
+  </app-root>
   
 </body>
 </html>

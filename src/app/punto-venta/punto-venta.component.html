@@ -1,0 +1,261 @@
+<div class='main'>
+    <div class="w3-container w3-white w3-card-4 w3-animate-top" style="margin-left:5vw;margin-right:5vw;border-radius:0px 0px 10px 10px">
+        <div class="row middle-xs w3-bar" style="padding:12px 24px">
+            <span class="w3-xlarge meraki-font-s5">Punto de venta</span>
+        </div>
+    </div>
+    <div class="container">
+        <div class="products">
+            <div *ngIfMediaQuery="'(max-width: 700px)'" >
+                <mat-grid-list cols="2" rowHeight="150px">
+                    <div *ngIf='productsOrPackages==0'>
+                        <mat-grid-tile (click)="addToList(i)" *ngFor="let option of filteredOptions; let i = index">
+                            <mat-grid-tile-header>
+                                <mat-icon mat-grid-avatar>info_outline</mat-icon>
+                                Precio : S/. {{option.Venta}}
+                            </mat-grid-tile-header>
+                            <img defaultImage='../../assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
+                            <mat-grid-tile-footer>
+                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
+                                <mat-icon>star_border</mat-icon>
+                            </mat-grid-tile-footer>
+                        </mat-grid-tile>
+                    </div>
+                    <div *ngIf='productsOrPackages==1'>
+                        <mat-grid-tile (click)="addToList(i)" *ngFor="let option of filteredPackages ; let i = index">
+                            <mat-grid-tile-header>
+                                <mat-icon mat-grid-avatar>info_outline</mat-icon>
+                                Precio : S/. {{option.Venta}}
+                            </mat-grid-tile-header>
+                            <img defaultImage='../../assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
+                            <mat-grid-tile-footer>
+                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
+                                <mat-icon>star_border</mat-icon>
+                            </mat-grid-tile-footer>
+                        </mat-grid-tile>
+                    </div>
+                </mat-grid-list>
+            </div>
+            <div *ngIfMediaQuery="'(min-width: 701px) and (max-width: 1000px)'" >
+                <mat-grid-list cols="3" rowHeight="200px">
+                    <div *ngIf='productsOrPackages==0'>
+                        <mat-grid-tile (click)="addToList(i)" *ngFor="let option of filteredOptions ; let i = index">
+                            <mat-grid-tile-header>
+                                <mat-icon mat-grid-avatar>info_outline</mat-icon>
+                                Precio : S/. {{option.Venta}}
+                            </mat-grid-tile-header>
+                            <img defaultImage='../../assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
+                            <mat-grid-tile-footer>
+                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
+                                <mat-icon>star_border</mat-icon>
+                            </mat-grid-tile-footer>
+                        </mat-grid-tile>
+                    </div>
+                    <div *ngIf='productsOrPackages==1'>
+                        <mat-grid-tile (click)="addToList(i)" *ngFor="let option of filteredPackages ; let i = index">
+                            <mat-grid-tile-header>
+                                <mat-icon mat-grid-avatar>info_outline</mat-icon>
+                                Precio : S/. {{option.Venta}}
+                            </mat-grid-tile-header>
+                            <img defaultImage='../../assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
+                            <mat-grid-tile-footer>
+                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
+                                <mat-icon>star_border</mat-icon>
+                            </mat-grid-tile-footer>
+                        </mat-grid-tile>
+                    </div>
+            </mat-grid-list>
+            </div>
+            <div *ngIfMediaQuery="'(min-width: 1001px) and (max-width: 1299px)'" >
+                <mat-grid-list cols="4" rowHeight="200px">
+                    <div *ngIf='productsOrPackages==0'>
+                        <mat-grid-tile (click)="addToList(i)" *ngFor="let option of filteredOptions ; let i = index">
+                            <mat-grid-tile-header>
+                                <mat-icon mat-grid-avatar>info_outline</mat-icon>
+                                Precio : S/. {{option.Venta}}
+                            </mat-grid-tile-header>
+                            <img defaultImage='../../assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
+                            <mat-grid-tile-footer>
+                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
+                                <mat-icon>star_border</mat-icon>
+                            </mat-grid-tile-footer>
+                        </mat-grid-tile>
+                    </div>
+                    <div *ngIf='productsOrPackages==1'>
+                        <mat-grid-tile (click)="addToList(i)" *ngFor="let option of filteredPackages ; let i = index">
+                            <mat-grid-tile-header>
+                                <mat-icon mat-grid-avatar>info_outline</mat-icon>
+                                Precio : S/. {{option.Venta}}
+                            </mat-grid-tile-header>
+                            <img defaultImage='../../assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
+                            <mat-grid-tile-footer>
+                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
+                                <mat-icon>star_border</mat-icon>
+                            </mat-grid-tile-footer>
+                        </mat-grid-tile>
+                    </div>
+                </mat-grid-list>
+            </div>
+            <div *ngIfMediaQuery="'(min-width: 1300px)'" >
+                <mat-grid-list cols="5" rowHeight="200px">
+                    <div *ngIf='productsOrPackages==0'>
+                        <mat-grid-tile (click)="addToList(i)" *ngFor="let option of filteredOptions ; let i = index">
+                            <mat-grid-tile-header>
+                                <mat-icon mat-grid-avatar>info_outline</mat-icon>
+                                Precio : S/. {{option.Venta}}
+                            </mat-grid-tile-header>
+                            <img defaultImage='../../assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
+                            <mat-grid-tile-footer>
+                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
+                                <mat-icon>star_border</mat-icon>
+                            </mat-grid-tile-footer>
+                        </mat-grid-tile>
+                    </div>
+                    <div *ngIf='productsOrPackages==1'>
+                        <mat-grid-tile (click)="addToList(i)" *ngFor="let option of filteredPackages ; let i = index">
+                            <mat-grid-tile-header>
+                                <mat-icon mat-grid-avatar>info_outline</mat-icon>
+                                Precio : S/. {{option.Venta}}
+                            </mat-grid-tile-header>
+                            <img defaultImage='../../assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
+                            <mat-grid-tile-footer>
+                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
+                                <mat-icon>star_border</mat-icon>
+                            </mat-grid-tile-footer>
+                        </mat-grid-tile>
+                    </div>
+                </mat-grid-list>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panelInt">
+            <div class="teclado one">
+                1
+            </div>
+            <div class="teclado two">
+                2
+            </div>
+            <div class="teclado three">
+                3
+            </div>
+            <div class="teclado four">
+                4
+            </div>
+            <div class="teclado five">
+                5
+            </div>
+            <div class="teclado six">
+                6
+            </div>
+            <div class="teclado seven">
+                7
+            </div>
+            <div class="teclado eight">
+                8
+            </div>
+            <div class="teclado nine">
+                9
+            </div>
+            <div class="teclado plus">
+                +/-
+            </div>
+            <div class="teclado zero">
+                0
+            </div>
+            <div class="teclado point">
+                .
+            </div>
+            <div class="customer teclado">
+                <mat-icon>account_circle</mat-icon>
+                <span class='nameIcon'>Customer</span>
+            </div>
+            <div class="payment teclado">
+                <mat-icon>payment</mat-icon>
+                <span class='nameIcon'>Payment</span>
+            </div>
+            <div class="teclado qty">
+                Qty
+            </div>
+            <div class="teclado disc">
+                Disc
+            </div>
+            <div class="teclado price2">
+                Price
+            </div>
+            <div class="teclado back">
+                <mat-icon>backspace</mat-icon>
+            </div>
+            </div>
+        </div>
+        <div class="filtro" [formGroup]="movimientoForm">
+            <div class="flex">      
+                <mat-form-field class="full-width2">
+                    <mat-select #almOrigen placeholder="Almacenes" panelClass="example-panel-blue" (change)="filtrarProductos(almOrigen.value)" [(ngModel)]='selectedWarehouse' [ngModelOptions]="{standalone: true}">
+                        <mat-option class="w3-indigo w3-hover-gray" *ngFor="let almacen_d of almacenes" [value]="almacen_d.Nombre">{{ almacen_d.Nombre }}</mat-option>
+                    </mat-select>
+                    <mat-icon class="warehouseIcon" matPrefix>account_balance</mat-icon>
+                </mat-form-field>
+                <mat-slide-toggle [disabled]="disabledToogle" [checked]="checked" matTooltip="Solo para los productos" matTooltipPosition="above" labelPosition = 'before' (change)="slideToogleChange($event)">{{ optionDisplay == 1 ? 'Nombre' : 'Codigo' }}</mat-slide-toggle>
+            </div>
+            <mat-tab-group (selectedTabChange)="onTabClick($event)">
+                <mat-tab label="Productos">
+                    <div class="insideFiltro">  
+                        <div class="productOptions">
+                            <mat-form-field class="full-width">
+                                <input matInput (keyup)="pushKeyProducts()" [matAutocomplete]="auto" #prod formControlName="Producto" placeholder="Buscar productos">
+                                <mat-autocomplete #auto="matAutocomplete">
+                                    <mat-option (click)="pushKeyProducts()" class="w3-indigo w3-hover-gray" *ngFor="let option of filteredOptions" [value]=" optionDisplay == 2 ? option.Codigo : option.Nombre ">
+                                        <span style="font-size: 13px;">{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</span> |
+                                        <span style="font-size: 13px;"> {{option.Stock_actual}}</span>
+                                    </mat-option>
+                                </mat-autocomplete>
+                                <mat-icon class="warehouseIcon" matSuffix>search</mat-icon>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Paquetes">
+                    <div class="insideFiltro">  
+                        <div class="productOptions">
+                            <mat-form-field class="full-width">
+                                <input matInput (keyup)="pushKeyPackage()" [matAutocomplete]="auto2" #packNombre formControlName="Paquete" placeholder="Buscar paquetes">
+                                <mat-autocomplete #auto2="matAutocomplete">
+                                    <mat-option (click)="pushKeyPackage()" class="w3-indigo w3-hover-gray" *ngFor="let pack of filteredPackages" [value]="pack.Nombre">
+                                        <span style="font-size: 13px;">{{pack.Nombre}}</span>
+                                    </mat-option>
+                                </mat-autocomplete>
+                                <mat-icon class="warehouseIcon" matSuffix>search</mat-icon>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+        <div class="check">
+            <ul style='padding-left: 0;'>
+                <div *ngFor="let product of listCustomers[currentCustomer].listAction; let i = index">
+                    <li class="productList" (click)='clickProductList(i)' [ngClass]="{'newBackground' : listCustomers[currentCustomer].lastItemClicked == product.id }" [ngClass]="{'newBackground' : listCustomers[currentCustomer].lastItemClicked == product.product }">
+                        <span class="productName">{{product.product}}</span>
+                        <span class="productClass">$ {{product.price}}</span>
+                        <span class="productInfo">{{product.units}}</span> 
+                    </li>
+                    <hr style="margin: 10px;"/> 
+                </div>
+            </ul>
+            <div *ngIf="listCustomers[currentCustomer].listAction.length != 0" class='listSummary'>
+            <span class='listTotal'>Total: $ {{listCustomers[currentCustomer].total}}</span>
+            <span class='listIGV'>IGV: $ {{listCustomers[currentCustomer].taxes}}</span>
+            </div>
+        </div>
+        <div class="tab">
+            <mat-tab-group (selectedTabChange)="onSelectCustomer($event)">
+            <mat-tab *ngFor="let customer of listCustomers; let i = index" label="{{i+1}}"></mat-tab>
+            <mat-tab >
+                <ng-template mat-tab-label>
+                <mat-icon>exposure_plus_1</mat-icon>
+                </ng-template>
+            </mat-tab>
+            </mat-tab-group>
+        </div>
+    </div>
+</div>

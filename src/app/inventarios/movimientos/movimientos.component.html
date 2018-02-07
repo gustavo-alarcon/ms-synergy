@@ -132,48 +132,43 @@
     <div class="w3-row w3-margin">
         <mat-tab-group>
           <mat-tab label="Productos">
-
             <div class="w3-row w3-padding">
               <div class="w3-quarter">
-                <mat-form-field color="accent" style="width:100%">
-                  <mat-select #prod formControlName="Producto" placeholder="Producto" (change)="prodActual(prod.value)">
-                      <mat-option class="w3-indigo w3-hover-gray" *ngFor="let producto of productos_filtrado"
-                                  [value]="producto">{{ producto.Nombre }}</mat-option>
-                  </mat-select>
-                  <mat-error *ngIf="!movimientoForm.valid">
-                    Producto <strong>requerido</strong> *
-                  </mat-error>
-                  <!--input #prod matInput formControlName="Producto" (change)="prodActual(prod.value)" type="text" placeholder="Producto" [matAutocomplete]="auto"-->
-                    
-                </mat-form-field>
-                <!--AGREGADO/ TEST-->
-                <!--mat-autocomplete #auto="matAutocomplete">
-                  <mat-option *ngFor="let option of productos_filtrado" [value]="option">
-                    {{ option.Nombre }}
-                  </mat-option>
-                </mat-autocomplete-->
+                  <mat-form-field color="accent" style="width:100%">
+                      <input matInput (keyup)="pushKeyProducts()" [matAutocomplete]="auto" #prod formControlName="Producto" placeholder="Producto" [value]="prodEscogido === undefined ? '' : prodEscogido.Nombre">
+                      <mat-autocomplete #auto="matAutocomplete">
+                        <mat-option class="w3-indigo w3-hover-gray" *ngFor="let option of filteredOptions"
+                          [value]="option">
+                          <span style="font-size: 13px;">{{ option.Nombre }}</span> |
+                          <span style="font-size: 13px;"> {{option.Stock_actual}}</span>
+                        </mat-option>
+                      </mat-autocomplete>
+                      <mat-error *ngIf="!movimientoForm.valid">
+                          Producto <strong>requerido</strong> *
+                        </mat-error>
+                    </mat-form-field>
               </div>
               <div class="w3-quarter">
                 <mat-form-field color="accent" style="width:100%">
-                  <input matInput type="text" value="{{ prod.value === undefined ? '':prod.value['Stock_actual'] }}" placeholder="Stock" disabled>
+                  <input matInput type="text" value="{{ prodEscogido === undefined ? '':prodEscogido.Stock_actual }}" placeholder="Stock" disabled>
                   <mat-hint>
-                    <strong>{{ prod.value === undefined ? '':prod.value['Unidad'] }}</strong>
+                    <strong>{{ prodEscogido === undefined ? '':prodEscogido.Unidad }}</strong>
                   </mat-hint> 
                 </mat-form-field>
               </div>
               <div class="w3-quarter">
                 <mat-form-field color="accent" style="width:100%" *ngIf="perms[0]['reg_t_prodPrecioCompra']">
-                  <input matInput type="text" value="{{ prod.value === undefined ? '':prod.value['Compra'] }}" placeholder="Compra" disabled>
+                  <input matInput type="text" value="{{ prodEscogido === undefined ? '':prodEscogido.Compra }}" placeholder="Compra" disabled>
                   <mat-hint>
-                    <strong>{{ prod.value === undefined ? '':prod.value['Moneda'] }}</strong>
+                    <strong>{{ prodEscogido === undefined ? '':prodEscogido.Moneda }}</strong>
                   </mat-hint> 
                 </mat-form-field>
               </div>
               <div class="w3-quarter">
                 <mat-form-field color="accent" style="width:100%">
-                  <input matInput type="text" value="{{ prod.value === undefined ? '':prod.value['Venta'] }}" placeholder="Venta" disabled>
+                  <input matInput type="text" value="{{ prodEscogido === undefined ? '':prodEscogido.Venta }}" placeholder="Venta" disabled>
                   <mat-hint>
-                    <strong>{{ prod.value === undefined ? '':prod.value['Moneda'] }}</strong>
+                    <strong>{{ prodEscogido === undefined ? '':prodEscogido.Moneda }}</strong>
                   </mat-hint> 
                 </mat-form-field>
               </div>
@@ -182,19 +177,20 @@
             
           </mat-tab>
           <mat-tab label="Paquetes">
-
             <div>
               <mat-form-field color="accent" class="meraki-fill">
-                <mat-select #packNombre formControlName="Paquete" (change)="packActual(packNombre.value)" placeholder="Paquete">
-                    <mat-option class="w3-indigo w3-hover-gray" *ngFor="let pack of pack_nombre"
-                                [value]="pack">{{ pack }}</mat-option>
-                </mat-select>
+                  <input matInput (keyup)="pushKeyPackage()" [matAutocomplete]="auto2" #packNombre formControlName="Paquete" placeholder="Paquete">
+                  <mat-autocomplete #auto2="matAutocomplete">
+                    <mat-option class="w3-indigo w3-hover-gray" *ngFor="let pack of filteredPackages"
+                      [value]="pack">
+                       {{pack}}
+                    </mat-option>
+                  </mat-autocomplete>
                 <mat-error *ngIf="!movimientoForm.valid">
                   Paquete <strong>requerido</strong> *
                 </mat-error>
               </mat-form-field>
             </div>
-
             <div class="w3-row" *ngFor="let item of lista_items_paquete">
               <div class="w3-quarter">
                 <mat-form-field color="accent" style="width:100%">
@@ -251,7 +247,7 @@
           <input  matInput type="number" min="0" step="0.01"
                   formControlName="Precio"
                   [placeholder]="precioPlaceholder">
-          <span matSuffix style="margin-right:8px" *ngIf="precioPlaceholder !== 'Movimiento interno'">{{ prod.value === undefined ? '':prod.value['Moneda']}}</span> 
+          <span matSuffix style="margin-right:8px" *ngIf="precioPlaceholder !== 'Movimiento interno'">{{ prodEscogido === undefined ? '':prodEscogido.Moneda}}</span> 
         </mat-form-field>
       </div>
 

@@ -1,0 +1,110 @@
+<mat-card>
+    <mat-card-header class="button-row">
+        <h2>Programacion de mensajes</h2>
+    </mat-card-header>
+    <mat-card-content>
+        <section>
+            <div class="input button-row">
+                <mat-form-field>
+                    <mat-icon matPrefix>filter_list</mat-icon>
+                    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtrar">
+                </mat-form-field>
+                <mat-checkbox class="select" (change)="changeAll($event)" [(ngModel)]="all">Seleccionar todos</mat-checkbox>
+                <mat-checkbox class="select" (change)="changeFranchise($event)" [(ngModel)]="fran">Clientes Franquicia</mat-checkbox>
+                <mat-checkbox class="select" (change)="changeProm($event)" [(ngModel)]="prom">Clientes Promocion</mat-checkbox>
+                <button mat-raised-button color="primary" (click)="openDialog(0)">Programar seleccionados</button>
+                <button mat-raised-button color="primary" (click)="openClient()">Agregar Clientes</button>
+            </div>
+            <div class="loadingSpinner" *ngIf="isLoadingResults">
+                <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+            </div>
+            <mat-table [dataSource]="dataSource" *ngIfMediaQuery="'(min-width: 500px)'">
+                <ng-container matColumnDef="name">
+                    <mat-header-cell *matHeaderCellDef>Nombre</mat-header-cell>
+                    <mat-cell *matCellDef="let cliente" (click)="openDialog(cliente)">{{cliente.Name}}</mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="mail">
+                    <mat-header-cell *matHeaderCellDef>Email</mat-header-cell>
+                    <mat-cell *matCellDef="let cliente" (click)="openDialog(cliente)">{{cliente.Mail}}</mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="phone">
+                    <mat-header-cell *matHeaderCellDef>Telefono</mat-header-cell>
+                    <mat-cell *matCellDef="let cliente" (click)="openDialog(cliente)">{{cliente.Phone}}</mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="place">
+                    <mat-header-cell *matHeaderCellDef>Lugar</mat-header-cell>
+                    <mat-cell *matCellDef="let cliente" (click)="openDialog(cliente)">{{cliente.Place}}</mat-cell>
+                </ng-container> 
+                <ng-container matColumnDef="birthday">
+                    <mat-header-cell *matHeaderCellDef>Fecha de nacimiento</mat-header-cell>
+                    <mat-cell *matCellDef="let cliente" (click)="openDialog(cliente)">{{cliente.Birthday}}</mat-cell>
+                </ng-container>   
+                <ng-container matColumnDef="type">
+                    <mat-header-cell *matHeaderCellDef>Tipo</mat-header-cell>
+                    <mat-cell *matCellDef="let cliente" (click)="openDialog(cliente)" class="type"><span *ngIf="cliente.Type=='1'">Franquicia</span><span *ngIf="cliente.Type=='2'">Promociones</span></mat-cell>
+                </ng-container>   
+                <ng-container matColumnDef="seleccionar">
+                    <mat-header-cell *matHeaderCellDef>Seleccionar</mat-header-cell>
+                    <mat-cell *matCellDef="let cliente; let i=index"><mat-checkbox [(ngModel)]="cliente.select" (change)="confirmAll($event,cliente.Type)"></mat-checkbox></mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row matTooltip="Haga click para personalizar un mensaje" matTooltipPosition="above" *matRowDef="let cliente; columns: displayedColumns;" ></mat-row>      
+            </mat-table>
+            <mat-table [dataSource]="dataSource" *ngIfMediaQuery="'(max-width: 499px)'" class="tableResponsive">
+                    <ng-container matColumnDef="name">
+                        <mat-header-cell *matHeaderCellDef>Nombre</mat-header-cell>
+                        <mat-cell *matCellDef="let cliente" (click)="openDialog(cliente)">{{cliente.Name}}</mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="phone">
+                        <mat-header-cell *matHeaderCellDef>Telefono</mat-header-cell>
+                        <mat-cell *matCellDef="let cliente" (click)="openDialog(cliente)">{{cliente.Phone}}</mat-cell>
+                    </ng-container> 
+                    <ng-container matColumnDef="type">
+                        <mat-header-cell *matHeaderCellDef>Tipo</mat-header-cell>
+                        <mat-cell *matCellDef="let cliente" (click)="openDialog(cliente)" class="type"><span *ngIf="cliente.Type=='1'">Franquicia</span><span *ngIf="cliente.Type=='2'">Promociones</span></mat-cell>
+                    </ng-container>   
+                    <ng-container matColumnDef="seleccionar">
+                        <mat-header-cell *matHeaderCellDef>Seleccionar</mat-header-cell>
+                        <mat-cell *matCellDef="let cliente; let i=index"><mat-checkbox [(ngModel)]="cliente.select" (change)="confirmAll($event,cliente.Type)"></mat-checkbox></mat-cell>
+                    </ng-container>
+                    <mat-header-row *matHeaderRowDef="displayedColumns2"></mat-header-row>
+                    <mat-row matTooltip="Haga click para personalizar un mensaje" matTooltipPosition="above" *matRowDef="let cliente; columns: displayedColumns2;" ></mat-row>      
+                </mat-table>
+            <mat-paginator [pageSizeOptions]="[5,10]"></mat-paginator>
+        </section>
+    </mat-card-content>
+</mat-card>
+
+<mat-card>
+    <mat-card-header class="button-row">
+        <h2>Uso de la cuenta</h2>
+        <button matTooltip="Recargar Valores" matTooltipPosition="above" mat-icon-button (click)="getBubbleValues()">
+            <mat-icon class="reload">autorenew</mat-icon>
+        </button>
+    </mat-card-header>
+    <mat-card-content>
+        <div class="loadingSpinner" *ngIf="isLoadingBubbles">
+            <mat-spinner *ngIf="isLoadingBubbles"></mat-spinner>
+        </div>
+        <section class="stats">
+            <div class="bubbleContainer">
+                <div class="bubble red">
+                    <span class="bubbleText">{{balance}}</span>
+                </div>
+                <h4 class="description">Cantidad de mensajes restantes <br/>( Saldo )</h4>
+            </div>
+            <div class="bubbleContainer">
+                <div class="bubble green">
+                    <span class="bubbleText">{{programmed}}</span>
+                </div>
+                <h4 class="description">Cantidad de mensajes programados para mandar</h4>
+            </div>
+            <div class="bubbleContainer">
+                <div class="bubble blue">
+                    <span class="bubbleText">{{send}}</span>
+                </div>
+                <h4 class="description">Cantidad de mensajes enviados</h4>
+            </div>
+        </section>      
+    </mat-card-content>
+</mat-card>

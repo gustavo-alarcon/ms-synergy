@@ -12,6 +12,10 @@ import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/map';
 import { log } from 'util';
 import { filter } from 'rxjs/operators/filter';
+import { map } from 'rxjs/operators/map';
+import {startWith} from 'rxjs/operators/startWith';
+
+
 
 
 const COMMA = 188;
@@ -79,6 +83,9 @@ export class MovimientosComponent implements OnInit {
 
   perms: any = [];
 
+  filteredOptions: string[];
+  filteredPackages: string[];
+  prodEscogido;
   constructor(private inventariosService: InventariosService,
               private loginService: LoginService,
               private fb: FormBuilder,
@@ -111,8 +118,7 @@ export class MovimientosComponent implements OnInit {
     this.loginService.currentPermissions.subscribe(res => {
       this.perms = res;
 
-    });
-
+    })
     this.currentDate();
     this.movimientoForm.patchValue({Fecha: this.now});
 
@@ -156,10 +162,7 @@ export class MovimientosComponent implements OnInit {
       });
     });
 
-    this.inventariosService.currentDataProductos.subscribe(res => {
-      this.productos = res;
-      this.productos.sort(this.sortBy('Nombre'));
-    });
+    this.getProducts();
 
     this.inventariosService.currentDataAlmacenes.subscribe(res => {
       this.almacenes = res;
@@ -171,11 +174,40 @@ export class MovimientosComponent implements OnInit {
       this.terceros.sort(this.sortBy('Nombre'));
     });
 
+    this.getPackages();
+
+    this.onChanges();
+    this.onChanges2();
+  }
+
+  onChanges(): void {
+    this.movimientoForm.get('Producto').valueChanges.subscribe(val=>{
+      if(val!==''){
+        this.prodEscogido = val;
+        this.prodActual(val);
+      }
+    });
+  }
+
+  onChanges2(): void {
+    this.movimientoForm.get('Paquete').valueChanges.subscribe(val2=>{
+      if(val2!==''){
+        this.packActual(val2);
+      }
+    });
+  }
+
+  getProducts(){
+    this.inventariosService.currentDataProductos.subscribe(res => {
+      this.productos = res;
+      this.productos.sort(this.sortBy('Nombre'));
+    });
+  }
+
+  getPackages(){
     this.inventariosService.currentDataPaquetes.subscribe(res => {
       this.paquetes = res;
-
     });
-    
   }
 
   currentDate() {
@@ -212,7 +244,6 @@ export class MovimientosComponent implements OnInit {
       
     }
 
-    console.log(limite);
     this.now = currentDate;
     this.timeLimit = limite;
   }
@@ -366,11 +397,29 @@ export class MovimientosComponent implements OnInit {
         _nombre = element['Paquete'];
       }
     });
-    
+    this.filteredOptions = this.productos_filtrado;
+    this.filteredPackages = this.pack_nombre;
+  }
+
+  pushKeyProducts(){
+    this.filteredOptions = this.filterProducto(this.movimientoForm.value['Producto']);
+  }
+
+  pushKeyPackage(){
+    this.filteredPackages = this.filterPackage(this.movimientoForm.value['Paquete']);
+  }
+
+  filterProducto(val): string[] {
+    return this.productos_filtrado.filter(option =>
+      option.Nombre.toLowerCase().indexOf(val.toLowerCase()) === 0);  
+  }
+
+  filterPackage(val): string[] {
+    return this.pack_nombre.filter(option =>
+      option.toLowerCase().indexOf(val.toLowerCase()) === 0);  
   }
 
   prodActual(prod: any) {
-    
     this.precioActual = 0;
     if (this.tipoMovimiento === 'TRANSFERENCIA' || this.tipoMovimiento === 'AJUSTE DE ENTRADA' || this.tipoMovimiento === 'AJUSTE DE SALIDA') {
       this.movimientoForm.controls['Precio'].disable();
@@ -379,19 +428,18 @@ export class MovimientosComponent implements OnInit {
     }
     
     this.movimientoForm.patchValue({Precio:0});
-    this.movimientoForm.patchValue({Paquete: ''});
     this.movimientoForm.patchValue({Compra: this.precioActual});
     this.movimientoForm.patchValue({Cantidad: null});
     this.packFlag = false;
 
     if (this.tipoMovimiento === 'ENTRADA') {
-      this.precioActual = parseFloat(prod['Compra']);
+      this.precioActual = parseFloat(prod.Compra);
     }else if (this.tipoMovimiento === 'SALIDA') {
-      this.precioActual = parseFloat(prod['Venta']);
+      this.precioActual = parseFloat(prod.Venta);
     }
 
-    this.tempStocks.push({Producto:prod['Nombre'], Stock:prod['Stock_actual']});
-    this.idProductoActual = prod['ID'];
+    this.tempStocks.push({Producto:prod.Nombre, Stock:prod.Stock_actual});
+    this.idProductoActual = prod.ID;
 
   }
 
@@ -400,8 +448,6 @@ export class MovimientosComponent implements OnInit {
     this.movimientoForm.controls['Precio'].disable();
     this.movimientoForm.patchValue({Precio:0});
     this.lista_items_paquete = [];
-    this.movimientoForm.patchValue({Paquete: pack});
-    this.movimientoForm.patchValue({Producto: ''});
     this.movimientoForm.patchValue({Cantidad: null});
     this.packFlag = true;
 
@@ -621,7 +667,8 @@ export class MovimientosComponent implements OnInit {
       this.snackBar.open(message, 'Genial!',{
         duration: 4000,
       });
-      
+      this.getProducts();
+      this.getPackages();
       this.inventariosService.registrarMovimiento(this.listaResumen);
       this.inventariosService.actualizarCorrelativo(this.documentoData);
       this.limpiarLista();
@@ -632,8 +679,13 @@ export class MovimientosComponent implements OnInit {
       this.movimientoForm.patchValue({
         Documento: '',
         Serie:'',
-        Correlativo: ''
+        Correlativo: '',
+        AlmacenOrigen: '',
+        Producto: '',
+        Paquete:''
       });
+      this.prodEscogido = undefined;
+      this.lista_items_paquete = [];
       this.movimientoForm.controls['Serie'].setErrors(null);
       this.movimientoForm.controls['Documento'].setErrors(null);
     }

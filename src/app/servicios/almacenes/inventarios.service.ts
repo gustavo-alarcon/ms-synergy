@@ -477,14 +477,11 @@ export class InventariosService {
   }
 
   actualizarStock(data: JSON) {
-    this.queryLoading(true);
-    console.log(data);
-    
+    this.queryLoading(true);    
     this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-productos-stock.php?db='+this.db, JSON.stringify(data))
       .subscribe(
         res => {
-          console.log(res.text());
-          
+         
           this.snackBar.open(res.text(), 'Cerrar',{
             duration: this.snackDuration
           });

@@ -1,0 +1,172 @@
+
+.limit{
+    margin-top: 72px;
+}
+
+.input{
+    width: 100%;
+    padding: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+mat-form-field{
+    width: 90%;
+}
+
+.column{
+    float: left;
+    width: 30%;
+}
+
+.red {
+    background: rgb(255, 101, 101);
+}
+.green {
+    background: rgb(156, 210, 112);
+  }
+  
+  .blue {
+    background: rgb(100, 126, 189);
+  }
+  
+  .pink {
+    background: rgb(209, 107, 199);
+  }
+
+  .stats{
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      flex-wrap: wrap;
+  }
+
+  .bubbleContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    flex-direction: column;
+  }
+
+  .bubble{
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 7px 7px 5px 0px rgba(50, 50, 50, 0.5);
+  }
+
+  .bubbleText{
+    font-weight: bold;
+    color: #fff;
+    font-size: 38px;
+  }
+
+  .button-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  mat-row:hover{
+      background: rgb(201, 199, 199);
+      cursor: pointer;
+  }
+
+  h1{
+      justify-content: center;
+      margin: 30px 10px;
+  }
+
+  span{
+      align-self: center;
+  }  
+
+  .description{
+    text-align: center;
+  }
+
+  mat-icon{
+    margin-right: 10px;
+}
+
+.reload{
+    margin-right: 0px;
+}
+
+.select{
+    margin: 0px 20px;
+    width: 10%;
+}
+
+button{
+    margin: 0px 15px;
+}
+
+mat-card{
+    padding: 20px 0px;
+    margin: 5vw;
+}
+
+.type::first-letter{
+    text-transform: capitalize;
+}
+
+mat-table{
+    overflow: auto;
+    max-height: 500px;
+}
+
+mat-cell{
+    padding: 10px;
+    word-wrap: normal;
+}
+
+.mat-column-seleccionar {
+    overflow: visible;
+}
+
+@media screen and (max-width:1400px){
+    .input{
+        display: block;
+        padding: 0px;
+        margin: 0px;
+    }
+
+    mat-card{
+        padding: 0px;
+    }
+
+    button{
+        margin: 15px;
+    }
+
+    mat-form-field{
+        margin: 10px;
+    }
+
+    mat-checkbox-layout{
+        margin-bottom: 5px;
+    }
+}
+
+@media screen and (max-width: 499px){
+    mat-cell{
+        padding: 1px;
+        font-size: 11px;
+        word-wrap: break-word;
+        text-align: center;    
+    }
+
+    mat-header-cell{
+        text-align: center;
+    }
+}
+
+

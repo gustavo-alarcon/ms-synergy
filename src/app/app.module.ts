@@ -5,8 +5,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule, Routes} from '@angular/router';
 import { RoutingModule } from './routing/routing.module';
-import {  NoConflictStyleCompatibilityMode,
-          MatToolbarModule,
+import {  MatToolbarModule,
           MatInputModule,
           MatAutocompleteModule,
           MatButtonModule,
@@ -26,7 +25,12 @@ import {  NoConflictStyleCompatibilityMode,
           MatNativeDateModule,
           MatChipsModule,
           MatSnackBarModule,
-          MatCheckboxModule
+          MatCheckboxModule,
+          MatProgressSpinnerModule,
+          MatListModule,
+          MatGridListModule,
+          MatSlideToggleModule,
+          MatTooltipModule
         } from '@angular/material';
 
 import { AppComponent } from './app.component';
@@ -60,6 +64,26 @@ import { ReportemovComponent } from './inventarios/reportemov/reportemov.compone
 import { DataTablesModule } from 'angular-datatables';
 import { ConfigAccountComponent } from './general/config-account/config-account.component';
 import { CrearAccountComponent } from './general/config-account/crear-account/crear-account.component';
+import { PuntoVentaComponent } from './punto-venta/punto-venta.component';
+import { ImageUploadModule } from "angular2-image-upload";
+import { HashLocationStrategy, LocationStrategy } from "@angular/common";
+import { AddClientComponent } from './ms-text/add-client/add-client.component';
+import { ContactComponent } from './ms-text/contact/contact.component';
+import { InputModalComponent } from './ms-text/input-modal/input-modal.component';
+import { MessagesComponent } from './ms-text/messages/messages.component'; 
+
+
+import { HttpClientModule } from '@angular/common/http';
+import { ClientsService } from './servicios/clients.service';
+import { MessagesService } from './servicios/messages.service';
+import { AuthService } from './servicios/auth.service';
+import { ToastrModule } from 'ngx-toastr';
+import { Auth2Guard } from './guards/auth2.guard';
+import { AuthLoginGuard } from './guards/auth-login.guard';
+import { NgIfMediaQuery } from '../angular2-if-media-query-directive';
+import { MsTextComponent } from './ms-text/mstext/mstext.component';
+import { LazyLoadImageModule } from 'ng2-lazyload-image';
+
 
 @NgModule({
   declarations: [
@@ -87,14 +111,20 @@ import { CrearAccountComponent } from './general/config-account/crear-account/cr
     CrearPaqueteComponent,
     ReportemovComponent,
     ConfigAccountComponent,
-    CrearAccountComponent
+    CrearAccountComponent,
+    PuntoVentaComponent,
+    AddClientComponent,
+    ContactComponent,
+    InputModalComponent,
+    MessagesComponent,
+    NgIfMediaQuery,
+    MsTextComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     HttpModule,
     FormsModule,
-    NoConflictStyleCompatibilityMode,
     MatToolbarModule,
     MatInputModule,
     MatAutocompleteModule,
@@ -118,10 +148,31 @@ import { CrearAccountComponent } from './general/config-account/crear-account/cr
     MatChipsModule,
     MatSnackBarModule,
     MatCheckboxModule,
-    DataTablesModule
-    
+    DataTablesModule,
+    MatProgressSpinnerModule,
+    HttpClientModule,
+    MatListModule,
+    ImageUploadModule.forRoot(),
+    ToastrModule.forRoot(),
+    LazyLoadImageModule,
+    MatGridListModule,
+    MatSlideToggleModule,
+    MatTooltipModule
   ],
-  providers: [LoginService,InventariosService, AuthGuard],
+  entryComponents:[
+    InputModalComponent,
+    AddClientComponent
+  ],
+  providers: [
+    LoginService,
+    InventariosService,
+    AuthGuard,
+    ClientsService,
+    MessagesService,
+    AuthService,
+    Auth2Guard,
+    AuthLoginGuard,
+    {provide: LocationStrategy, useClass: HashLocationStrategy}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
