@@ -129,40 +129,40 @@
         </div>
         <div class="panel">
             <div class="panelInt">
-            <div class="teclado one">
+            <div (click)="executeOperation('1')" class="teclado one">
                 1
             </div>
-            <div class="teclado two">
+            <div (click)="executeOperation('2')" class="teclado two">
                 2
             </div>
-            <div class="teclado three">
+            <div (click)="executeOperation('3')" class="teclado three">
                 3
             </div>
-            <div class="teclado four">
+            <div (click)="executeOperation('4')" class="teclado four">
                 4
             </div>
-            <div class="teclado five">
+            <div (click)="executeOperation('5')" class="teclado five">
                 5
             </div>
-            <div class="teclado six">
+            <div (click)="executeOperation('6')" class="teclado six">
                 6
             </div>
-            <div class="teclado seven">
+            <div (click)="executeOperation('7')" class="teclado seven">
                 7
             </div>
-            <div class="teclado eight">
+            <div (click)="executeOperation('8')" class="teclado eight">
                 8
             </div>
-            <div class="teclado nine">
+            <div (click)="executeOperation('9')" class="teclado nine">
                 9
             </div>
-            <div class="teclado plus">
+            <div class="teclado plus" (click)="addPlusOrNegative()">
                 +/-
             </div>
-            <div class="teclado zero">
+            <div (click)="executeOperation('0')" class="teclado zero">
                 0
             </div>
-            <div class="teclado point">
+            <div class="teclado point" (click)="executeOperation('.')">
                 .
             </div>
             <div class="customer teclado">
@@ -173,16 +173,19 @@
                 <mat-icon>payment</mat-icon>
                 <span class='nameIcon'>Payment</span>
             </div>
-            <div class="teclado qty">
+            <div class="qty" (click)="changeOperationType(1)" 
+            [ngClass]="{operationFocused : operationOption == 1, teclado : operationOption != 1}">
                 Qty
             </div>
-            <div class="teclado disc">
+            <div class="disc" (click)="changeOperationType(2)" 
+            [ngClass]="{operationFocused : operationOption == 2, teclado : operationOption != 2}">
                 Disc
             </div>
-            <div class="teclado price2">
+            <div class="price2" (click)="changeOperationType(3)" 
+            [ngClass]="{operationFocused : operationOption == 3, teclado : operationOption != 3}">
                 Price
             </div>
-            <div class="teclado back">
+            <div (click)="backspace()" class="teclado back">
                 <mat-icon>backspace</mat-icon>
             </div>
             </div>
@@ -234,10 +237,11 @@
         <div class="check">
             <ul style='padding-left: 0;'>
                 <div *ngFor="let product of listCustomers[currentCustomer].listAction; let i = index">
-                    <li class="productList" (click)='clickProductList(i)' [ngClass]="{'newBackground' : listCustomers[currentCustomer].lastItemClicked == product.id }" [ngClass]="{'newBackground' : listCustomers[currentCustomer].lastItemClicked == product.product }">
+                    <li class="productList" (click)='clickProductList(i)' [ngClass]="{'newBackground' : listCustomers[currentCustomer].lastItemClicked == product.id }" [ngClass]="{'newBackground' : listCustomers[currentCustomer].lastItemClicked == product.id }">
                         <span class="productName">{{product.product}}</span>
-                        <span class="productClass">$ {{product.price}}</span>
-                        <span class="productInfo">{{product.units}}</span> 
+                        <span class="productClass">$ {{product.price == '' ? '0' : product.price}}</span>
+                        <span class="productInfo">{{product.units == '' ? '0' : product.units}} {{ product.units == '1' ? 'unidad' : 'unidades'}} a $ {{product.unitPrice == '' ? '0' : product.unitPrice }} c/u</span> 
+                        <span *ngIf="product.dsc != ''" class="productInfo">{{product.dsc}}% de descuento</span> 
                     </li>
                     <hr style="margin: 10px;"/> 
                 </div>

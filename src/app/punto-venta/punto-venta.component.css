@@ -155,7 +155,7 @@ mat-grid-tile {
 }
 
 .teclado{
-    background : rgb(255, 255, 255);
+    background : rgb(220, 220, 220);
     border-radius: 10px;
     display: flex;
     justify-content: center;
@@ -165,7 +165,12 @@ mat-grid-tile {
 }
 
 .teclado:hover{
-    background : rgba(0, 0, 0, 0.1);
+    background : rgb(255, 255, 255);
+    color: #000;
+}
+
+.teclado:active{
+    background : rgb(30, 131, 16);
     color: #fff;
 }
 
@@ -343,6 +348,16 @@ mat-icon{
     border-radius: 15px;
 }
 
+.operationFocused {
+    background: rgb(92, 224, 48);
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border : 3px solid rgba(0, 0, 0, 0.096);
+    font-size: 15px;
+}
+
 .focused{
     list-style: none;
     display: flex;
@@ -421,7 +436,7 @@ mat-icon{
         font-size: 11px;
    }
 
-   .teclado{
+   .teclado, .operationFocused{
         font-size: 10px;
         text-align: center;
    }
@@ -444,7 +459,7 @@ mat-icon{
 }
 
 @media screen and (max-width : 535px) {
-    .teclado{
+    .teclado, .operationFocused{
         font-size: 10px;
     }
 }
@@ -477,7 +492,7 @@ mat-icon{
             "cus pay back"
             "cus pay back";
     }
-    .teclado{
+    .teclado, .operationFocused{
         font-size: 15px;
         flex-direction: column;
         text-align: center;
@@ -485,7 +500,7 @@ mat-icon{
 }
 
 @media screen and (max-width : 810px) {
-    .teclado{
+    .teclado, .operationFocused{
         font-size: 13px;
     }
 

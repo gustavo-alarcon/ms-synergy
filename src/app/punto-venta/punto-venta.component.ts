@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { InventariosService } from '../servicios/almacenes/inventarios.service';
 import { FormControl, Validators, FormGroup, FormBuilder } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
@@ -30,10 +31,12 @@ export class PuntoVentaComponent implements OnInit {
   lastItemClicked : number = null;
   changeItemClicked : number = null;
   checked : boolean;
+  operationOption : number = 1
 
   constructor(
     private inventariosService : InventariosService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private toastr: ToastrService,
   ) { 
 
     this.listCustomers.push({
@@ -85,12 +88,204 @@ export class PuntoVentaComponent implements OnInit {
     }
   }
 
+  changeOperationType(i){
+    this.operationOption = i;
+  }
+
   clickProductList(i){
     if(this.lastItemClicked == null){
       this.listCustomers[this.currentCustomer].lastItemClicked = this.listCustomers[this.currentCustomer].listAction[i].id;
     }
     else{
       this.listCustomers[this.currentCustomer].lastItemClicked = this.listCustomers[this.currentCustomer].listAction[i].id;
+    }
+  }
+
+  executeOperation(int){
+    if(this.listCustomers[this.currentCustomer].listAction.length != 0){
+      for(let i = 0 ; i < this.listCustomers[this.currentCustomer].listAction.length ; i++){
+        if(this.listCustomers[this.currentCustomer].lastItemClicked == this.listCustomers[this.currentCustomer].listAction[i].id && this.operationOption == 1){
+          if(int != '.'){
+            this.listCustomers[this.currentCustomer].listAction[i].units = this.listCustomers[this.currentCustomer].listAction[i].units +int; 
+            if(this.verifyValue(i) ){
+              this.listCustomers[this.currentCustomer].listAction[i].price = (parseFloat(this.listCustomers[this.currentCustomer].listAction[i].unitPrice)*(parseFloat(this.listCustomers[this.currentCustomer].listAction[i].units)));
+              if(this.listCustomers[this.currentCustomer].listAction[i].dsc != ''){
+                this.listCustomers[this.currentCustomer].listAction[i].price = (parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price)*(100-parseFloat(this.listCustomers[this.currentCustomer].listAction[i].dsc)))/100; 
+              }
+            }
+            else 
+              this.listCustomers[this.currentCustomer].listAction[i].price = '';
+            this.calculateTotalAndTaxes(); 
+            return;
+          }
+          else{
+            return;
+          }
+        }
+        if(this.listCustomers[this.currentCustomer].lastItemClicked == this.listCustomers[this.currentCustomer].listAction[i].id && this.operationOption == 2){  
+          if(int == '.'){
+            for(let x = 0 ; x < this.listCustomers[this.currentCustomer].listAction[i].dsc.length ; x++)
+              if(this.listCustomers[this.currentCustomer].listAction[i].dsc[x] == '.')return;
+          }
+          if(parseInt(this.listCustomers[this.currentCustomer].listAction[i].dsc +int) < 100 )
+            this.listCustomers[this.currentCustomer].listAction[i].dsc = this.listCustomers[this.currentCustomer].listAction[i].dsc +int;
+          else
+            this.listCustomers[this.currentCustomer].listAction[i].dsc = '100';
+          if(this.listCustomers[this.currentCustomer].listAction[i].dsc != '' && this.listCustomers[this.currentCustomer].listAction[i].units != '' && this.listCustomers[this.currentCustomer].listAction[i].unitPrice != ''){
+            if(this.listCustomers[this.currentCustomer].listAction[i].dsc[this.listCustomers[this.currentCustomer].listAction[i].dsc.length-1] != '.')
+              this.listCustomers[this.currentCustomer].listAction[i].price = (parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price)*(100-parseFloat(this.listCustomers[this.currentCustomer].listAction[i].dsc)))/100; 
+          }
+          else
+            this.listCustomers[this.currentCustomer].listAction[i].price = '';
+          this.calculateTotalAndTaxes();
+          return;
+        }
+        if(this.listCustomers[this.currentCustomer].lastItemClicked == this.listCustomers[this.currentCustomer].listAction[i].id && this.operationOption == 3){  
+          if(int == '.'){
+            for(let x = 0 ; x < this.listCustomers[this.currentCustomer].listAction[i].unitPrice.length ; x++)
+              if(this.listCustomers[this.currentCustomer].listAction[i].unitPrice[x] == '.')
+                return;
+          }
+          this.listCustomers[this.currentCustomer].listAction[i].unitPrice = this.listCustomers[this.currentCustomer].listAction[i].unitPrice+int;
+          if(this.verifyValue(i)){
+            if(this.listCustomers[this.currentCustomer].listAction[i].unitPrice[this.listCustomers[this.currentCustomer].listAction[i].unitPrice.length-1] != '.'){
+              this.listCustomers[this.currentCustomer].listAction[i].price = (parseFloat(this.listCustomers[this.currentCustomer].listAction[i].unitPrice)*(parseFloat(this.listCustomers[this.currentCustomer].listAction[i].units))); 
+              if(this.listCustomers[this.currentCustomer].listAction[i].dsc != ''){
+                this.listCustomers[this.currentCustomer].listAction[i].price = (parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price)*(100-parseFloat(this.listCustomers[this.currentCustomer].listAction[i].dsc)))/100; 
+              }
+            }  
+          }
+          else
+            this.listCustomers[this.currentCustomer].listAction[i].price = '';
+          this.calculateTotalAndTaxes();
+          return;
+        }
+      }
+    }
+  }
+
+  calculateTotalAndTaxes(){
+    this.listCustomers[this.currentCustomer].total = 0;
+    this.listCustomers[this.currentCustomer].taxes = 0;
+    for(let i = 0; i < this.listCustomers[this.currentCustomer].listAction.length ; i++){
+      this.listCustomers[this.currentCustomer].total += +(this.listCustomers[this.currentCustomer].listAction[i].price);
+    }
+    if(this.listCustomers[this.currentCustomer].total > 0)
+      this.listCustomers[this.currentCustomer].taxes = (this.listCustomers[this.currentCustomer].total*18)/100;
+    this.listCustomers[this.currentCustomer].total = parseFloat(this.listCustomers[this.currentCustomer].total.toFixed(2));
+    this.listCustomers[this.currentCustomer].taxes = parseFloat(this.listCustomers[this.currentCustomer].taxes.toFixed(2));
+  }
+
+  backspace(){
+    if(this.listCustomers[this.currentCustomer].listAction.length != 0){
+      for(let i = 0 ; i < this.listCustomers[this.currentCustomer].listAction.length ; i++){
+        if(this.listCustomers[this.currentCustomer].lastItemClicked == this.listCustomers[this.currentCustomer].listAction[i].id && this.operationOption == 1){  
+          if(this.listCustomers[this.currentCustomer].listAction[i].units == '' ){
+            this.listCustomers[this.currentCustomer].listAction.splice(i,1);
+            if(this.listCustomers[this.currentCustomer].listAction.length >= 1)  
+              this.listCustomers[this.currentCustomer].lastItemClicked = this.listCustomers[this.currentCustomer].listAction[i-1].id;
+          }
+          else{
+            if(this.listCustomers[this.currentCustomer].listAction[i].units.length != 0){
+              this.listCustomers[this.currentCustomer].listAction[i].units = this.listCustomers[this.currentCustomer].listAction[i].units.slice(0, -1); 
+              if(this.verifyValue(i)){
+                if(this.listCustomers[this.currentCustomer].listAction[i].units[this.listCustomers[this.currentCustomer].listAction[i].units.length-1] != '.'){
+                  this.listCustomers[this.currentCustomer].listAction[i].price = (parseFloat(this.listCustomers[this.currentCustomer].listAction[i].unitPrice)*(parseFloat(this.listCustomers[this.currentCustomer].listAction[i].units)));
+                  if(this.listCustomers[this.currentCustomer].listAction[i].dsc != ''){
+                    this.listCustomers[this.currentCustomer].listAction[i].price = (parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price)*(100-parseFloat(this.listCustomers[this.currentCustomer].listAction[i].dsc)))/100; 
+                  }
+                }
+              }  
+              else{
+                this.listCustomers[this.currentCustomer].listAction[i].price = '';
+              }
+            }
+          }
+          this.calculateTotalAndTaxes();
+          return;
+        }
+        if(this.listCustomers[this.currentCustomer].lastItemClicked == this.listCustomers[this.currentCustomer].listAction[i].id && this.operationOption == 2){  
+          if(this.listCustomers[this.currentCustomer].listAction[i].dsc == ''){
+            this.listCustomers[this.currentCustomer].listAction.splice(i,1);
+            if(this.listCustomers[this.currentCustomer].listAction.length >= 1)  
+              this.listCustomers[this.currentCustomer].lastItemClicked = this.listCustomers[this.currentCustomer].listAction[i-1].id;
+          }
+          else{
+            if(this.listCustomers[this.currentCustomer].listAction[i].dsc.length != 0){
+              this.listCustomers[this.currentCustomer].listAction[i].dsc = this.listCustomers[this.currentCustomer].listAction[i].dsc.slice(0, -1); 
+              if(this.listCustomers[this.currentCustomer].listAction[i].dsc != '' && this.listCustomers[this.currentCustomer].listAction[i].units != '' && this.listCustomers[this.currentCustomer].listAction[i].unitPrice != ''){
+                if(this.listCustomers[this.currentCustomer].listAction[i].dsc[this.listCustomers[this.currentCustomer].listAction[i].dsc.length-1] != '.')
+                  this.listCustomers[this.currentCustomer].listAction[i].price = (parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price)*(100-parseFloat(this.listCustomers[this.currentCustomer].listAction[i].dsc)))/100; 
+              }
+              else{
+                this.listCustomers[this.currentCustomer].listAction[i].price = '';
+              }
+            }
+          }
+          this.calculateTotalAndTaxes();    
+          return;     
+        }
+        if(this.listCustomers[this.currentCustomer].lastItemClicked == this.listCustomers[this.currentCustomer].listAction[i].id && this.operationOption == 3){  
+          if(this.listCustomers[this.currentCustomer].listAction[i].unitPrice == '' ){
+            this.listCustomers[this.currentCustomer].listAction.splice(i,1);
+            if(this.listCustomers[this.currentCustomer].listAction.length >= 1)  
+              this.listCustomers[this.currentCustomer].lastItemClicked = this.listCustomers[this.currentCustomer].listAction[i-1].id;
+          }
+          else{
+            if(this.listCustomers[this.currentCustomer].listAction[i].unitPrice.length != 0){
+              if(this.listCustomers[this.currentCustomer].listAction[i].unitPrice.length == 2 && this.listCustomers[this.currentCustomer].listAction[i].unitPrice[0] == '-'){
+                this.listCustomers[this.currentCustomer].listAction[i].unitPrice = '';
+              }
+              else
+                this.listCustomers[this.currentCustomer].listAction[i].unitPrice = this.listCustomers[this.currentCustomer].listAction[i].unitPrice.slice(0, -1);
+              if(this.verifyValue(i)){
+                if(this.listCustomers[this.currentCustomer].listAction[i].unitPrice[this.listCustomers[this.currentCustomer].listAction[i].unitPrice.length-1] != '.'){
+                  this.listCustomers[this.currentCustomer].listAction[i].price = (parseFloat(this.listCustomers[this.currentCustomer].listAction[i].unitPrice)*(parseFloat(this.listCustomers[this.currentCustomer].listAction[i].units))); 
+                  if(this.listCustomers[this.currentCustomer].listAction[i].dsc != ''){
+                    this.listCustomers[this.currentCustomer].listAction[i].price = (parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price)*(100-parseFloat(this.listCustomers[this.currentCustomer].listAction[i].dsc)))/100; 
+                  }
+                }    
+              }  
+              else{
+                this.listCustomers[this.currentCustomer].listAction[i].price = '';
+              }
+            }   
+          }
+          this.calculateTotalAndTaxes();  
+          return;
+        }
+      }
+    }
+  }
+
+  verifyValue(i){
+    if(this.listCustomers[this.currentCustomer].listAction[i].units != '' && this.listCustomers[this.currentCustomer].listAction[i].unitPrice != ''){
+      return true;
+    }
+    else
+      return false;
+  }
+
+  addPlusOrNegative(){
+    if(this.listCustomers[this.currentCustomer].listAction.length != 0){
+      for(let i = 0 ; i < this.listCustomers[this.currentCustomer].listAction.length ; i++){
+        if(this.listCustomers[this.currentCustomer].lastItemClicked == this.listCustomers[this.currentCustomer].listAction[i].id){
+          if(this.listCustomers[this.currentCustomer].listAction[i].unitPrice != ''){
+            if(this.listCustomers[this.currentCustomer].listAction[i].unitPrice[0] == '-')
+            this.listCustomers[this.currentCustomer].listAction[i].unitPrice = this.listCustomers[this.currentCustomer].listAction[i].unitPrice.substr(1);
+            else
+              this.listCustomers[this.currentCustomer].listAction[i].unitPrice = '-'+this.listCustomers[this.currentCustomer].listAction[i].unitPrice;
+          }
+          if(this.verifyValue(i)){
+            this.listCustomers[this.currentCustomer].listAction[i].price = (parseFloat(this.listCustomers[this.currentCustomer].listAction[i].unitPrice)*(parseFloat(this.listCustomers[this.currentCustomer].listAction[i].units))); 
+            if(this.listCustomers[this.currentCustomer].listAction[i].dsc != ''){
+              this.listCustomers[this.currentCustomer].listAction[i].price = (parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price)*(100-parseFloat(this.listCustomers[this.currentCustomer].listAction[i].dsc)))/100; 
+            }
+          }
+          this.calculateTotalAndTaxes();
+          return;
+        }
+      }
     }
   }
 
@@ -139,7 +334,8 @@ export class PuntoVentaComponent implements OnInit {
       if(this.paquetes_filtrado[i].Paquete != _nombre){
         this.pack_nombre.push({
           'Nombre' : this.paquetes_filtrado[i].Paquete,
-          'Venta' : this.paquetes_filtrado[i].Venta * this.paquetes_filtrado[i].Cantidad     
+          'Venta' : this.paquetes_filtrado[i].Venta * this.paquetes_filtrado[i].Cantidad,
+          'ID' :   this.paquetes_filtrado[i].ID
         });
         _nombre = this.paquetes_filtrado[i].Paquete;
         _position = this.pack_nombre.length-1;
@@ -189,30 +385,52 @@ export class PuntoVentaComponent implements OnInit {
   }
 
   addToList(i){
+    let alreadyIn = false;
     //Trabajo con productos
-    if(this.productsOrPackages == 0){
-      this.listCustomers[this.currentCustomer].listAction.push({
-        price : this.productos_filtrado[i].Venta,
-        product : this.productos_filtrado[i].Nombre,
-        units : 1,
-        id : this.productos_filtrado[i].ID
-      });
-      this.listCustomers[this.currentCustomer].total += +(this.listCustomers[this.currentCustomer].listAction[this.listCustomers[this.currentCustomer].listAction.length-1].price);
-      this.listCustomers[this.currentCustomer].taxes = (this.listCustomers[this.currentCustomer].total*17)/100;
-      this.lastItemClicked = this.productos_filtrado[i].ID;
+    if(this.productsOrPackages == 0){  
+      for(let x = 0; x < this.listCustomers[this.currentCustomer].listAction.length; x++){
+        if(this.listCustomers[this.currentCustomer].listAction[x].id == this.productos_filtrado[i].Codigo )
+          alreadyIn = true;
+      }
+      if(!alreadyIn){
+        this.listCustomers[this.currentCustomer].listAction.push({
+          price : this.productos_filtrado[i].Venta,
+          product : this.productos_filtrado[i].Nombre,
+          units : '1',
+          id : this.productos_filtrado[i].Codigo,
+          dsc : '',
+          unitPrice : this.productos_filtrado[i].Venta
+        });
+        this.listCustomers[this.currentCustomer].total += +(this.listCustomers[this.currentCustomer].listAction[this.listCustomers[this.currentCustomer].listAction.length-1].price);
+        this.listCustomers[this.currentCustomer].taxes = (this.listCustomers[this.currentCustomer].total*17)/100;
+        this.listCustomers[this.currentCustomer].lastItemClicked = this.productos_filtrado[i].Codigo;
+      }
+      else{
+        this.toastr.warning('El producto ya esta en la lista de venta, haga click en el para aumentar la cantidad','Cuidado');
+      }
     }
     //Trabajo con paquetes
     else{
-      this.listCustomers[this.currentCustomer].listAction.push({
-        price : this.pack_nombre[i].Venta,
-        product : this.pack_nombre[i].Nombre,
-        units : 1,
-        id : this.pack_nombre[i].Nombre
-      });
-      this.listCustomers[this.currentCustomer].total += +(this.listCustomers[this.currentCustomer].listAction[this.listCustomers[this.currentCustomer].listAction.length-1].price);
-      this.listCustomers[this.currentCustomer].taxes = (this.listCustomers[this.currentCustomer].total*18)/100;
-      this.lastItemClicked = this.pack_nombre[i].Nombre;
-
+      for(let x = 0; x < this.listCustomers[this.currentCustomer].listAction.length; x++){
+        if(this.listCustomers[this.currentCustomer].listAction[x].id == this.pack_nombre[i].ID )
+          alreadyIn = true;
+      }
+      if(!alreadyIn){
+        this.listCustomers[this.currentCustomer].listAction.push({
+          price : this.pack_nombre[i].Venta,
+          product : this.pack_nombre[i].Nombre,
+          units : '1',
+          id : this.pack_nombre[i].ID,
+          dsc : '',
+          unitPrice : this.pack_nombre[i].Venta
+        });
+        this.listCustomers[this.currentCustomer].total += +(this.listCustomers[this.currentCustomer].listAction[this.listCustomers[this.currentCustomer].listAction.length-1].price);
+        this.listCustomers[this.currentCustomer].taxes = (this.listCustomers[this.currentCustomer].total*18)/100;
+        this.listCustomers[this.currentCustomer].lastItemClicked = this.pack_nombre[i].ID;
+      }
+      else{
+        this.toastr.warning('El paquete ya esta en la lista de venta, haga click en el para aumentar la cantidad','Cuidado');
+      }
     }
   }
 
@@ -227,7 +445,9 @@ interface ListCustomers {
 
 interface ListAction {
   product : string;
-  price : number;
-  units : number;
+  price : any;
+  units : string;
   id : number;
+  dsc : string;
+  unitPrice : string;
 }
