@@ -18,7 +18,7 @@
             <div class="loadingSpinner" *ngIf="isLoadingResults">
                 <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
             </div>
-            <mat-table [dataSource]="dataSource" *ngIfMediaQuery="'(min-width: 500px)'">
+            <mat-table [dataSource]="dataSource" *ngIfMediaQuery="'(min-width: 500px)'" style = "text-align: center;">
                 <ng-container matColumnDef="name">
                     <mat-header-cell *matHeaderCellDef>Nombre</mat-header-cell>
                     <mat-cell *matCellDef="let cliente" (click)="openDialog(cliente)">{{cliente.Name}}</mat-cell>
@@ -50,7 +50,7 @@
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                 <mat-row matTooltip="Haga click para personalizar un mensaje" matTooltipPosition="above" *matRowDef="let cliente; columns: displayedColumns;" ></mat-row>      
             </mat-table>
-            <mat-table [dataSource]="dataSource" *ngIfMediaQuery="'(max-width: 499px)'" class="tableResponsive">
+            <mat-table [dataSource]="dataSource" *ngIfMediaQuery="'(max-width: 499px)'" style = "text-align: center;">
                     <ng-container matColumnDef="name">
                         <mat-header-cell *matHeaderCellDef>Nombre</mat-header-cell>
                         <mat-cell *matCellDef="let cliente" (click)="openDialog(cliente)">{{cliente.Name}}</mat-cell>

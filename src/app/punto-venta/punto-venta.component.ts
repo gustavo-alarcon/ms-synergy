@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { InventariosService } from '../servicios/almacenes/inventarios.service';
 import { FormControl, Validators, FormGroup, FormBuilder } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+import { ClientsComponent } from './clients/clients.component'
+import { PaymentComponent } from './payment/payment.component'
 
 
 @Component({
@@ -37,13 +40,15 @@ export class PuntoVentaComponent implements OnInit {
     private inventariosService : InventariosService,
     private fb: FormBuilder,
     private toastr: ToastrService,
+    private dialog : MatDialog,
   ) { 
 
     this.listCustomers.push({
       listAction : [],
       total : 0,
       taxes : 0,
-      lastItemClicked : null
+      lastItemClicked : null,
+      client : null
     });
 
     this.movimientoForm = this.fb.group({
@@ -108,9 +113,11 @@ export class PuntoVentaComponent implements OnInit {
           if(int != '.'){
             this.listCustomers[this.currentCustomer].listAction[i].units = this.listCustomers[this.currentCustomer].listAction[i].units +int; 
             if(this.verifyValue(i) ){
-              this.listCustomers[this.currentCustomer].listAction[i].price = (parseFloat(this.listCustomers[this.currentCustomer].listAction[i].unitPrice)*(parseFloat(this.listCustomers[this.currentCustomer].listAction[i].units)));
+              this.listCustomers[this.currentCustomer].listAction[i].price = (parseFloat(this.listCustomers[this.currentCustomer].listAction[i].unitPrice))*(parseFloat(this.listCustomers[this.currentCustomer].listAction[i].units));
+              this.listCustomers[this.currentCustomer].listAction[i].price = parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price).toFixed(2);
               if(this.listCustomers[this.currentCustomer].listAction[i].dsc != ''){
-                this.listCustomers[this.currentCustomer].listAction[i].price = (parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price)*(100-parseFloat(this.listCustomers[this.currentCustomer].listAction[i].dsc)))/100; 
+                this.listCustomers[this.currentCustomer].listAction[i].price = ((parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price))*(100-parseFloat(this.listCustomers[this.currentCustomer].listAction[i].dsc)))/100; 
+                this.listCustomers[this.currentCustomer].listAction[i].price = parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price).toFixed(2);
               }
             }
             else 
@@ -123,17 +130,19 @@ export class PuntoVentaComponent implements OnInit {
           }
         }
         if(this.listCustomers[this.currentCustomer].lastItemClicked == this.listCustomers[this.currentCustomer].listAction[i].id && this.operationOption == 2){  
+          if(this.listCustomers[this.currentCustomer].listAction[i].dsc == '100') {return;}
           if(int == '.'){
             for(let x = 0 ; x < this.listCustomers[this.currentCustomer].listAction[i].dsc.length ; x++)
-              if(this.listCustomers[this.currentCustomer].listAction[i].dsc[x] == '.')return;
+              if(this.listCustomers[this.currentCustomer].listAction[i].dsc[x] == '.'){return;}
           }
-          if(parseInt(this.listCustomers[this.currentCustomer].listAction[i].dsc +int) < 100 )
-            this.listCustomers[this.currentCustomer].listAction[i].dsc = this.listCustomers[this.currentCustomer].listAction[i].dsc +int;
-          else
+          this.listCustomers[this.currentCustomer].listAction[i].dsc = this.listCustomers[this.currentCustomer].listAction[i].dsc +int;
+          if(parseFloat(this.listCustomers[this.currentCustomer].listAction[i].dsc) > 100 )
             this.listCustomers[this.currentCustomer].listAction[i].dsc = '100';
           if(this.listCustomers[this.currentCustomer].listAction[i].dsc != '' && this.listCustomers[this.currentCustomer].listAction[i].units != '' && this.listCustomers[this.currentCustomer].listAction[i].unitPrice != ''){
-            if(this.listCustomers[this.currentCustomer].listAction[i].dsc[this.listCustomers[this.currentCustomer].listAction[i].dsc.length-1] != '.')
-              this.listCustomers[this.currentCustomer].listAction[i].price = (parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price)*(100-parseFloat(this.listCustomers[this.currentCustomer].listAction[i].dsc)))/100; 
+            if(this.listCustomers[this.currentCustomer].listAction[i].dsc[this.listCustomers[this.currentCustomer].listAction[i].dsc.length-1] != '.'){
+              this.listCustomers[this.currentCustomer].listAction[i].price = ((parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price))*(100-parseFloat(this.listCustomers[this.currentCustomer].listAction[i].dsc)))/100; 
+              this.listCustomers[this.currentCustomer].listAction[i].price = parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price).toFixed(2);
+            }
           }
           else
             this.listCustomers[this.currentCustomer].listAction[i].price = '';
@@ -141,19 +150,20 @@ export class PuntoVentaComponent implements OnInit {
           return;
         }
         if(this.listCustomers[this.currentCustomer].lastItemClicked == this.listCustomers[this.currentCustomer].listAction[i].id && this.operationOption == 3){  
-          if(int == '.'){
+          if(int == '.'){ 
             for(let x = 0 ; x < this.listCustomers[this.currentCustomer].listAction[i].unitPrice.length ; x++)
-              if(this.listCustomers[this.currentCustomer].listAction[i].unitPrice[x] == '.')
-                return;
+              if(this.listCustomers[this.currentCustomer].listAction[i].unitPrice[x] == '.'){return;}
           }
           this.listCustomers[this.currentCustomer].listAction[i].unitPrice = this.listCustomers[this.currentCustomer].listAction[i].unitPrice+int;
           if(this.verifyValue(i)){
             if(this.listCustomers[this.currentCustomer].listAction[i].unitPrice[this.listCustomers[this.currentCustomer].listAction[i].unitPrice.length-1] != '.'){
-              this.listCustomers[this.currentCustomer].listAction[i].price = (parseFloat(this.listCustomers[this.currentCustomer].listAction[i].unitPrice)*(parseFloat(this.listCustomers[this.currentCustomer].listAction[i].units))); 
+              this.listCustomers[this.currentCustomer].listAction[i].price = (parseFloat(this.listCustomers[this.currentCustomer].listAction[i].unitPrice))*(parseFloat(this.listCustomers[this.currentCustomer].listAction[i].units)); 
+              this.listCustomers[this.currentCustomer].listAction[i].price = parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price).toFixed(2);
               if(this.listCustomers[this.currentCustomer].listAction[i].dsc != ''){
-                this.listCustomers[this.currentCustomer].listAction[i].price = (parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price)*(100-parseFloat(this.listCustomers[this.currentCustomer].listAction[i].dsc)))/100; 
+                this.listCustomers[this.currentCustomer].listAction[i].price = ((parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price))*(100-parseFloat(this.listCustomers[this.currentCustomer].listAction[i].dsc)))/100; 
+                this.listCustomers[this.currentCustomer].listAction[i].price = parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price).toFixed(2);              
               }
-            }  
+            } 
           }
           else
             this.listCustomers[this.currentCustomer].listAction[i].price = '';
@@ -191,8 +201,10 @@ export class PuntoVentaComponent implements OnInit {
               if(this.verifyValue(i)){
                 if(this.listCustomers[this.currentCustomer].listAction[i].units[this.listCustomers[this.currentCustomer].listAction[i].units.length-1] != '.'){
                   this.listCustomers[this.currentCustomer].listAction[i].price = (parseFloat(this.listCustomers[this.currentCustomer].listAction[i].unitPrice)*(parseFloat(this.listCustomers[this.currentCustomer].listAction[i].units)));
+                  this.listCustomers[this.currentCustomer].listAction[i].price = parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price).toFixed(2);
                   if(this.listCustomers[this.currentCustomer].listAction[i].dsc != ''){
-                    this.listCustomers[this.currentCustomer].listAction[i].price = (parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price)*(100-parseFloat(this.listCustomers[this.currentCustomer].listAction[i].dsc)))/100; 
+                    this.listCustomers[this.currentCustomer].listAction[i].price = ((parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price))*(100-parseFloat(this.listCustomers[this.currentCustomer].listAction[i].dsc)))/100; 
+                    this.listCustomers[this.currentCustomer].listAction[i].price = parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price).toFixed(2);
                   }
                 }
               }  
@@ -213,9 +225,15 @@ export class PuntoVentaComponent implements OnInit {
           else{
             if(this.listCustomers[this.currentCustomer].listAction[i].dsc.length != 0){
               this.listCustomers[this.currentCustomer].listAction[i].dsc = this.listCustomers[this.currentCustomer].listAction[i].dsc.slice(0, -1); 
-              if(this.listCustomers[this.currentCustomer].listAction[i].dsc != '' && this.listCustomers[this.currentCustomer].listAction[i].units != '' && this.listCustomers[this.currentCustomer].listAction[i].unitPrice != ''){
-                if(this.listCustomers[this.currentCustomer].listAction[i].dsc[this.listCustomers[this.currentCustomer].listAction[i].dsc.length-1] != '.')
-                  this.listCustomers[this.currentCustomer].listAction[i].price = (parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price)*(100-parseFloat(this.listCustomers[this.currentCustomer].listAction[i].dsc)))/100; 
+              if(this.verifyValue(i)){
+                this.listCustomers[this.currentCustomer].listAction[i].price = (parseFloat(this.listCustomers[this.currentCustomer].listAction[i].unitPrice))*(parseFloat(this.listCustomers[this.currentCustomer].listAction[i].units));
+                this.listCustomers[this.currentCustomer].listAction[i].price = parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price).toFixed(2);
+                if(this.listCustomers[this.currentCustomer].listAction[i].dsc != ''){
+                  if(this.listCustomers[this.currentCustomer].listAction[i].dsc[this.listCustomers[this.currentCustomer].listAction[i].dsc.length-1] != '.'){
+                    this.listCustomers[this.currentCustomer].listAction[i].price = ((parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price))*(100-parseFloat(this.listCustomers[this.currentCustomer].listAction[i].dsc)))/100; 
+                    this.listCustomers[this.currentCustomer].listAction[i].price = parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price).toFixed(2);
+                  }
+                }
               }
               else{
                 this.listCustomers[this.currentCustomer].listAction[i].price = '';
@@ -241,8 +259,10 @@ export class PuntoVentaComponent implements OnInit {
               if(this.verifyValue(i)){
                 if(this.listCustomers[this.currentCustomer].listAction[i].unitPrice[this.listCustomers[this.currentCustomer].listAction[i].unitPrice.length-1] != '.'){
                   this.listCustomers[this.currentCustomer].listAction[i].price = (parseFloat(this.listCustomers[this.currentCustomer].listAction[i].unitPrice)*(parseFloat(this.listCustomers[this.currentCustomer].listAction[i].units))); 
+                  this.listCustomers[this.currentCustomer].listAction[i].price = parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price).toFixed(2);
                   if(this.listCustomers[this.currentCustomer].listAction[i].dsc != ''){
-                    this.listCustomers[this.currentCustomer].listAction[i].price = (parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price)*(100-parseFloat(this.listCustomers[this.currentCustomer].listAction[i].dsc)))/100; 
+                    this.listCustomers[this.currentCustomer].listAction[i].price = ((parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price))*(100-parseFloat(this.listCustomers[this.currentCustomer].listAction[i].dsc)))/100; 
+                    this.listCustomers[this.currentCustomer].listAction[i].price = parseFloat(this.listCustomers[this.currentCustomer].listAction[i].price).toFixed(2);
                   }
                 }    
               }  
@@ -379,7 +399,8 @@ export class PuntoVentaComponent implements OnInit {
       listAction : [],
       total : 0,
       taxes : 0,
-      lastItemClicked : null
+      lastItemClicked : null,
+      client : null
     });
     this.currentCustomer = this.listCustomers.length-1;
   }
@@ -399,11 +420,13 @@ export class PuntoVentaComponent implements OnInit {
           units : '1',
           id : this.productos_filtrado[i].Codigo,
           dsc : '',
-          unitPrice : this.productos_filtrado[i].Venta
+          unitPrice : '' + this.productos_filtrado[i].Venta
         });
         this.listCustomers[this.currentCustomer].total += +(this.listCustomers[this.currentCustomer].listAction[this.listCustomers[this.currentCustomer].listAction.length-1].price);
         this.listCustomers[this.currentCustomer].taxes = (this.listCustomers[this.currentCustomer].total*17)/100;
         this.listCustomers[this.currentCustomer].lastItemClicked = this.productos_filtrado[i].Codigo;
+        this.listCustomers[this.currentCustomer].total = parseFloat(this.listCustomers[this.currentCustomer].total.toFixed(2));
+        this.listCustomers[this.currentCustomer].taxes = parseFloat(this.listCustomers[this.currentCustomer].taxes.toFixed(2));
       }
       else{
         this.toastr.warning('El producto ya esta en la lista de venta, haga click en el para aumentar la cantidad','Cuidado');
@@ -422,16 +445,46 @@ export class PuntoVentaComponent implements OnInit {
           units : '1',
           id : this.pack_nombre[i].ID,
           dsc : '',
-          unitPrice : this.pack_nombre[i].Venta
+          unitPrice : '' + this.pack_nombre[i].Venta
         });
         this.listCustomers[this.currentCustomer].total += +(this.listCustomers[this.currentCustomer].listAction[this.listCustomers[this.currentCustomer].listAction.length-1].price);
         this.listCustomers[this.currentCustomer].taxes = (this.listCustomers[this.currentCustomer].total*18)/100;
         this.listCustomers[this.currentCustomer].lastItemClicked = this.pack_nombre[i].ID;
+        this.listCustomers[this.currentCustomer].total = parseFloat(this.listCustomers[this.currentCustomer].total.toFixed(2));
+        this.listCustomers[this.currentCustomer].taxes = parseFloat(this.listCustomers[this.currentCustomer].taxes.toFixed(2));
       }
       else{
         this.toastr.warning('El paquete ya esta en la lista de venta, haga click en el para aumentar la cantidad','Cuidado');
       }
     }
+  }
+
+  openClients(){
+    let dialogRef = this.dialog.open(ClientsComponent,{
+      width : '80%',
+      data : 'text' 
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result != 'close'){
+        if(result == 'sin')
+          this.listCustomers[this.currentCustomer].client = null;
+        else
+          this.listCustomers[this.currentCustomer].client = result;
+      }
+    });
+  }
+
+  openPayment(){
+    let dialogRef = this.dialog.open(PaymentComponent,{
+      width : '95%',
+      height : '90vh',
+      data : this.listCustomers[this.currentCustomer] 
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Payment close ${result}');
+    });
   }
 
 }
@@ -441,6 +494,7 @@ interface ListCustomers {
   total: number;
   taxes : number;
   lastItemClicked  : any;
+  client : any;
 }
 
 interface ListAction {

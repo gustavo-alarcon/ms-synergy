@@ -1,0 +1,13 @@
+
+mat-cell{
+    padding: 5px;
+}
+
+mat-row:hover{
+    background: rgb(201, 199, 199);
+    cursor: pointer;
+}
+
+mat-form-field{
+    width: 100%;
+}

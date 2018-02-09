@@ -165,11 +165,11 @@
             <div class="teclado point" (click)="executeOperation('.')">
                 .
             </div>
-            <div class="customer teclado">
+            <div class="customer teclado" (click)="openClients()">
                 <mat-icon>account_circle</mat-icon>
-                <span class='nameIcon'>Customer</span>
+                <span class='nameIcon'>{{ listCustomers[currentCustomer].client == null ? 'Cliente' : listCustomers[currentCustomer].client.Name }}</span>
             </div>
-            <div class="payment teclado">
+            <div class="payment teclado" (click)="openPayment()">
                 <mat-icon>payment</mat-icon>
                 <span class='nameIcon'>Payment</span>
             </div>
@@ -235,6 +235,9 @@
             </mat-tab-group>
         </div>
         <div class="check">
+            <div class="customerMedia" *ngIfMediaQuery="'(max-width: 850px)'">
+                {{ listCustomers[currentCustomer].client == null ? 'Cliente' : listCustomers[currentCustomer].client.Name }}
+            </div>
             <ul style='padding-left: 0;'>
                 <div *ngFor="let product of listCustomers[currentCustomer].listAction; let i = index">
                     <li class="productList" (click)='clickProductList(i)' [ngClass]="{'newBackground' : listCustomers[currentCustomer].lastItemClicked == product.id }" [ngClass]="{'newBackground' : listCustomers[currentCustomer].lastItemClicked == product.id }">
@@ -247,8 +250,8 @@
                 </div>
             </ul>
             <div *ngIf="listCustomers[currentCustomer].listAction.length != 0" class='listSummary'>
-            <span class='listTotal'>Total: $ {{listCustomers[currentCustomer].total}}</span>
-            <span class='listIGV'>IGV: $ {{listCustomers[currentCustomer].taxes}}</span>
+                <span class='listTotal'>Total: $ {{listCustomers[currentCustomer].total}}</span>
+                <span class='listIGV'>IGV: $ {{listCustomers[currentCustomer].taxes}}</span>
             </div>
         </div>
         <div class="tab">

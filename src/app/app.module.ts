@@ -83,6 +83,8 @@ import { AuthLoginGuard } from './guards/auth-login.guard';
 import { NgIfMediaQuery } from '../angular2-if-media-query-directive';
 import { MsTextComponent } from './ms-text/mstext/mstext.component';
 import { LazyLoadImageModule } from 'ng2-lazyload-image';
+import { ClientsComponent } from './punto-venta/clients/clients.component';
+import { PaymentComponent } from './punto-venta/payment/payment.component';
 
 
 @NgModule({
@@ -118,7 +120,9 @@ import { LazyLoadImageModule } from 'ng2-lazyload-image';
     InputModalComponent,
     MessagesComponent,
     NgIfMediaQuery,
-    MsTextComponent
+    MsTextComponent,
+    ClientsComponent,
+    PaymentComponent
   ],
   imports: [
     BrowserModule,
@@ -161,7 +165,9 @@ import { LazyLoadImageModule } from 'ng2-lazyload-image';
   ],
   entryComponents:[
     InputModalComponent,
-    AddClientComponent
+    AddClientComponent,
+    ClientsComponent,
+    PaymentComponent
   ],
   providers: [
     LoginService,
@@ -172,7 +178,10 @@ import { LazyLoadImageModule } from 'ng2-lazyload-image';
     AuthService,
     Auth2Guard,
     AuthLoginGuard,
-    {provide: LocationStrategy, useClass: HashLocationStrategy}],
+    {
+      provide: LocationStrategy, useClass: HashLocationStrategy
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

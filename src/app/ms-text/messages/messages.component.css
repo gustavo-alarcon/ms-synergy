@@ -119,13 +119,11 @@ mat-card{
 }
 
 mat-table{
-    overflow: auto;
     max-height: 500px;
 }
 
 mat-cell{
-    padding: 10px;
-    word-wrap: normal;
+    padding: 5px;
 }
 
 .mat-column-seleccionar {
