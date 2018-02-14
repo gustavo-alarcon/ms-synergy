@@ -333,6 +333,20 @@ mat-icon{
     width: 17px;
 }
 
+.tabIcon{
+    font-size: 24px; 
+    height: 24px;
+    width: 24px;
+}
+
+.tabName{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .productList{
     list-style: none;
     display: flex;
@@ -410,6 +424,13 @@ mat-icon{
 .listIGV{
     width: 100%;
     display: inline-block;
+    font-size: 18px;
+}
+
+.listSubTotal{
+    width: 100%;
+    display: inline-block;
+    font-size: 16px;
 }
 
 .nameIcon{

@@ -1,15 +1,18 @@
+import { Component, OnInit } from '@angular/core';
+import { MatDialogRef, MatDialog } from '@angular/material';
+import { MAT_DIALOG_DATA } from '@angular/material';
+import { LoginService } from './../../../servicios/login/login.service';
 import { InventariosService } from './../../../servicios/almacenes/inventarios.service';
 import { Router } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
 import {FormControl, Validators, FormGroup, FormBuilder} from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
 
 @Component({
-  selector: 'app-crear-tercero',
-  templateUrl: './crear-tercero.component.html',
-  styleUrls: ['./crear-tercero.component.css']
+  selector: 'app-add-client',
+  templateUrl: './add-client.component.html',
+  styleUrls: ['./add-client.component.css']
 })
-export class CrearTerceroComponent implements OnInit {
+export class AddClient2Component implements OnInit {
 
   crearTerceroForm: FormGroup;
 
@@ -34,7 +37,9 @@ export class CrearTerceroComponent implements OnInit {
   constructor(private fb: FormBuilder,
               private router: Router,
               private inventariosService: InventariosService,
-              private snackBar: MatSnackBar) { }
+              private snackBar: MatSnackBar,
+              private DialogRef :   MatDialogRef<AddClient2Component>, 
+            ) { }
 
   ngOnInit() {
 
@@ -59,7 +64,8 @@ export class CrearTerceroComponent implements OnInit {
     this.message = 'Cambiar de: ';
 
     if (!this.numeroExist && !this.nombreExist) {
-      this.inventariosService.crearTercero(this.crearTerceroForm.value,"0");
+      this.inventariosService.crearTercero(this.crearTerceroForm.value,"1");
+      this.DialogRef.close(true);
     }else{
       if (this.numeroExist && !this.nombreExist) {
         this.message += 'N° de Documento'
@@ -86,6 +92,10 @@ export class CrearTerceroComponent implements OnInit {
     if (this.terceros.filter(tercero => tercero['Nombre'] === target).length > 0) {
       this.nombreExist = true;
     }
+  }
+
+  onNoClick(){
+    this.DialogRef.close('close');
   }
 
 }

@@ -1,0 +1,89 @@
+<div class="full" mat-dialog-content>
+  <form [formGroup]="crearTerceroForm" (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="w3-white w3-padding">
+          <h4>Tercero</h4>
+
+          <mat-form-field color="accent" style="width:100%">
+              <mat-select formControlName="TerceroClass" placeholder="Tipo de Tercero">
+                  <mat-option class="w3-indigo w3-hover-gray" *ngFor="let tipo of tipos"
+                              [value]="tipo.nombre">{{ tipo.nombre }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="!crearTerceroForm.valid">
+                  Seleccionar un tipo *
+              </mat-error>
+          </mat-form-field>
+
+          <mat-form-field color="accent" style="width:100%">
+              <mat-select formControlName="IdentiClass" placeholder="Documento">
+                  <mat-option class="w3-indigo w3-hover-gray" *ngFor="let documento of documentos"
+                              [value]="documento.nombre">{{ documento.nombre }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="!crearTerceroForm.valid">
+                  Seleccionar un documento *
+              </mat-error>
+          </mat-form-field>
+
+          <mat-form-field color="accent" style="width:100%">
+              <input #numero matInput formControlName="Identi" (input)="checkByNumero(numero.value)" type="text" placeholder="N°">
+              <mat-error *ngIf="!crearTerceroForm.valid">
+                  Número requerido *
+              </mat-error>
+              <mat-hint *ngIf="numeroExist">
+                  El N° de documento ya existe.
+              </mat-hint>
+          </mat-form-field>
+
+          <mat-form-field color="accent" style="width:100%">
+              <input #nombre matInput formControlName="Nombre" (input)="checkByNombre(nombre.value)"type="text" placeholder="Nombre">
+              <mat-error *ngIf="!crearTerceroForm.valid">
+                  Nombre requerido *
+              </mat-error>
+              <mat-hint *ngIf="nombreExist">
+                  El nombre ya existe.
+              </mat-hint>
+          </mat-form-field>
+
+          <mat-form-field color="accent" style="width:100%">
+              <input matInput formControlName="Direccion" type="text" placeholder="Dirección">
+              <mat-error *ngIf="!crearTerceroForm.valid">
+                  Dirección requerida *
+              </mat-error>
+          </mat-form-field>
+          <br> 
+      </div>
+      <hr>
+      <div class="w3-white w3-padding">
+          <h4>Contacto</h4>
+
+          <mat-form-field color="accent" style="width:100%">
+              <input matInput formControlName="Contacto" type="text" placeholder="Nombre">
+              <mat-error *ngIf="!crearTerceroForm.valid">
+                  Nombre requerido *
+              </mat-error>
+          </mat-form-field>
+
+          <mat-form-field color="accent" style="width:100%">
+              <input matInput formControlName="Mail" type="text" placeholder="Mail">
+              
+          </mat-form-field>
+
+          <mat-form-field color="accent" style="width:100%">
+              <input matInput formControlName="Telefono" type="text" placeholder="Teléfono">
+              
+          </mat-form-field>
+          <br> 
+      </div>
+      <br>
+      <div mat-dialog-actions align="end">
+        <button mat-raised-button
+              type="submit"
+              color="primary"
+              [disabled]="!crearTerceroForm.valid"
+              >CREAR</button>
+        <button mat-raised-button
+              color="warn"
+              (click)="onNoClick"
+              >CANCELAR</button>
+      </div>
+  </form>
+</div>

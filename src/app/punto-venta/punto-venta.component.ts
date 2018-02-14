@@ -47,6 +47,7 @@ export class PuntoVentaComponent implements OnInit {
       listAction : [],
       total : 0,
       taxes : 0,
+      subtotal: 0,
       lastItemClicked : null,
       client : null
     });
@@ -86,15 +87,19 @@ export class PuntoVentaComponent implements OnInit {
   }
   
   onSelectCustomer(e){
-    if(e.index != this.listCustomers.length)
-      this.currentCustomer = e.index;
-    else{
-      this.addCustomer();
-    }
+    console.log(e);
+    this.currentCustomer = e;
   }
 
   changeOperationType(i){
     this.operationOption = i;
+  }
+
+  eraseCustomer(i){
+    if(this.listCustomers.length != 1){
+      this.listCustomers.splice(i,1);
+      this.currentCustomer = i-1;
+    }
   }
 
   clickProductList(i){
@@ -177,13 +182,18 @@ export class PuntoVentaComponent implements OnInit {
   calculateTotalAndTaxes(){
     this.listCustomers[this.currentCustomer].total = 0;
     this.listCustomers[this.currentCustomer].taxes = 0;
+    this.listCustomers[this.currentCustomer].subtotal = 0;
     for(let i = 0; i < this.listCustomers[this.currentCustomer].listAction.length ; i++){
       this.listCustomers[this.currentCustomer].total += +(this.listCustomers[this.currentCustomer].listAction[i].price);
     }
-    if(this.listCustomers[this.currentCustomer].total > 0)
-      this.listCustomers[this.currentCustomer].taxes = (this.listCustomers[this.currentCustomer].total*18)/100;
+    if(this.listCustomers[this.currentCustomer].total > 0){
+      this.listCustomers[this.currentCustomer].subtotal = (this.listCustomers[this.currentCustomer].total/1.18);
+      this.listCustomers[this.currentCustomer].taxes = this.listCustomers[this.currentCustomer].total - this.listCustomers[this.currentCustomer].subtotal;
+    }
     this.listCustomers[this.currentCustomer].total = parseFloat(this.listCustomers[this.currentCustomer].total.toFixed(2));
     this.listCustomers[this.currentCustomer].taxes = parseFloat(this.listCustomers[this.currentCustomer].taxes.toFixed(2));
+    this.listCustomers[this.currentCustomer].subtotal = parseFloat(this.listCustomers[this.currentCustomer].subtotal.toFixed(2));
+
   }
 
   backspace(){
@@ -399,6 +409,7 @@ export class PuntoVentaComponent implements OnInit {
       listAction : [],
       total : 0,
       taxes : 0,
+      subtotal : 0,
       lastItemClicked : null,
       client : null
     });
@@ -423,10 +434,13 @@ export class PuntoVentaComponent implements OnInit {
           unitPrice : '' + this.productos_filtrado[i].Venta
         });
         this.listCustomers[this.currentCustomer].total += +(this.listCustomers[this.currentCustomer].listAction[this.listCustomers[this.currentCustomer].listAction.length-1].price);
-        this.listCustomers[this.currentCustomer].taxes = (this.listCustomers[this.currentCustomer].total*17)/100;
+        this.listCustomers[this.currentCustomer].subtotal = (this.listCustomers[this.currentCustomer].total/1.18);
+      this.listCustomers[this.currentCustomer].taxes = this.listCustomers[this.currentCustomer].total - this.listCustomers[this.currentCustomer].subtotal;
         this.listCustomers[this.currentCustomer].lastItemClicked = this.productos_filtrado[i].Codigo;
         this.listCustomers[this.currentCustomer].total = parseFloat(this.listCustomers[this.currentCustomer].total.toFixed(2));
         this.listCustomers[this.currentCustomer].taxes = parseFloat(this.listCustomers[this.currentCustomer].taxes.toFixed(2));
+        this.listCustomers[this.currentCustomer].subtotal = parseFloat(this.listCustomers[this.currentCustomer].subtotal.toFixed(2));
+
       }
       else{
         this.toastr.warning('El producto ya esta en la lista de venta, haga click en el para aumentar la cantidad','Cuidado');
@@ -483,7 +497,20 @@ export class PuntoVentaComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('Payment close ${result}');
+      if(result){
+        if(this.currentCustomer !=0 ){
+          this.listCustomers.splice(this.currentCustomer , 1);
+          this.currentCustomer = this.currentCustomer - 1;
+        }
+        else{
+          this.listCustomers[this.currentCustomer].listAction = [];
+          this.listCustomers[this.currentCustomer].total = 0,
+          this.listCustomers[this.currentCustomer].taxes = 0,
+          this.listCustomers[this.currentCustomer].subtotal= 0,
+          this.listCustomers[this.currentCustomer].lastItemClicked = null,
+          this.listCustomers[this.currentCustomer].client = null
+        }
+      }
     });
   }
 
@@ -493,6 +520,7 @@ interface ListCustomers {
   listAction : ListAction[];
   total: number;
   taxes : number;
+  subtotal: number;
   lastItemClicked  : any;
   client : any;
 }

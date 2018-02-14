@@ -85,7 +85,7 @@ import { MsTextComponent } from './ms-text/mstext/mstext.component';
 import { LazyLoadImageModule } from 'ng2-lazyload-image';
 import { ClientsComponent } from './punto-venta/clients/clients.component';
 import { PaymentComponent } from './punto-venta/payment/payment.component';
-
+import { AddClient2Component } from './punto-venta/clients/add-client/add-client.component'
 
 @NgModule({
   declarations: [
@@ -122,7 +122,8 @@ import { PaymentComponent } from './punto-venta/payment/payment.component';
     NgIfMediaQuery,
     MsTextComponent,
     ClientsComponent,
-    PaymentComponent
+    PaymentComponent,
+    AddClient2Component
   ],
   imports: [
     BrowserModule,
@@ -167,7 +168,8 @@ import { PaymentComponent } from './punto-venta/payment/payment.component';
     InputModalComponent,
     AddClientComponent,
     ClientsComponent,
-    PaymentComponent
+    PaymentComponent,
+    AddClient2Component
   ],
   providers: [
     LoginService,

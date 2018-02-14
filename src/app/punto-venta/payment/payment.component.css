@@ -50,6 +50,7 @@ h1, hr {
     border: 2px solid #b0b0b0;
     border-radius: 5px;
     margin-left: 2px;
+    overflow: auto;
 }
 
 .actions{   
@@ -116,12 +117,17 @@ h1, hr {
     width: 100%;
     display: inline-block;
     text-align: center;
+    margin-bottom: 30%;
+    font-size: 21px;
+    left: 50%;
+    position: relative;
 }
 
 .listIGV{
     width: 100%;
     display: inline-block;
     text-align: center;
+    margin-bottom: 50px;
 }
 
 mat-icon{

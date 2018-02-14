@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA } from '@angular/material';
 import { ClientsService } from '../../servicios/clients.service';
 import {MatPaginator,  MatTableDataSource} from '@angular/material';
 import * as crypto from 'crypto-js';
+import { AddClient2Component } from './add-client/add-client.component';
 
 @Component({
   selector: 'app-clients',
@@ -12,8 +13,8 @@ import * as crypto from 'crypto-js';
 })
 export class ClientsComponent implements OnInit {
 
-  displayedColumns=['name','mail','phone','place','birthday','type'];
-  displayedColumns2=['name','phone','type'];
+  displayedColumns=['Identi','IdentiClass','Nombre','Direccion'];
+  displayedColumns2=['Identi','IdentiClass','Nombre'];
   isLoadingResults = false;
   bytes = crypto.AES.decrypt(localStorage.getItem('db'),'meraki');
   bd = this.bytes.toString(crypto.enc.Utf8);
@@ -25,6 +26,8 @@ export class ClientsComponent implements OnInit {
   constructor(
     public DialogRef : MatDialogRef<ClientsComponent>,
     private clientService:ClientsService,
+    private dialog : MatDialog,
+
   ) {
       
     this.getClients();  
@@ -53,8 +56,10 @@ export class ClientsComponent implements OnInit {
   }
 
   getClients(){
+    console.log(this.bd);
     this.isLoadingResults = true;
-    this.clientService.getBdClient(this.bd).subscribe(data=>{
+    this.clientService.getTerceros(this.bd).subscribe(data=>{
+      console.log(data);
       this.clientsSales = data.records;
       for(let i=0;i<data.length;i++){
         this.clientsSales.push({
@@ -70,6 +75,19 @@ export class ClientsComponent implements OnInit {
       this.isLoadingResults = false;
       this.dataSource = new MatTableDataSource(this.clientsSales);  
       this.dataSource.paginator = this.paginator;
+    });
+  }
+
+  addClient(){
+    let dialogRef = this.dialog.open(AddClient2Component,{
+      width : '80%',
+      data : 'text' 
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        this.getClients();
+      }
     });
   }
 

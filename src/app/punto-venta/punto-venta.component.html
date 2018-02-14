@@ -250,16 +250,24 @@
                 </div>
             </ul>
             <div *ngIf="listCustomers[currentCustomer].listAction.length != 0" class='listSummary'>
-                <span class='listTotal'>Total: $ {{listCustomers[currentCustomer].total}}</span>
+                <span class='listSubTotal'>Sub-total: $ {{listCustomers[currentCustomer].subtotal}}</span>
                 <span class='listIGV'>IGV: $ {{listCustomers[currentCustomer].taxes}}</span>
+                <span class='listTotal'>Total: $ {{listCustomers[currentCustomer].total}}</span>
             </div>
         </div>
         <div class="tab">
-            <mat-tab-group (selectedTabChange)="onSelectCustomer($event)">
-            <mat-tab *ngFor="let customer of listCustomers; let i = index" label="{{i+1}}"></mat-tab>
-            <mat-tab >
+            <mat-tab-group>
+            <mat-tab *ngFor="let customer of listCustomers; let i = index" label="{{i+1}}">
                 <ng-template mat-tab-label>
-                <mat-icon>exposure_plus_1</mat-icon>
+                    <a class="tabName" (click)="onSelectCustomer(i)">
+                        {{i+1}}
+                    </a>
+                    <mat-icon *ngIf="i != 0" class="tabIcon" (click)="eraseCustomer(i)">highlight_off</mat-icon>
+                </ng-template>
+            </mat-tab>
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon class="tabIcon tabName" (click)="addCustomer()">add_circle</mat-icon>
                 </ng-template>
             </mat-tab>
             </mat-tab-group>

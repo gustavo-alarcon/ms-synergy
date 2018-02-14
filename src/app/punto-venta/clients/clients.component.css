@@ -11,3 +11,25 @@ mat-row:hover{
 mat-form-field{
     width: 100%;
 }
+
+mat-dialog-title, h1{
+    margin: 0 !important;
+}
+
+mat-icon{
+    cursor: pointer;
+}
+
+.header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.full{
+    height: 100%;
+}
+
+.mat-dialog-content{
+    max-height: 100vh;
+}

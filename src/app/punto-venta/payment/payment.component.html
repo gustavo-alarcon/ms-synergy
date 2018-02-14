@@ -18,40 +18,40 @@
   </div>
   <div class="panel">
     <div class="panelInt">
-      <div class="teclado one">
+      <div (click)="addPayment('1')" class="teclado one">
           1
       </div>
-      <div class="teclado two">
+      <div (click)="addPayment('2')" class="teclado two">
           2
       </div>
-      <div class="teclado three">
+      <div (click)="addPayment('3')" class="teclado three">
           3
       </div>
-      <div class="teclado four">
+      <div (click)="addPayment('4')" class="teclado four">
           4
       </div>
-      <div class="teclado five">
+      <div (click)="addPayment('5')" class="teclado five">
           5
       </div>
-      <div class="teclado six">
+      <div (click)="addPayment('6')" class="teclado six">
           6
       </div>
-      <div class="teclado seven">
+      <div (click)="addPayment('7')" class="teclado seven">
           7
       </div>
-      <div class="teclado eight">
+      <div (click)="addPayment('8')" class="teclado eight">
           8
       </div>
-      <div class="teclado nine">
+      <div (click)="addPayment('9')" class="teclado nine">
           9
       </div>
-      <div class="teclado zero">
+      <div (click)="addPayment('0')" class="teclado zero">
           0
       </div>
-      <div class="teclado point">
+      <div (click)="addPayment('.')" class="teclado point">
           .
       </div>
-      <div class="teclado back">
+      <div (click)="backspace()" class="teclado back">
           <mat-icon>backspace</mat-icon>
       </div>
     </div>
@@ -59,20 +59,25 @@
   <div class="content">
     <div class="paymentList">
       <mat-form-field class="full-width">
-        <mat-select placeholder="Tipo de pago">
-          <mat-option>Efectivo</mat-option>
+        <mat-select placeholder="Tipo de pago" [(ngModel)]="paymentType">
+          <mat-option value="0">Efectivo</mat-option>
         </mat-select>
       </mat-form-field>
-      <span class='listTotal'>Total: $ {{customer.total}}</span>
-      <span class='listIGV'>IGV: $ {{customer.taxes}}</span>
-      <hr />
-      <span class='listIGV'>Entregado: $ 6523</span>
-      <hr />
-      <span class='listIGV'>Vuelto: $ 6513</span>
+      <div style="width: 50%;">
+        <span class='listIGV'>IGV: $ {{customer.subtotal}}</span>
+        <span class='listIGV'>IGV: $ {{customer.taxes}}</span>
+        <span class='listTotal'>Total: $ {{customer.total}}</span>
+        <hr />
+      </div>
+      <div style="width: 50%;">
+        <span class='listIGV'>Entregado: $ {{entregado == '' ? '0' : entregado}}</span>
+        <hr />
+        <span class='listIGV'>Vuelto: $ {{vuelto == '' ? '0' : vuelto}}</span>
+      </div>
     </div>
   </div>
   <div class="actions" mat-dialog-actions align="end">
+      <button mat-raised-button [disabled]="confirm()" color="primary" (click)="confirmSale()">Confirmar</button>
       <button mat-raised-button color="warn" (click)="onNoClick()" >Cancelar</button>
-      <button mat-raised-button color="primary">Confirmar</button>
   </div>
 </div>

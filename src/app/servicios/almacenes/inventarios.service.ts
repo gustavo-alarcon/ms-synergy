@@ -225,7 +225,7 @@ export class InventariosService {
       });
   }
 
-  crearTercero(data: JSON) {
+  crearTercero(data: JSON,page) {
     this.queryLoading(true);
     //this.http.post('http://localhost/meraki-rent/ms-synergy/src/app/servicios/almacenes/handler-terceros-cre.php?db='+this.db, JSON.stringify(data))
     this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-terceros-cre.php?db='+this.db, JSON.stringify(data))
@@ -235,7 +235,8 @@ export class InventariosService {
             duration: this.snackDuration
           });
           this.getTerceros();
-          this.router.navigate(['inventarios/terceros']);
+          if(page == "0")
+            this.router.navigate(['inventarios/terceros']);
         },
         err => {
           this.snackBar.open('Error de conexión', 'Cerrar',{

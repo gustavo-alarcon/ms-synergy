@@ -19,5 +19,8 @@ export class ClientsService {
     return this.http.get("http://www.meraki-s.com/rent/ms-synergy/php/handler-getcustomers-sms.php?db="+JSON.parse(bd));
   }
 
+  getTerceros(db): Observable<any>{
+    return this.http.get('http://www.meraki-s.com/rent/ms-synergy/php/terceros_mysql.php?db='+JSON.parse(db));
+  }
 
 }
