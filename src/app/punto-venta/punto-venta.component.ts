@@ -490,30 +490,33 @@ export class PuntoVentaComponent implements OnInit {
   }
 
   openPayment(){
-    let dialogRef = this.dialog.open(PaymentComponent,{
-      width : '95%',
-      height : '90vh',
-      data : this.listCustomers[this.currentCustomer] 
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if(result){
-        if(this.currentCustomer !=0 ){
-          this.listCustomers.splice(this.currentCustomer , 1);
-          this.currentCustomer = this.currentCustomer - 1;
+    if(this.listCustomers[this.currentCustomer].listAction.length != 0){
+      let dialogRef = this.dialog.open(PaymentComponent,{
+        width : '95%',
+        height : '90vh',
+        data : this.listCustomers[this.currentCustomer] 
+      });
+  
+      dialogRef.afterClosed().subscribe(result => {
+        if(result){
+          if(this.currentCustomer !=0 ){
+            this.listCustomers.splice(this.currentCustomer , 1);
+            this.currentCustomer = this.currentCustomer - 1;
+          }
+          else{
+            this.listCustomers[this.currentCustomer].listAction = [];
+            this.listCustomers[this.currentCustomer].total = 0,
+            this.listCustomers[this.currentCustomer].taxes = 0,
+            this.listCustomers[this.currentCustomer].subtotal= 0,
+            this.listCustomers[this.currentCustomer].lastItemClicked = null,
+            this.listCustomers[this.currentCustomer].client = null
+          }
         }
-        else{
-          this.listCustomers[this.currentCustomer].listAction = [];
-          this.listCustomers[this.currentCustomer].total = 0,
-          this.listCustomers[this.currentCustomer].taxes = 0,
-          this.listCustomers[this.currentCustomer].subtotal= 0,
-          this.listCustomers[this.currentCustomer].lastItemClicked = null,
-          this.listCustomers[this.currentCustomer].client = null
-        }
-      }
-    });
+      });
+    }
+    else
+      this.toastr.warning("No hay ningun producto o paquete seleccionado","Cuidado");
   }
-
 }
 
 interface ListCustomers {
