@@ -145,7 +145,6 @@ export class LoginService {
   logout() {
     this.loginAuth.next(false);
     this.loginSend.next(false);
-    window.location.replace('http://www.meraki-s.com/rent/ms-synergy/');
   }
 
   clean() {
