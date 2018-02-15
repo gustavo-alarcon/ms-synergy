@@ -25,7 +25,7 @@ import {
           {optional:true}),
         // move page off screen right on leave
         query(':leave',
-          animate('500ms ease',
+          animate('600ms ease',
             style({
               position: 'fixed',
               width:'100%',
@@ -35,7 +35,7 @@ import {
         {optional:true}),
         // move page in screen from left to right
         query(':enter',
-          animate('500ms ease',
+          animate('600ms ease',
             style({
               opacity: 1,
               transform: 'translateX(0%)'

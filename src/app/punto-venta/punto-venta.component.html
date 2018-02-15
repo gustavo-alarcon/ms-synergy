@@ -4,7 +4,7 @@
             <span class="w3-xlarge meraki-font-s5">Punto de venta</span>
         </div>
     </div>
-    <div class="container">
+    <div class="container"> 
         <div class="products">
             <div *ngIfMediaQuery="'(max-width: 700px)'" >
                 <mat-grid-list cols="2" rowHeight="150px">
@@ -14,7 +14,7 @@
                                 <mat-icon mat-grid-avatar>info_outline</mat-icon>
                                 Precio : S/. {{option.Venta}}
                             </mat-grid-tile-header>
-                            <img defaultImage='../../assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
+                            <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
                             <mat-grid-tile-footer>
                                 <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
                                 <mat-icon>star_border</mat-icon>
@@ -27,7 +27,7 @@
                                 <mat-icon mat-grid-avatar>info_outline</mat-icon>
                                 Precio : S/. {{option.Venta}}
                             </mat-grid-tile-header>
-                            <img defaultImage='../../assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
+                            <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
                             <mat-grid-tile-footer>
                                 <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
                                 <mat-icon>star_border</mat-icon>
@@ -44,7 +44,7 @@
                                 <mat-icon mat-grid-avatar>info_outline</mat-icon>
                                 Precio : S/. {{option.Venta}}
                             </mat-grid-tile-header>
-                            <img defaultImage='../../assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
+                            <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
                             <mat-grid-tile-footer>
                                 <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
                                 <mat-icon>star_border</mat-icon>
@@ -57,7 +57,7 @@
                                 <mat-icon mat-grid-avatar>info_outline</mat-icon>
                                 Precio : S/. {{option.Venta}}
                             </mat-grid-tile-header>
-                            <img defaultImage='../../assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
+                            <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
                             <mat-grid-tile-footer>
                                 <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
                                 <mat-icon>star_border</mat-icon>
@@ -74,7 +74,7 @@
                                 <mat-icon mat-grid-avatar>info_outline</mat-icon>
                                 Precio : S/. {{option.Venta}}
                             </mat-grid-tile-header>
-                            <img defaultImage='../../assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
+                            <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
                             <mat-grid-tile-footer>
                                 <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
                                 <mat-icon>star_border</mat-icon>
@@ -87,7 +87,7 @@
                                 <mat-icon mat-grid-avatar>info_outline</mat-icon>
                                 Precio : S/. {{option.Venta}}
                             </mat-grid-tile-header>
-                            <img defaultImage='../../assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
+                            <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
                             <mat-grid-tile-footer>
                                 <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
                                 <mat-icon>star_border</mat-icon>
@@ -104,7 +104,7 @@
                                 <mat-icon mat-grid-avatar>info_outline</mat-icon>
                                 Precio : S/. {{option.Venta}}
                             </mat-grid-tile-header>
-                            <img defaultImage='../../assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
+                            <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
                             <mat-grid-tile-footer>
                                 <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
                                 <mat-icon>star_border</mat-icon>
@@ -117,7 +117,7 @@
                                 <mat-icon mat-grid-avatar>info_outline</mat-icon>
                                 Precio : S/. {{option.Venta}}
                             </mat-grid-tile-header>
-                            <img defaultImage='../../assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
+                            <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
                             <mat-grid-tile-footer>
                                 <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
                                 <mat-icon>star_border</mat-icon>
@@ -127,7 +127,7 @@
                 </mat-grid-list>
             </div>
         </div>
-        <div class="panel">
+        <div class="panel" >
             <div class="panelInt">
             <div (click)="executeOperation('1')" class="teclado one">
                 1
@@ -190,7 +190,7 @@
             </div>
             </div>
         </div>
-        <div class="filtro" [formGroup]="movimientoForm">
+        <div class="filtro" [formGroup]="movimientoForm" >
             <div class="flex">      
                 <mat-form-field class="full-width2">
                     <mat-select #almOrigen placeholder="Almacenes" panelClass="example-panel-blue" (change)="filtrarProductos(almOrigen.value)" [(ngModel)]='selectedWarehouse' [ngModelOptions]="{standalone: true}">
@@ -236,10 +236,10 @@
         </div>
         <div class="check">
             <div class="customerMedia" *ngIfMediaQuery="'(max-width: 850px)'">
-                {{ listCustomers[currentCustomer].client == null ? 'Cliente' : listCustomers[currentCustomer].client.Name }}
+                {{ listCustomers[currentCustomer].client == null ? 'Cliente' : listCustomers[currentCustomer].client.Nombre }}
             </div>
             <ul style='padding-left: 0;'>
-                <div *ngFor="let product of listCustomers[currentCustomer].listAction; let i = index">
+                <div @cardProduct *ngFor="let product of listCustomers[currentCustomer].listAction; let i = index">
                     <li class="productList" (click)='clickProductList(i)' [ngClass]="{'newBackground' : listCustomers[currentCustomer].lastItemClicked == product.id }" [ngClass]="{'newBackground' : listCustomers[currentCustomer].lastItemClicked == product.id }">
                         <span class="productName">{{product.product}}</span>
                         <span class="productClass">$ {{product.price == '' ? '0' : product.price}}</span>
@@ -249,20 +249,20 @@
                     <hr style="margin: 10px;"/> 
                 </div>
             </ul>
-            <div *ngIf="listCustomers[currentCustomer].listAction.length != 0" class='listSummary'>
+            <div @totalTaxes *ngIf="listCustomers[currentCustomer].listAction.length != 0" class='listSummary'>
                 <span class='listSubTotal'>Sub-total: $ {{listCustomers[currentCustomer].subtotal}}</span>
                 <span class='listIGV'>IGV: $ {{listCustomers[currentCustomer].taxes}}</span>
                 <span class='listTotal'>Total: $ {{listCustomers[currentCustomer].total}}</span>
             </div>
         </div>
         <div class="tab">
-            <mat-tab-group>
-            <mat-tab *ngFor="let customer of listCustomers; let i = index" label="{{i+1}}">
-                <ng-template mat-tab-label>
-                    <a class="tabName" (click)="onSelectCustomer(i)">
+            <mat-tab-group [(selectedIndex)]="selectedIndex"  (selectedTabChange)="tabChanged($event)" #tab>
+            <mat-tab *ngFor="let customer of listCustomers; let i = index">
+                <ng-template mat-tab-label >
+                    <a @tab class="tabName" (click)="onSelectCustomer(i)">
                         {{i+1}}
                     </a>
-                    <mat-icon *ngIf="i != 0" class="tabIcon" (click)="eraseCustomer(i)">highlight_off</mat-icon>
+                    <mat-icon @tab *ngIf="i != 0" class="tabIcon" (click)="eraseCustomer(i)">highlight_off</mat-icon>
                 </ng-template>
             </mat-tab>
             <mat-tab>

@@ -3,17 +3,44 @@ import { InventariosService } from '../servicios/almacenes/inventarios.service';
 import { FormControl, Validators, FormGroup, FormBuilder } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
-import { ClientsComponent } from './clients/clients.component'
-import { PaymentComponent } from './payment/payment.component'
-
+import { ClientsComponent } from './clients/clients.component';
+import { PaymentComponent } from './payment/payment.component';
+import { trigger,state,style,transition,animate,keyframes,query,stagger } from '@angular/animations';
 
 @Component({
   selector: 'app-punto-venta',
   templateUrl: './punto-venta.component.html',
-  styleUrls: ['./punto-venta.component.css']
+  styleUrls: ['./punto-venta.component.css'],
+  animations: [
+    trigger('cardProduct', [
+      transition(':enter', animate('700ms ease-in', keyframes([
+        style({opacity: 0, transform: 'translateY(-80%)', offset: 0}),
+        style({opacity: 1, transform: 'translateY(35px)',  offset: 0.5}),
+        style({opacity: 1, transform: 'translateY(0)',     offset: 1.0}),
+      ]))),
+      transition(':leave', animate('400ms ease-in', keyframes([
+        style({opacity: 1, transform: 'translateY(0)', offset: 0}),
+        style({opacity: 0.5, transform: 'translateY(25px)', offset: 0.5}),
+        style({opacity: 0, transform: 'translateX(-1000px)',  offset: 1}),
+    ])))
+   ]),
+   trigger('totalTaxes',[
+    state('void', style ({opacity : 0})),
+    transition(':enter, :leave',[
+       animate(500),
+    ]),
+  ]),
+  trigger('tab', [
+    transition(':enter', animate('700ms ease-in', keyframes([
+      style({opacity: 0, transform: 'translateX(100px)', offset: 0}),
+      style({opacity: 1, transform: 'translateX(0)',     offset: 1.0}),
+    ])))
+ ]),
+  ]
 })
+
 export class PuntoVentaComponent implements OnInit {
-  
+  selectedIndex;
   clicked = false;
   almacenes: any[] = [];
   productos_filtrado: any[] = [];
@@ -410,7 +437,13 @@ export class PuntoVentaComponent implements OnInit {
       lastItemClicked : null,
       client : null
     });
-    this.currentCustomer = this.listCustomers.length-1;
+    this.currentCustomer = this.listCustomers.length - 1;
+  }
+
+  tabChanged(e){
+    if(e.index == this.listCustomers.length){
+      this.selectedIndex = this.listCustomers.length - 1;
+    }
   }
 
   addToList(i){
