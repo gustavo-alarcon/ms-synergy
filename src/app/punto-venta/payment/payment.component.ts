@@ -27,7 +27,7 @@ export class PaymentComponent implements OnInit {
   }
   
   onNoClick(){
-    this.DialogRef.close('CLOSE');
+    this.DialogRef.close(false);
   }
 
   addPayment(int){

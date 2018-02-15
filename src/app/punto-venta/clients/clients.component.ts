@@ -56,10 +56,8 @@ export class ClientsComponent implements OnInit {
   }
 
   getClients(){
-    console.log(this.bd);
     this.isLoadingResults = true;
     this.clientService.getTerceros(this.bd).subscribe(data=>{
-      console.log(data);
       this.clientsSales = data.records;
       for(let i=0;i<data.length;i++){
         this.clientsSales.push({
@@ -86,7 +84,6 @@ export class ClientsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if(result){
-        console.log("Entro");
         this.getClients();
       }
     });

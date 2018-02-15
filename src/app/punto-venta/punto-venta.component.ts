@@ -87,7 +87,6 @@ export class PuntoVentaComponent implements OnInit {
   }
   
   onSelectCustomer(e){
-    console.log(e);
     this.currentCustomer = e;
   }
 
@@ -374,8 +373,6 @@ export class PuntoVentaComponent implements OnInit {
         this.pack_nombre[_position].Venta = parseFloat(this.pack_nombre[_position].Venta) + parseFloat(this.paquetes_filtrado[i].Venta);
       }
     }
-    console.log(this.productos_filtrado);
-    console.log(this.paquetes_filtrado);
     this.filteredOptions = this.productos_filtrado;
     this.filteredPackages = this.pack_nombre;
   }

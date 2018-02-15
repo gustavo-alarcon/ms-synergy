@@ -437,6 +437,7 @@ mat-icon{
     margin-left: 5px;
     font-size: 13px;
     width: 50%;
+    overflow: hidden;
 }
 
 @media screen and (min-height: 1px) and (max-height: 250px){
