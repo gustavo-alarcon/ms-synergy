@@ -95,7 +95,7 @@ export class AddClient2Component implements OnInit {
   }
 
   onNoClick(){
-    this.DialogRef.close('close');
+    this.DialogRef.close(false);
   }
 
 }

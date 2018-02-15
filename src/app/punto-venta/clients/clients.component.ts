@@ -86,6 +86,7 @@ export class ClientsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if(result){
+        console.log("Entro");
         this.getClients();
       }
     });
