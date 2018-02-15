@@ -20,7 +20,7 @@ import { trigger,state,style,transition,animate,keyframes,query,stagger } from '
       ]))),
       transition(':leave', animate('400ms ease-in', keyframes([
         style({opacity: 1, transform: 'translateY(0)', offset: 0}),
-        style({opacity: 0.5, transform: 'translateY(25px)', offset: 0.5}),
+        style({opacity: 0.5, transform: 'translateY(25px)', offset: 0.3}),
         style({opacity: 0, transform: 'translateX(-1000px)',  offset: 1}),
     ])))
    ]),
@@ -28,7 +28,13 @@ import { trigger,state,style,transition,animate,keyframes,query,stagger } from '
     state('void', style ({opacity : 0})),
     transition(':enter, :leave',[
        animate(500),
-    ]),
+    ]),  
+  ]),
+  trigger('images',[
+    state('void', style ({opacity : 0})),
+    transition(':enter, :leave',[
+       animate(900),
+    ]),  
   ]),
   trigger('tab', [
     transition(':enter', animate('700ms ease-in', keyframes([

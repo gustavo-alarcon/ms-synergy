@@ -9,7 +9,7 @@
             <div *ngIfMediaQuery="'(max-width: 700px)'" >
                 <mat-grid-list cols="2" rowHeight="150px">
                     <div *ngIf='productsOrPackages==0'>
-                        <mat-grid-tile (click)="addToList(i)" *ngFor="let option of filteredOptions; let i = index">
+                        <mat-grid-tile @images (click)="addToList(i)" *ngFor="let option of filteredOptions; let i = index">
                             <mat-grid-tile-header>
                                 <mat-icon mat-grid-avatar>info_outline</mat-icon>
                                 Precio : S/. {{option.Venta}}
@@ -22,7 +22,7 @@
                         </mat-grid-tile>
                     </div>
                     <div *ngIf='productsOrPackages==1'>
-                        <mat-grid-tile (click)="addToList(i)" *ngFor="let option of filteredPackages ; let i = index">
+                        <mat-grid-tile @images (click)="addToList(i)" *ngFor="let option of filteredPackages ; let i = index">
                             <mat-grid-tile-header>
                                 <mat-icon mat-grid-avatar>info_outline</mat-icon>
                                 Precio : S/. {{option.Venta}}
@@ -39,7 +39,7 @@
             <div *ngIfMediaQuery="'(min-width: 701px) and (max-width: 1000px)'" >
                 <mat-grid-list cols="3" rowHeight="200px">
                     <div *ngIf='productsOrPackages==0'>
-                        <mat-grid-tile (click)="addToList(i)" *ngFor="let option of filteredOptions ; let i = index">
+                        <mat-grid-tile @images (click)="addToList(i)" *ngFor="let option of filteredOptions ; let i = index">
                             <mat-grid-tile-header>
                                 <mat-icon mat-grid-avatar>info_outline</mat-icon>
                                 Precio : S/. {{option.Venta}}
@@ -52,7 +52,7 @@
                         </mat-grid-tile>
                     </div>
                     <div *ngIf='productsOrPackages==1'>
-                        <mat-grid-tile (click)="addToList(i)" *ngFor="let option of filteredPackages ; let i = index">
+                        <mat-grid-tile @images (click)="addToList(i)" *ngFor="let option of filteredPackages ; let i = index">
                             <mat-grid-tile-header>
                                 <mat-icon mat-grid-avatar>info_outline</mat-icon>
                                 Precio : S/. {{option.Venta}}
@@ -69,7 +69,7 @@
             <div *ngIfMediaQuery="'(min-width: 1001px) and (max-width: 1299px)'" >
                 <mat-grid-list cols="4" rowHeight="200px">
                     <div *ngIf='productsOrPackages==0'>
-                        <mat-grid-tile (click)="addToList(i)" *ngFor="let option of filteredOptions ; let i = index">
+                        <mat-grid-tile @images (click)="addToList(i)" *ngFor="let option of filteredOptions ; let i = index">
                             <mat-grid-tile-header>
                                 <mat-icon mat-grid-avatar>info_outline</mat-icon>
                                 Precio : S/. {{option.Venta}}
@@ -82,7 +82,7 @@
                         </mat-grid-tile>
                     </div>
                     <div *ngIf='productsOrPackages==1'>
-                        <mat-grid-tile (click)="addToList(i)" *ngFor="let option of filteredPackages ; let i = index">
+                        <mat-grid-tile @images (click)="addToList(i)" *ngFor="let option of filteredPackages ; let i = index">
                             <mat-grid-tile-header>
                                 <mat-icon mat-grid-avatar>info_outline</mat-icon>
                                 Precio : S/. {{option.Venta}}
@@ -99,7 +99,7 @@
             <div *ngIfMediaQuery="'(min-width: 1300px)'" >
                 <mat-grid-list cols="5" rowHeight="200px">
                     <div *ngIf='productsOrPackages==0'>
-                        <mat-grid-tile (click)="addToList(i)" *ngFor="let option of filteredOptions ; let i = index">
+                        <mat-grid-tile @images (click)="addToList(i)" *ngFor="let option of filteredOptions ; let i = index">
                             <mat-grid-tile-header>
                                 <mat-icon mat-grid-avatar>info_outline</mat-icon>
                                 Precio : S/. {{option.Venta}}
@@ -112,7 +112,7 @@
                         </mat-grid-tile>
                     </div>
                     <div *ngIf='productsOrPackages==1'>
-                        <mat-grid-tile (click)="addToList(i)" *ngFor="let option of filteredPackages ; let i = index">
+                        <mat-grid-tile @images (click)="addToList(i)" *ngFor="let option of filteredPackages ; let i = index">
                             <mat-grid-tile-header>
                                 <mat-icon mat-grid-avatar>info_outline</mat-icon>
                                 Precio : S/. {{option.Venta}}
