@@ -20,6 +20,10 @@
         "panel products";
 }
 
+.mat-grid-tile{
+    background: #bdcfb5;
+}
+
 .mat-grid-tile .mat-grid-tile-header, 
 .mat-grid-tile .mat-grid-tile-footer {
     display: flex;
@@ -33,6 +37,19 @@
     left: 0;
     font-size: 13px;
     right: 0;
+}
+
+.listRadios{
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    flex-wrap: wrap;
+    font-size: 15px;
+    margin-bottom: 10px;
+}
+
+mat-radio-button{
+    margin: 0 5px;
 }
 
 .products{
@@ -521,6 +538,10 @@ mat-icon{
         font-size: 15px;
         flex-direction: column;
         text-align: center;
+   }
+
+   .listSummary{
+       text-align: center;
    }
 }
 

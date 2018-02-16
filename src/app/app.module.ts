@@ -30,7 +30,8 @@ import {  MatToolbarModule,
           MatListModule,
           MatGridListModule,
           MatSlideToggleModule,
-          MatTooltipModule
+          MatTooltipModule,
+          MatRadioModule
         } from '@angular/material';
 
 import { AppComponent } from './app.component';
@@ -162,7 +163,8 @@ import { AddClient2Component } from './punto-venta/clients/add-client/add-client
     LazyLoadImageModule,
     MatGridListModule,
     MatSlideToggleModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatRadioModule
   ],
   entryComponents:[
     InputModalComponent,

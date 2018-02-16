@@ -28,8 +28,14 @@ import { trigger,state,style,transition,animate,keyframes,query,stagger } from '
     state('void', style ({opacity : 0})),
     transition(':enter, :leave',[
        animate(500),
-    ]),  
-  ]),
+      ]),  
+    ]),
+    trigger('fadeList',[
+      state('void', style ({opacity : 0})),
+      transition(':enter, :leave',[
+         animate(300),
+      ]),  
+    ]),
   trigger('images',[
     state('void', style ({opacity : 0})),
     transition(':enter, :leave',[
@@ -46,7 +52,7 @@ import { trigger,state,style,transition,animate,keyframes,query,stagger } from '
 })
 
 export class PuntoVentaComponent implements OnInit {
-  selectedIndex;
+  selectedIndex : any;
   clicked = false;
   almacenes: any[] = [];
   productos_filtrado: any[] = [];
@@ -67,7 +73,8 @@ export class PuntoVentaComponent implements OnInit {
   lastItemClicked : number = null;
   changeItemClicked : number = null;
   checked : boolean;
-  operationOption : number = 1
+  operationOption : number = 1;
+  igvType : number = 1;
 
   constructor(
     private inventariosService : InventariosService,
@@ -131,6 +138,7 @@ export class PuntoVentaComponent implements OnInit {
     if(this.listCustomers.length != 1){
       this.listCustomers.splice(i,1);
       this.currentCustomer = i-1;
+      this.selectedIndex = this.currentCustomer;
     }
   }
 
@@ -215,17 +223,41 @@ export class PuntoVentaComponent implements OnInit {
     this.listCustomers[this.currentCustomer].total = 0;
     this.listCustomers[this.currentCustomer].taxes = 0;
     this.listCustomers[this.currentCustomer].subtotal = 0;
-    for(let i = 0; i < this.listCustomers[this.currentCustomer].listAction.length ; i++){
-      this.listCustomers[this.currentCustomer].total += +(this.listCustomers[this.currentCustomer].listAction[i].price);
-    }
-    if(this.listCustomers[this.currentCustomer].total > 0){
-      this.listCustomers[this.currentCustomer].subtotal = (this.listCustomers[this.currentCustomer].total/1.18);
-      this.listCustomers[this.currentCustomer].taxes = this.listCustomers[this.currentCustomer].total - this.listCustomers[this.currentCustomer].subtotal;
-    }
-    this.listCustomers[this.currentCustomer].total = parseFloat(this.listCustomers[this.currentCustomer].total.toFixed(2));
-    this.listCustomers[this.currentCustomer].taxes = parseFloat(this.listCustomers[this.currentCustomer].taxes.toFixed(2));
-    this.listCustomers[this.currentCustomer].subtotal = parseFloat(this.listCustomers[this.currentCustomer].subtotal.toFixed(2));
 
+    if(this.igvType == 1){
+      for(let i = 0; i < this.listCustomers[this.currentCustomer].listAction.length ; i++){
+        this.listCustomers[this.currentCustomer].total += +(this.listCustomers[this.currentCustomer].listAction[i].price);
+      }
+      if(this.listCustomers[this.currentCustomer].total > 0){
+        this.listCustomers[this.currentCustomer].subtotal = (this.listCustomers[this.currentCustomer].total/1.18);
+        this.listCustomers[this.currentCustomer].taxes = this.listCustomers[this.currentCustomer].total - this.listCustomers[this.currentCustomer].subtotal;
+      }
+      this.listCustomers[this.currentCustomer].total = parseFloat(this.listCustomers[this.currentCustomer].total.toFixed(2));
+      this.listCustomers[this.currentCustomer].taxes = parseFloat(this.listCustomers[this.currentCustomer].taxes.toFixed(2));
+      this.listCustomers[this.currentCustomer].subtotal = parseFloat(this.listCustomers[this.currentCustomer].subtotal.toFixed(2));
+    }
+
+    if (this.igvType == 2){
+      console.log(this.igvType);
+      for(let i = 0; i < this.listCustomers[this.currentCustomer].listAction.length ; i++){
+        this.listCustomers[this.currentCustomer].total += +(this.listCustomers[this.currentCustomer].listAction[i].price);
+      }
+      if(this.listCustomers[this.currentCustomer].total > 0){
+        this.listCustomers[this.currentCustomer].subtotal = (this.listCustomers[this.currentCustomer].total);
+        this.listCustomers[this.currentCustomer].total = (this.listCustomers[this.currentCustomer].total*1.18);
+        this.listCustomers[this.currentCustomer].taxes = this.listCustomers[this.currentCustomer].total - this.listCustomers[this.currentCustomer].subtotal;
+      }
+      this.listCustomers[this.currentCustomer].total = parseFloat(this.listCustomers[this.currentCustomer].total.toFixed(2));
+      this.listCustomers[this.currentCustomer].taxes = parseFloat(this.listCustomers[this.currentCustomer].taxes.toFixed(2));
+      this.listCustomers[this.currentCustomer].subtotal = parseFloat(this.listCustomers[this.currentCustomer].subtotal.toFixed(2));
+    }
+
+    if (this.igvType == 3){
+      for(let i = 0; i < this.listCustomers[this.currentCustomer].listAction.length ; i++){
+        this.listCustomers[this.currentCustomer].total += +(this.listCustomers[this.currentCustomer].listAction[i].price);
+      }
+      this.listCustomers[this.currentCustomer].total = parseFloat(this.listCustomers[this.currentCustomer].total.toFixed(2));
+    }
   }
 
   backspace(){
@@ -349,6 +381,10 @@ export class PuntoVentaComponent implements OnInit {
         }
       }
     }
+  }
+
+  changeIGVType(){
+    this.calculateTotalAndTaxes();
   }
 
   sortBy(key) {

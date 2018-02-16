@@ -250,8 +250,15 @@
                 </div>
             </ul>
             <div @totalTaxes *ngIf="listCustomers[currentCustomer].listAction.length != 0" class='listSummary'>
-                <span class='listSubTotal'>Sub-total: $ {{listCustomers[currentCustomer].subtotal}}</span>
-                <span class='listIGV'>IGV: $ {{listCustomers[currentCustomer].taxes}}</span>
+                <div class="listRadios">
+                    <mat-radio-group [(ngModel)]="igvType" (change)="changeIGVType()">
+                        <mat-radio-button value=1>Incluir IGV</mat-radio-button>
+                        <mat-radio-button value=2>Calcular IGV</mat-radio-button>
+                        <mat-radio-button value=3>Sin IGV</mat-radio-button>
+                    </mat-radio-group>
+                </div>
+                <span @fadeList *ngIf="igvType != 3" class='listSubTotal'>Sub-total: $ {{listCustomers[currentCustomer].subtotal}}</span>
+                <span @fadeList *ngIf="igvType != 3" class='listIGV'>IGV: $ {{listCustomers[currentCustomer].taxes}}</span>
                 <span class='listTotal'>Total: $ {{listCustomers[currentCustomer].total}}</span>
             </div>
         </div>
