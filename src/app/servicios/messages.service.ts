@@ -35,8 +35,8 @@ export class MessagesService {
       'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE, PUT',
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Headers': "X-Requested-With, Content-Type, Origin, Authorization, Accept, Client-Security-Token, Accept-Encoding",
-  });
-    return this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-addToCrono.php?db='+JSON.parse(this.bd),JSON.stringify(messages));
+    });
+    return this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-addToCrono.php?db='+JSON.parse(this.bd),JSON.stringify(messages),{responseType: 'text' });
   }
   
   getBubbleValues(): Observable<any>{
