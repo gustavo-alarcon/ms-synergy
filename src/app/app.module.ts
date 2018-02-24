@@ -86,7 +86,12 @@ import { MsTextComponent } from './ms-text/mstext/mstext.component';
 import { LazyLoadImageModule } from 'ng2-lazyload-image';
 import { ClientsComponent } from './punto-venta/clients/clients.component';
 import { PaymentComponent } from './punto-venta/payment/payment.component';
-import { AddClient2Component } from './punto-venta/clients/add-client/add-client.component'
+import { AddClient2Component } from './punto-venta/clients/add-client/add-client.component';
+import { SalesHistoryComponent } from './sales-history/sales-history.component';
+import { SatPopoverModule } from '@ncstate/sat-popover';
+import { InlineEditComponent } from './ms-text/inline-edit/inline-edit.component';
+import { HistoryComponent } from './ms-text/history/history.component'
+
 
 @NgModule({
   declarations: [
@@ -124,7 +129,10 @@ import { AddClient2Component } from './punto-venta/clients/add-client/add-client
     MsTextComponent,
     ClientsComponent,
     PaymentComponent,
-    AddClient2Component
+    AddClient2Component,
+    SalesHistoryComponent,
+    InlineEditComponent,
+    HistoryComponent
   ],
   imports: [
     BrowserModule,
@@ -164,7 +172,8 @@ import { AddClient2Component } from './punto-venta/clients/add-client/add-client
     MatGridListModule,
     MatSlideToggleModule,
     MatTooltipModule,
-    MatRadioModule
+    MatRadioModule,
+    SatPopoverModule 
   ],
   entryComponents:[
     InputModalComponent,

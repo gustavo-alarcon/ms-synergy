@@ -99,8 +99,16 @@ h1, hr {
 }
 
 .full-width{
-    width: 100%;
+    width: 50%;
     padding: 5px 5px 0 5px;
+}
+
+.selects{
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    background-color: #967a7a;
+    flex-direction: row;
 }
 
 .listSummary{
@@ -116,18 +124,25 @@ h1, hr {
 .listTotal{
     width: 100%;
     display: inline-block;
-    text-align: center;
+    text-align: left;
     margin-bottom: 30%;
-    font-size: 21px;
+    font-size: 25px;
     left: 50%;
-    position: relative;
+    font-weight: bold;
+    text-decoration: underline;
+    margin-top: 20px;
+    padding-left: 30px;
 }
 
 .listIGV{
     width: 100%;
     display: inline-block;
-    text-align: center;
+    text-align: left;
     margin-bottom: 50px;
+    font-weight: bold;
+    font-size: 20px;
+    margin-top: 20px;
+    padding-left: 30px;
 }
 
 mat-icon{
@@ -213,6 +228,17 @@ mat-icon{
 @media screen and (min-width : 800px) {
     .teclado {
         font-size: 15px;
+    }
+}
+
+
+@media screen and (max-width : 550px) {
+    .listIGV {
+        font-size: 14px;
+    }
+
+    .listTotal{
+        font-size: 20px;
     }
 }
 

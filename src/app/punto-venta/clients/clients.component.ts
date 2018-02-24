@@ -13,8 +13,8 @@ import { AddClient2Component } from './add-client/add-client.component';
 })
 export class ClientsComponent implements OnInit {
 
-  displayedColumns=['Identi','IdentiClass','Nombre','Direccion'];
-  displayedColumns2=['Identi','IdentiClass','Nombre'];
+  displayedColumns=['Nombre','IdentiClass','Identi','Direccion'];
+  displayedColumns2=['Nombre','IdentiClass','Identi'];
   isLoadingResults = false;
   bytes = crypto.AES.decrypt(localStorage.getItem('db'),'meraki');
   bd = this.bytes.toString(crypto.enc.Utf8);

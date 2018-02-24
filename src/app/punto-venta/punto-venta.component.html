@@ -27,6 +27,12 @@
                                 <mat-icon mat-grid-avatar>info_outline</mat-icon>
                                 Precio : S/. {{option.Venta}}
                             </mat-grid-tile-header>
+                            <span class="packageProducts">
+                                Productos :
+                                <span *ngFor="let product of option.Productos">
+                                    {{product}}
+                                </span>
+                            </span>
                             <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
                             <mat-grid-tile-footer>
                                 <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
@@ -57,6 +63,12 @@
                                 <mat-icon mat-grid-avatar>info_outline</mat-icon>
                                 Precio : S/. {{option.Venta}}
                             </mat-grid-tile-header>
+                            <span class="packageProducts">
+                                Productos :
+                                <span *ngFor="let product of option.Productos">
+                                    {{product}}
+                                </span>
+                            </span>
                             <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
                             <mat-grid-tile-footer>
                                 <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
@@ -87,6 +99,12 @@
                                 <mat-icon mat-grid-avatar>info_outline</mat-icon>
                                 Precio : S/. {{option.Venta}}
                             </mat-grid-tile-header>
+                            <span class="packageProducts">
+                                Productos :
+                                <span *ngFor="let product of option.Productos">
+                                    {{product}}
+                                </span>
+                            </span>
                             <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
                             <mat-grid-tile-footer>
                                 <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
@@ -117,6 +135,12 @@
                                 <mat-icon mat-grid-avatar>info_outline</mat-icon>
                                 Precio : S/. {{option.Venta}}
                             </mat-grid-tile-header>
+                            <span class="packageProducts">
+                                Productos :
+                                <span *ngFor="let product of option.Productos">
+                                    {{product}}
+                                </span>
+                            </span>
                             <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
                             <mat-grid-tile-footer>
                                 <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
@@ -245,6 +269,10 @@
                         <span class="productClass">$ {{product.price == '' ? '0' : product.price}}</span>
                         <span class="productInfo">{{product.units == '' ? '0' : product.units}} {{ product.units == '1' ? 'unidad' : 'unidades'}} a $ {{product.unitPrice == '' ? '0' : product.unitPrice }} c/u</span> 
                         <span *ngIf="product.dsc != ''" class="productInfo">{{product.dsc}}% de descuento</span> 
+                        <span *ngIf="product.products" class="productInfo">Items en el paquete:</span>
+                            <span class="productInfo2" *ngFor="let product of product.products">
+                                {{product}}
+                            </span>
                     </li>
                     <hr style="margin: 10px;"/> 
                 </div>

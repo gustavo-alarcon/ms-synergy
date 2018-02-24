@@ -1,6 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { MatDialogRef, MatDialog } from '@angular/material';
+import { InventariosService } from '../../servicios/almacenes/inventarios.service';
+
 
 @Component({
   selector: 'app-payment',
@@ -13,12 +15,34 @@ export class PaymentComponent implements OnInit {
   entregado : string = '';
   vuelto : string = '';
   paymentType : any = '';
+  documentos: any[] = [];
+  numerosSerie: any[] [];
+  selectedDocument : any = '';
+  serieSeleccionado : any = '';
+  correlativo : any = '';
+  inputCorrelativo:boolean = true;
 
   constructor(
     public DialogRef : MatDialogRef<PaymentComponent>,
+    private inventariosService : InventariosService,
     @Inject(MAT_DIALOG_DATA) public data : any
   ) { 
     this.customer = data;
+
+    this.inventariosService.currentDataDocumentos.subscribe(res => {  
+      let _serie = '';
+      this.numerosSerie = [];
+      res.forEach(element => {
+        if(element.Naturaleza== 'SALIDA'){
+          this.documentos.push(element);
+          if (element['Numtienda'] != _serie && this.numerosSerie.indexOf(element['Numtienda']) < 0) {
+            this.numerosSerie.push(element['Numtienda']);
+            _serie = element['Numtienda'];
+          }
+        }
+      });
+      console.log(this.documentos);
+    });
 
   }
 
@@ -26,6 +50,12 @@ export class PaymentComponent implements OnInit {
     
   }
   
+  changeDocument(){
+    console.log(this.selectedDocument);
+    console.log(this.serieSeleccionado);
+    this.correlativo = this.selectedDocument.Correlativo_actual;
+  }
+
   onNoClick(){
     this.DialogRef.close(false);
   }

@@ -19,8 +19,8 @@ export class MessagesComponent implements OnInit{
   fran:boolean=false;
   prom:boolean=false;
   clientsSales:Client[];  
-  displayedColumns=['name','mail','phone','place','birthday','type','seleccionar'];
-  displayedColumns2=['name','phone','type','seleccionar'];
+  displayedColumns=['name','mail','phone','place','birthday','type','seleccionar','eliminar'];
+  displayedColumns2=['name','phone','type','seleccionar','eliminar'];
   dataSource: MatTableDataSource<any>; 
   isLoadingResults = false;
   isLoadingBubbles = false;
@@ -29,7 +29,8 @@ export class MessagesComponent implements OnInit{
   send : string='';
   programmed : string = '';
   balance : string = '';
- 
+  edit : boolean = false;
+  message1 : string = "Haga click para personalizar un mensaje";
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   
@@ -70,6 +71,17 @@ export class MessagesComponent implements OnInit{
       this.dataSource = new MatTableDataSource(this.clientsSales);  
       this.dataSource.paginator = this.paginator;
     });
+  }
+
+  slideToogleChange(e){
+    if(e.checked){
+      this.edit = true;
+      this.message1 = "Haga click en una celda para actualizarla";
+    }
+    else{
+      this.edit = false;
+      this.message1 = "Haga click para personalizar un mensaje";
+    }
   }
 
   getBubbleValues(){
@@ -160,11 +172,15 @@ export class MessagesComponent implements OnInit{
       for(let i=0;i<this.clientsSales.length;i++){
           this.clientsSales[i].select=true;
       }
+      this.prom = true;
+      this.fran = true;
     }
     else{
       for(let i=0;i<this.clientsSales.length;i++){
           this.clientsSales[i].select=false;
       }
+      this.prom = false;
+      this.fran = false;
     }
   }
 
@@ -188,9 +204,13 @@ export class MessagesComponent implements OnInit{
     }
     if(e.checked==true){
       this.fran=true;
+      if(this.prom == true)
+        this.all = true;
     }
     else{
       this.fran=false;
+      if(this.all == true)
+        this.all = false;
     }
   }
 
@@ -205,9 +225,13 @@ export class MessagesComponent implements OnInit{
     }
     if(e.checked==true){
       this.prom=true;
+      if(this.fran == true)
+        this.all = true;
     }
     else{
       this.prom=false;
+      if(this.all == true)
+        this.all = false;
     }
   }
 

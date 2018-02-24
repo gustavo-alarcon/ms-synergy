@@ -58,20 +58,38 @@
   </div>
   <div class="content">
     <div class="paymentList">
-      <mat-form-field class="full-width">
-        <mat-select placeholder="Tipo de pago" [(ngModel)]="paymentType">
-          <mat-option value="0">Efectivo</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <div style="width: 50%;">
+      <div class="selects">
+        <mat-form-field name="paymentType" class="full-width" ngDefaultControl>
+          <mat-select placeholder="Tipo de pago" [(ngModel)]="paymentType">
+            <mat-option class="w3-hover-gray" value="0">Efectivo</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field name="selectedDocument" class="full-width" ngDefaultControl>
+          <mat-select placeholder="Documento" (change)="changeDocument()"  [(ngModel)]="selectedDocument">
+              <mat-option class="w3-hover-gray" *ngFor="let documento of documentos"
+                        [value]="documento" >{{ documento.Nombre }}</mat-option>
+          </mat-select>
+        </mat-form-field> 
+
+        <mat-form-field name="serie" class="full-width" ngDefaultControl>
+          <mat-select placeholder="N°Serie" [(ngModel)]="serieSeleccionado">
+              <mat-option class="w3-hover-gray" *ngFor="let serie of numerosSerie"
+              [value]="serie" >{{ serie }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field name="correlativo" class="full-width" ngDefaultControl>
+          <input matInput type="number" min="0" placeholder="N°Doc" [(ngModel)]="correlativo" disabled="true">
+        </mat-form-field>
+      </div>
+      <div style="width: 50%; background-color : #bda6a6 ">
         <span class='listIGV'>Subtotal: $ {{customer.subtotal}}</span>
         <span class='listIGV'>IGV: $ {{customer.taxes}}</span>
         <span class='listTotal'>Total: $ {{customer.total}}</span>
-        <hr />
       </div>
-      <div style="width: 50%;">
+      <div style="width: 50%; background-color : #de8787">
         <span class='listIGV'>Entregado: $ {{entregado == '' ? '0' : entregado}}</span>
-        <hr />
         <span class='listIGV'>Vuelto: $ {{vuelto == '' ? '0' : vuelto}}</span>
       </div>
     </div>

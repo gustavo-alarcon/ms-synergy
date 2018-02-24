@@ -26,10 +26,24 @@
           <p class="meraki-font-s5">Inventarios</p>
         </div>
         <div class="w3-center" style="width:100px">
-          <button mat-fab class="w3-orange w3-hover-brown" routerLink="/puntoVenta">
-            <mat-icon>shopping_cart</mat-icon>
-          </button>
-          <p class="meraki-font-s5">Ventas</p>
+            <div class="buttonPOS">
+              <button mat-fab class="w3-orange w3-hover-brown" (click)="openMenu()">
+                <mat-icon>credit_card</mat-icon>
+              </button>
+              <p class="meraki-font-s5">POS</p>
+              <div class="options" [@menuInOut]="menu">
+                <div class="historial">
+                    <button matTooltip="Historial" class="w3-hover-purple" matTooltipPosition="above" matTooltipClass="tooltip" mat-mini-fab routerLink="/historialVentas">
+                      <mat-icon>assignment</mat-icon>
+                    </button>
+                  </div>
+                  <div class="pos">
+                    <button matTooltip="Ventas" class="w3-hover-purple" matTooltipClass="tooltip" matTooltipPosition="above" mat-mini-fab routerLink="/puntoVenta">
+                      <mat-icon>shopping_cart</mat-icon>
+                    </button>
+                  </div>
+              </div>
+          </div>
         </div>
         <div class="w3-center" style="width:100px">
           <button mat-fab class="w3-orange w3-hover-brown" [disabled]="!perms[0]['Servicios']">

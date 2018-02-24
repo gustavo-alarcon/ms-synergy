@@ -4,8 +4,10 @@ import { LoginService } from './../login/login.service';
 import { Headers, Http, Response, RequestOptions } from '@angular/http';
 import { Injectable } from '@angular/core';
 import 'rxjs/Rx';
+import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
-import { MatSnackBar } from '@angular/material';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable()
 export class InventariosService {
@@ -47,12 +49,13 @@ export class InventariosService {
   currentMoneda = this.moneda.asObservable();
 
   simTime: number = 0;
-  snackDuration: number = 10000;
+  toastrDuration: number = 10000;
 
   constructor(private http: Http,
               private loginService: LoginService,
               private router: Router,
-              public snackBar: MatSnackBar) {
+              private toastr: ToastrService,
+              private http2:HttpClient) {
 
     this.loginService.currentUserInfo.subscribe(res => {
       this.db = res[0]['Db'];
@@ -79,37 +82,27 @@ export class InventariosService {
         
         switch (data['Tabla']) {
           case 'zonas_sucursales':
-            this.snackBar.open('Almacen: ' + res.text(), 'Cerrar',{
-              duration: 6000
-            });
+            this.toastr.warning('Almacen: ' + res.text(), 'Cerrar',);
             this.getAlmacenes();
             this.router.navigate(['inventarios/almacenes']);
             break;
           case 'terceros':
-            this.snackBar.open('Terceros: ' + res.text(), 'Cerrar',{
-              duration: 6000
-            });
+            this.toastr.warning('Terceros: ' + res.text(), 'Cerrar');
             this.getTerceros();
             this.router.navigate(['inventarios/terceros']);
             break;
           case 'documentos':
-            this.snackBar.open('Documentos: ' + res.text(), 'Cerrar',{
-              duration: 6000
-            });
+            this.toastr.warning('Documentos: ' + res.text(), 'Cerrar');
             this.getDocumentos();
             this.router.navigate(['inventarios/documentos']);
             break;
           case 'grupos':
-            this.snackBar.open('Grupos: ' + res.text(), 'Cerrar',{
-              duration: 6000
-            });
+            this.toastr.warning('Grupos: ' + res.text(), 'Cerrar');
             this.getGrupos();
             this.router.navigate(['inventarios/grupos']);
             break;
           case 'productos':
-            this.snackBar.open('Productos: ' + res.text(), 'Cerrar',{
-              duration: 6000
-            });
+            this.toastr.warning('Productos: ' + res.text(), 'Cerrar');
             this.getProductos();
             this.router.navigate(['inventarios/productos']);
             break;
@@ -119,9 +112,7 @@ export class InventariosService {
         
       },
       err => {
-        this.snackBar.open('Error de conexión', 'Cerrar',{
-          duration: this.snackDuration
-        });
+        this.toastr.warning('Error de conexión', 'Cerrar');
         this.queryLoading(false);
       }
     );
@@ -132,9 +123,7 @@ export class InventariosService {
     this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-exportdata.php', JSON.stringify(data))
       .subscribe( 
         res => {
-          this.snackBar.open(res.text(), 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning(res.text(), 'Cerrar');
       })
   }
 
@@ -153,9 +142,7 @@ export class InventariosService {
           
       },
       err => {
-        this.snackBar.open('Error de conexión', 'Cerrar',{
-          duration: this.snackDuration
-        });
+        this.toastr.warning('Error de conexión', 'Cerrar');
         this.queryLoading(false);
       });
   }
@@ -166,16 +153,12 @@ export class InventariosService {
     this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-almacenes-cre.php?db='+this.db, JSON.stringify(data))
       .subscribe(
         res => {
-          this.snackBar.open(res.text(), 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning(res.text(), 'Cerrar');
           this.getAlmacenes();
           this.router.navigate(['inventarios/almacenes']);
         },
         err => {
-          this.snackBar.open('Error de conexión', 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning('Error de conexión', 'Cerrar');
           this.queryLoading(false);
         }
       );
@@ -187,15 +170,11 @@ export class InventariosService {
     this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-almacenes-mod.php?db='+this.db, JSON.stringify(data))
       .subscribe(
         res => {
-          this.snackBar.open(res.text(), 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning(res.text(), 'Cerrar');
           this.getAlmacenes();
         },
         err => {
-          this.snackBar.open('Error de conexión', 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning('Error de conexión', 'Cerrar');
           this.queryLoading(false);
         }
       );
@@ -218,9 +197,7 @@ export class InventariosService {
         
       },
       err => {
-        this.snackBar.open('Error de conexión', 'Cerrar',{
-          duration: this.snackDuration
-        });
+        this.toastr.warning('Error de conexión', 'Cerrar');
         this.queryLoading(false);
       });
   }
@@ -231,17 +208,13 @@ export class InventariosService {
     this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-terceros-cre.php?db='+this.db, JSON.stringify(data))
       .subscribe(
         res => {
-          this.snackBar.open(res.text(), 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning(res.text(), 'Cerrar');
           this.getTerceros();
           if(page == "0")
             this.router.navigate(['inventarios/terceros']);
         },
         err => {
-          this.snackBar.open('Error de conexión', 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning('Error de conexión', 'Cerrar');
           this.queryLoading(false);
         }
       );
@@ -253,15 +226,11 @@ export class InventariosService {
     this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-terceros-mod.php?db='+this.db, JSON.stringify(data))
       .subscribe(
         res => {
-          this.snackBar.open(res.text(), 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning(res.text(), 'Cerrar');
           this.getTerceros();
         },
         err => {
-          this.snackBar.open('Error de conexión', 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning('Error de conexión', 'Cerrar');
           this.queryLoading(false);
         }
       );
@@ -282,9 +251,7 @@ export class InventariosService {
         
       },
       err => {
-        this.snackBar.open('Error de conexión', 'Cerrar',{
-          duration: this.snackDuration
-        });
+        this.toastr.warning('Error de conexión', 'Cerrar');
         this.queryLoading(false);
       });
   }
@@ -295,16 +262,12 @@ export class InventariosService {
     this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-documentos-cre.php?db='+this.db, JSON.stringify(data))
       .subscribe(
         res => {
-          this.snackBar.open(res.text(), 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning(res.text(), 'Cerrar');
           this.getDocumentos();
           this.router.navigate(['inventarios/documentos']);
         },
         err => {
-          this.snackBar.open('Error de conexión', 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning('Error de conexión', 'Cerrar');
           this.queryLoading(false);
         }
       );
@@ -316,19 +279,22 @@ export class InventariosService {
     this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-documentos-mod.php?db='+this.db, JSON.stringify(data))
       .subscribe(
         res => {
-          this.snackBar.open(res.text(), 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning(res.text(), 'Cerrar');
           this.getDocumentos();
         },
         err => {
-          this.snackBar.open('Error de conexión', 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning('Error de conexión', 'Cerrar');
           this.queryLoading(false);
         }
       );
   }
+
+  guardarImagen(fileToUpload: File){
+    let formData= new FormData();
+    formData.append('file', fileToUpload, fileToUpload.name);
+    return this.http2.post('http://www.meraki-s.com/rent/ms-synergy/php/test/upload_image.php  ',formData, {responseType: 'text' });
+  }
+
 
   actualizarCorrelativo(data: JSON) {
     this.queryLoading(true);
@@ -338,15 +304,13 @@ export class InventariosService {
       .subscribe(
         res => {
           /*
-          this.snackBar.open(res.text(), 'Cerrar',{
-            duration: this.snackDuration
+          this.toastr.warning(res.text(), 'Cerrar',{
+            duration: this.toastrDuration
           });*/
           this.getDocumentos();
         },
         err => {
-          this.snackBar.open('Error de conexión', 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning('Error de conexión', 'Cerrar');
           this.queryLoading(false);
         }
       );
@@ -366,9 +330,7 @@ export class InventariosService {
         }, this.simTime);
       },
       err => {
-        this.snackBar.open('Error de conexión', 'Cerrar',{
-          duration: this.snackDuration
-        });
+        this.toastr.warning('Error de conexión', 'Cerrar');
         this.queryLoading(false);
       });
   }
@@ -379,16 +341,12 @@ export class InventariosService {
     this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-grupos-cre.php?db='+this.db, JSON.stringify(data))
       .subscribe(
         res => {
-          this.snackBar.open(res.text(), 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning(res.text(), 'Cerrar');
           this.getGrupos();
           this.router.navigate(['inventarios/grupos']);
         },
         err => {
-          this.snackBar.open('Error de conexión', 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning('Error de conexión', 'Cerrar');
           this.queryLoading(false);
         }
       );
@@ -400,15 +358,11 @@ export class InventariosService {
     this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-grupos-mod.php?db='+this.db, JSON.stringify(data))
       .subscribe(
         res => {
-          this.snackBar.open(res.text(), 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning(res.text(), 'Cerrar');
           this.getGrupos();
         },
         err => {
-          this.snackBar.open('Error de conexión', 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning('Error de conexión', 'Cerrar');
           this.queryLoading(false);
         }
       );
@@ -429,9 +383,7 @@ export class InventariosService {
         
       },
       err => {
-        this.snackBar.open('Error de conexión', 'Cerrar',{
-          duration: this.snackDuration
-        });
+        this.toastr.warning('Error de conexión', 'Cerrar');
         this.queryLoading(false);
       });
   }
@@ -442,16 +394,12 @@ export class InventariosService {
     this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-productos-cre.php?db='+this.db, JSON.stringify(data))
       .subscribe(
         res => {
-          this.snackBar.open(res.text(), 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning(res.text(), 'Cerrar');
           this.getProductos();
           this.router.navigate(['inventarios/productos']);
         },
         err => {
-          this.snackBar.open('Error de conexión', 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning('Error de conexión', 'Cerrar');
           this.queryLoading(false);
         }
       );
@@ -463,15 +411,11 @@ export class InventariosService {
     this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-productos-mod.php?db='+this.db, JSON.stringify(data))
       .subscribe(
         res => {
-          this.snackBar.open(res.text(), 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning(res.text(), 'Cerrar');
           this.getProductos();
         },
         err => {
-          this.snackBar.open('Error de conexión', 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning('Error de conexión', 'Cerrar');
           this.queryLoading(false);
         }
       );
@@ -483,16 +427,12 @@ export class InventariosService {
       .subscribe(
         res => {
          
-          this.snackBar.open(res.text(), 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning(res.text(), 'Cerrar');
           this.getProductos();
         },
         err => {
           
-          this.snackBar.open('Error de conexión', 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning('Error de conexión', 'Cerrar');
           this.queryLoading(false);
         }
       );
@@ -506,15 +446,11 @@ export class InventariosService {
       .subscribe(
         res => {
           let message = res.text();
-          this.snackBar.open(message, 'Cerrar',{
-            duration:this.snackDuration
-          });
+          this.toastr.warning(message, 'Cerrar');
           this.getProductos();
         },
         err => {
-          this.snackBar.open('Error de conexión', 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning('Error de conexión', 'Cerrar');
           this.queryLoading(false);
         }
       );
@@ -536,9 +472,7 @@ export class InventariosService {
         
       },
       err => {
-        this.snackBar.open('Error de conexión', 'Cerrar',{
-          duration: this.snackDuration
-        });
+        this.toastr.warning('Error de conexión', 'Cerrar');
         this.queryLoading(false);
       });
   }
@@ -550,16 +484,12 @@ export class InventariosService {
     this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-paquetes-cre.php?db='+this.db, JSON.stringify(data))
       .subscribe(
         res => {
-          this.snackBar.open(res.text(), 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning(res.text(), 'Cerrar');
           this.getPaquetes();
           this.router.navigate(['inventarios/productos']);
         },
         err => {
-          this.snackBar.open('Error de conexión', 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning('Error de conexión', 'Cerrar');
           this.queryLoading(false);
         }
       );
@@ -571,15 +501,11 @@ export class InventariosService {
     this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-paquetes-mod.php?db='+this.db, JSON.stringify(data))
       .subscribe(
         res => {
-          this.snackBar.open(res.text(), 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning(res.text(), 'Cerrar');
           this.getPaquetes();
         },
         err => {
-          this.snackBar.open('Error de conexión', 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning('Error de conexión', 'Cerrar');
           this.queryLoading(false);
         }
       );
@@ -591,15 +517,11 @@ export class InventariosService {
     this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-paquetes-bor.php?db='+this.db, data)
       .subscribe(
         res => {
-          this.snackBar.open(res.text(), 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning(res.text(), 'Cerrar');
           this.getPaquetes();
         },
         err => {
-          this.snackBar.open('Error de conexión', 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning('Error de conexión', 'Cerrar');
           this.queryLoading(false);
         }
       );
@@ -612,16 +534,12 @@ export class InventariosService {
     this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-movimientos-reg.php?db='+this.db, JSON.stringify(data))
       .subscribe(
         res => {
-          this.snackBar.open(res.text(), 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning(res.text(), 'Cerrar');
           this.queryLoading(false);
           this.router.navigate(['inventarios/movimientos']);
         },
         err => {
-          this.snackBar.open('Error de conexión', 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning('Error de conexión', 'Cerrar');
           this.queryLoading(false);
         }
       );
@@ -642,9 +560,7 @@ export class InventariosService {
           this.consultaKardexSend.next(true);
         },
         err => {
-          this.snackBar.open('Error de conexión', 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning('Error de conexión', 'Cerrar');
           this.queryLoading(false);
         }
       );
@@ -665,9 +581,7 @@ export class InventariosService {
           this.consultaStockSend.next(true);
         },
         err => {
-          this.snackBar.open('Error de conexión:' + err, 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning('Error de conexión:' + err, 'Cerrar');
           this.queryLoading(false);
         }
       );
@@ -687,14 +601,10 @@ export class InventariosService {
           this.queryLoading(false);
           this.consultaReportemovSend.next(true);
           this.moneda.next(res['records'][0]['Moneda']);
-          this.snackBar.open('listo!', 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning('listo!', 'Cerrar');
         },
         err => {
-          this.snackBar.open(err, 'Cerrar',{
-            duration: this.snackDuration
-          });
+          this.toastr.warning(err, 'Cerrar');
           this.queryLoading(false);
         }
       );

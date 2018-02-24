@@ -46,3 +46,9 @@ h1.example-app-name {
     min-width: 300px;
     position: relative;
   }
+
+  .tooltip{
+    font-size: 15px;
+    background: rgba(0,0,0,0.8);
+  }
+  

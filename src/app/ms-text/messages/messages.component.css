@@ -117,13 +117,12 @@ mat-card{
 .type::first-letter{
     text-transform: capitalize;
 }
-
-mat-table{
-    max-height: 500px;
-}
-
 mat-cell{
     padding: 5px;
+}
+
+.add-comment {
+    opacity: 0.4;
 }
 
 .mat-column-seleccionar {

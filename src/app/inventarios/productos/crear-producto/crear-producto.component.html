@@ -164,7 +164,7 @@
                 type="submit"
                 color="primary"
                 (change)="checkDuplicates(nombre.value,codigo.value,almacen.value)"
-                [disabled]="!crearProductoForm.valid"
+                [disabled]="!crearProductoForm.valid && !crearProd"
                     >CREAR</button>
     </form>
 </div>

@@ -55,6 +55,7 @@ export class PuntoVentaComponent implements OnInit {
   selectedIndex : any;
   clicked = false;
   almacenes: any[] = [];
+  documentos: any[] = [];
   productos_filtrado: any[] = [];
   pack_nombre: any[] = [];
   productos: any[] = [];
@@ -75,6 +76,7 @@ export class PuntoVentaComponent implements OnInit {
   checked : boolean;
   operationOption : number = 1;
   igvType : number = 1;
+  numerosSerie: any[] [];
 
   constructor(
     private inventariosService : InventariosService,
@@ -96,6 +98,7 @@ export class PuntoVentaComponent implements OnInit {
       Producto: '',
       Paquete: '',
     });
+
     this.inventariosService.currentDataAlmacenes.subscribe(res => {
       this.almacenes = res;
       this.almacenes.sort(this.sortBy('Nombre'));
@@ -412,6 +415,7 @@ export class PuntoVentaComponent implements OnInit {
   filtrarProductos(alm: string){
     
     this.productos_filtrado = [];
+    this.paquetes_filtrado = [];
 
     this.productos.forEach(element => {
       if(element['Zona'] === alm){
@@ -433,13 +437,16 @@ export class PuntoVentaComponent implements OnInit {
         this.pack_nombre.push({
           'Nombre' : this.paquetes_filtrado[i].Paquete,
           'Venta' : this.paquetes_filtrado[i].Venta * this.paquetes_filtrado[i].Cantidad,
-          'ID' :   this.paquetes_filtrado[i].ID
+          'ID' :   this.paquetes_filtrado[i].ID,
+          'Productos' : []
         });
+        this.pack_nombre[this.pack_nombre.length-1].Productos.push(this.paquetes_filtrado[i].Nombre);
         _nombre = this.paquetes_filtrado[i].Paquete;
         _position = this.pack_nombre.length-1;
       }
       else{
         this.pack_nombre[_position].Venta = parseFloat(this.pack_nombre[_position].Venta) + parseFloat(this.paquetes_filtrado[i].Venta);
+        this.pack_nombre[_position].Productos.push(this.paquetes_filtrado[i].Nombre);
       }
     }
     this.filteredOptions = this.productos_filtrado;
@@ -507,7 +514,7 @@ export class PuntoVentaComponent implements OnInit {
         });
         this.listCustomers[this.currentCustomer].total += +(this.listCustomers[this.currentCustomer].listAction[this.listCustomers[this.currentCustomer].listAction.length-1].price);
         this.listCustomers[this.currentCustomer].subtotal = (this.listCustomers[this.currentCustomer].total/1.18);
-      this.listCustomers[this.currentCustomer].taxes = this.listCustomers[this.currentCustomer].total - this.listCustomers[this.currentCustomer].subtotal;
+        this.listCustomers[this.currentCustomer].taxes = this.listCustomers[this.currentCustomer].total - this.listCustomers[this.currentCustomer].subtotal;
         this.listCustomers[this.currentCustomer].lastItemClicked = this.productos_filtrado[i].Codigo;
         this.listCustomers[this.currentCustomer].total = parseFloat(this.listCustomers[this.currentCustomer].total.toFixed(2));
         this.listCustomers[this.currentCustomer].taxes = parseFloat(this.listCustomers[this.currentCustomer].taxes.toFixed(2));
@@ -531,13 +538,16 @@ export class PuntoVentaComponent implements OnInit {
           units : '1',
           id : this.pack_nombre[i].ID,
           dsc : '',
-          unitPrice : '' + this.pack_nombre[i].Venta
+          unitPrice : '' + this.pack_nombre[i].Venta,
+          products : this.pack_nombre[i].Productos
         });
         this.listCustomers[this.currentCustomer].total += +(this.listCustomers[this.currentCustomer].listAction[this.listCustomers[this.currentCustomer].listAction.length-1].price);
+        this.listCustomers[this.currentCustomer].subtotal = (this.listCustomers[this.currentCustomer].total/1.18);
         this.listCustomers[this.currentCustomer].taxes = (this.listCustomers[this.currentCustomer].total*18)/100;
         this.listCustomers[this.currentCustomer].lastItemClicked = this.pack_nombre[i].ID;
         this.listCustomers[this.currentCustomer].total = parseFloat(this.listCustomers[this.currentCustomer].total.toFixed(2));
         this.listCustomers[this.currentCustomer].taxes = parseFloat(this.listCustomers[this.currentCustomer].taxes.toFixed(2));
+        this.listCustomers[this.currentCustomer].subtotal = parseFloat(this.listCustomers[this.currentCustomer].subtotal.toFixed(2));
       }
       else{
         this.toastr.warning('El paquete ya esta en la lista de venta, haga click en el para aumentar la cantidad','Cuidado');
@@ -562,7 +572,7 @@ export class PuntoVentaComponent implements OnInit {
   }
 
   openPayment(){
-    if(this.listCustomers[this.currentCustomer].listAction.length != 0){
+    if(this.listCustomers[this.currentCustomer].listAction.length != 0 && this.listCustomers[this.currentCustomer].client != null){
       let dialogRef = this.dialog.open(PaymentComponent,{
         width : '95%',
         height : '90vh',
@@ -587,7 +597,10 @@ export class PuntoVentaComponent implements OnInit {
       });
     }
     else
-      this.toastr.warning("No hay ningun producto o paquete seleccionado","Cuidado");
+      if(this.listCustomers[this.currentCustomer].client == null)
+        this.toastr.warning("Seleccione un cliente","Cuidado");
+      if(this.listCustomers[this.currentCustomer].listAction.length == 0)
+        this.toastr.warning("No hay ningun producto o paquete seleccionado","Cuidado");
   }
 }
 
@@ -607,4 +620,5 @@ interface ListAction {
   id : number;
   dsc : string;
   unitPrice : string;
+  products? : string[];
 }

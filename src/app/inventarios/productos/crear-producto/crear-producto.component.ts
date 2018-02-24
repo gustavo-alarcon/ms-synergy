@@ -1,7 +1,8 @@
 import { MatSnackBar } from '@angular/material';
 import { InventariosService } from './../../../servicios/almacenes/inventarios.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import {FormControl, Validators, FormGroup, FormBuilder} from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-crear-producto',
@@ -10,6 +11,7 @@ import {FormControl, Validators, FormGroup, FormBuilder} from '@angular/forms';
 })
 export class CrearProductoComponent implements OnInit {
 
+  fileToUpload: File = null;    
   inputFile = {
     selectButton: {
       "background-color": "#fff",
@@ -62,7 +64,7 @@ export class CrearProductoComponent implements OnInit {
 
   constructor(private fb: FormBuilder,
               private inventariosService: InventariosService,
-              private snackBar: MatSnackBar) { }
+              private toast: ToastrService) { }
 
   ngOnInit() {
 
@@ -92,7 +94,8 @@ export class CrearProductoComponent implements OnInit {
       CantidadPaq: '',
       Moneda: ['', Validators.required],
       Compra: ['', Validators.required],
-      Venta: ['', Validators.required]
+      Venta: ['', Validators.required],
+      avatar: null
     });
 
   }
@@ -103,7 +106,9 @@ export class CrearProductoComponent implements OnInit {
         Compra: this.crearProductoForm.value['Compra'].toFixed(2),
         Venta: this.crearProductoForm.value['Venta'].toFixed(2)
       })
-      this.inventariosService.crearProducto(this.crearProductoForm.value);
+      this.inventariosService.crearProducto(this.crearProductoForm.value);  
+        this.inventariosService.guardarImagen(this.images).subscribe(data=>{
+        });
     }
   }
 
@@ -115,7 +120,7 @@ export class CrearProductoComponent implements OnInit {
   }
 
   imageFinishedUploading(file) {
-    this.images = file;
+    this.images = file.file;
   }
 
   checkByNombre(target:string) {
@@ -175,9 +180,7 @@ export class CrearProductoComponent implements OnInit {
     });
 
     if ( this.message !== '') {
-      this.snackBar.open(this.message, 'Cerrar',{
-        duration: 10000,
-      });
+      this.toast.warning(this.message, 'Cerrar');
     }
     
   }
