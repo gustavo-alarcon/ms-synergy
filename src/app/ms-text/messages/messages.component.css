@@ -111,7 +111,12 @@ button{
 
 mat-card{
     padding: 20px 0px;
-    margin: 5vw;
+    margin: 30px 5vw;
+    border-radius: 15px
+}
+
+mat-card-content {
+    padding: 10px;
 }
 
 .type::first-letter{

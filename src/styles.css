@@ -52,3 +52,6 @@ h1.example-app-name {
     background: rgba(0,0,0,0.8);
   }
   
+  .changeBar mat-ink-bar.mat-ink-bar{
+    background-color: rgb(209, 107, 199) !important;
+}

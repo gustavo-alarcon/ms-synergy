@@ -90,7 +90,8 @@ import { AddClient2Component } from './punto-venta/clients/add-client/add-client
 import { SalesHistoryComponent } from './sales-history/sales-history.component';
 import { SatPopoverModule } from '@ncstate/sat-popover';
 import { InlineEditComponent } from './ms-text/inline-edit/inline-edit.component';
-import { HistoryComponent } from './ms-text/history/history.component'
+import { HistoryComponent } from './ms-text/history/history.component';
+import { InlineEditHistoryComponent } from './ms-text/history/inline-edit-history/inline-edit-history.component'
 
 
 @NgModule({
@@ -132,7 +133,8 @@ import { HistoryComponent } from './ms-text/history/history.component'
     AddClient2Component,
     SalesHistoryComponent,
     InlineEditComponent,
-    HistoryComponent
+    HistoryComponent,
+    InlineEditHistoryComponent
   ],
   imports: [
     BrowserModule,

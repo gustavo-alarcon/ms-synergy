@@ -1,13 +1,13 @@
-<div class='main'>
+<div class='main w3-sand'>
     <div class="w3-container w3-white w3-card-4 w3-animate-top" style="margin-left:5vw;margin-right:5vw;border-radius:0px 0px 10px 10px">
         <div class="row middle-xs w3-bar" style="padding:12px 24px">
             <span class="w3-xlarge meraki-font-s5">Punto de venta</span>
         </div>
     </div>
-    <div class="container"> 
+    <div class="container">
         <div class="products">
-            <div *ngIfMediaQuery="'(max-width: 700px)'" >
-                <mat-grid-list cols="2" rowHeight="150px">
+            <div *ngIfMediaQuery="'(max-width: 700px)'">
+                <mat-grid-list cols="2" rowHeight="150px" gutterSize="5px">
                     <div *ngIf='productsOrPackages==0'>
                         <mat-grid-tile @images (click)="addToList(i)" *ngFor="let option of filteredOptions; let i = index">
                             <mat-grid-tile-header>
@@ -42,44 +42,8 @@
                     </div>
                 </mat-grid-list>
             </div>
-            <div *ngIfMediaQuery="'(min-width: 701px) and (max-width: 1000px)'" >
-                <mat-grid-list cols="3" rowHeight="200px">
-                    <div *ngIf='productsOrPackages==0'>
-                        <mat-grid-tile @images (click)="addToList(i)" *ngFor="let option of filteredOptions ; let i = index">
-                            <mat-grid-tile-header>
-                                <mat-icon mat-grid-avatar>info_outline</mat-icon>
-                                Precio : S/. {{option.Venta}}
-                            </mat-grid-tile-header>
-                            <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
-                            <mat-grid-tile-footer>
-                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
-                                <mat-icon>star_border</mat-icon>
-                            </mat-grid-tile-footer>
-                        </mat-grid-tile>
-                    </div>
-                    <div *ngIf='productsOrPackages==1'>
-                        <mat-grid-tile @images (click)="addToList(i)" *ngFor="let option of filteredPackages ; let i = index">
-                            <mat-grid-tile-header>
-                                <mat-icon mat-grid-avatar>info_outline</mat-icon>
-                                Precio : S/. {{option.Venta}}
-                            </mat-grid-tile-header>
-                            <span class="packageProducts">
-                                Productos :
-                                <span *ngFor="let product of option.Productos">
-                                    {{product}}
-                                </span>
-                            </span>
-                            <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
-                            <mat-grid-tile-footer>
-                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
-                                <mat-icon>star_border</mat-icon>
-                            </mat-grid-tile-footer>
-                        </mat-grid-tile>
-                    </div>
-            </mat-grid-list>
-            </div>
-            <div *ngIfMediaQuery="'(min-width: 1001px) and (max-width: 1299px)'" >
-                <mat-grid-list cols="4" rowHeight="200px">
+            <div *ngIfMediaQuery="'(min-width: 701px) and (max-width: 1000px)'">
+                <mat-grid-list cols="3" rowHeight="200px" gutterSize="5px">
                     <div *ngIf='productsOrPackages==0'>
                         <mat-grid-tile @images (click)="addToList(i)" *ngFor="let option of filteredOptions ; let i = index">
                             <mat-grid-tile-header>
@@ -114,8 +78,44 @@
                     </div>
                 </mat-grid-list>
             </div>
-            <div *ngIfMediaQuery="'(min-width: 1300px)'" >
-                <mat-grid-list cols="5" rowHeight="200px">
+            <div *ngIfMediaQuery="'(min-width: 1001px) and (max-width: 1299px)'">
+                <mat-grid-list cols="4" rowHeight="200px" gutterSize="5px">
+                    <div *ngIf='productsOrPackages==0'>
+                        <mat-grid-tile @images (click)="addToList(i)" *ngFor="let option of filteredOptions ; let i = index">
+                            <mat-grid-tile-header>
+                                <mat-icon mat-grid-avatar>info_outline</mat-icon>
+                                Precio : S/. {{option.Venta}}
+                            </mat-grid-tile-header>
+                            <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
+                            <mat-grid-tile-footer>
+                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
+                                <mat-icon>star_border</mat-icon>
+                            </mat-grid-tile-footer>
+                        </mat-grid-tile>
+                    </div>
+                    <div *ngIf='productsOrPackages==1'>
+                        <mat-grid-tile @images (click)="addToList(i)" *ngFor="let option of filteredPackages ; let i = index">
+                            <mat-grid-tile-header>
+                                <mat-icon mat-grid-avatar>info_outline</mat-icon>
+                                Precio : S/. {{option.Venta}}
+                            </mat-grid-tile-header>
+                            <span class="packageProducts">
+                                Productos :
+                                <span *ngFor="let product of option.Productos">
+                                    {{product}}
+                                </span>
+                            </span>
+                            <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
+                            <mat-grid-tile-footer>
+                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
+                                <mat-icon>star_border</mat-icon>
+                            </mat-grid-tile-footer>
+                        </mat-grid-tile>
+                    </div>
+                </mat-grid-list>
+            </div>
+            <div *ngIfMediaQuery="'(min-width: 1300px)'">
+                <mat-grid-list cols="5" rowHeight="200px" gutterSize="5px">
                     <div *ngIf='productsOrPackages==0'>
                         <mat-grid-tile @images (click)="addToList(i)" *ngFor="let option of filteredOptions ; let i = index">
                             <mat-grid-tile-header>
@@ -151,82 +151,82 @@
                 </mat-grid-list>
             </div>
         </div>
-        <div class="panel" >
+        <div class="panel">
             <div class="panelInt">
-            <div (click)="executeOperation('1')" class="teclado one">
-                1
-            </div>
-            <div (click)="executeOperation('2')" class="teclado two">
-                2
-            </div>
-            <div (click)="executeOperation('3')" class="teclado three">
-                3
-            </div>
-            <div (click)="executeOperation('4')" class="teclado four">
-                4
-            </div>
-            <div (click)="executeOperation('5')" class="teclado five">
-                5
-            </div>
-            <div (click)="executeOperation('6')" class="teclado six">
-                6
-            </div>
-            <div (click)="executeOperation('7')" class="teclado seven">
-                7
-            </div>
-            <div (click)="executeOperation('8')" class="teclado eight">
-                8
-            </div>
-            <div (click)="executeOperation('9')" class="teclado nine">
-                9
-            </div>
-            <div class="teclado plus" (click)="addPlusOrNegative()">
-                +/-
-            </div>
-            <div (click)="executeOperation('0')" class="teclado zero">
-                0
-            </div>
-            <div class="teclado point" (click)="executeOperation('.')">
-                .
-            </div>
-            <div class="customer teclado" (click)="openClients()">
-                <mat-icon>account_circle</mat-icon>
-                <span class='nameIcon'>{{ listCustomers[currentCustomer].client == null ? 'Cliente' : listCustomers[currentCustomer].client.Nombre }}</span>
-            </div>
-            <div class="payment teclado" (click)="openPayment()">
-                <mat-icon>payment</mat-icon>
-                <span class='nameIcon'>Payment</span>
-            </div>
-            <div class="qty" (click)="changeOperationType(1)" 
-            [ngClass]="{operationFocused : operationOption == 1, teclado : operationOption != 1}">
-                Qty
-            </div>
-            <div class="disc" (click)="changeOperationType(2)" 
-            [ngClass]="{operationFocused : operationOption == 2, teclado : operationOption != 2}">
-                Disc
-            </div>
-            <div class="price2" (click)="changeOperationType(3)" 
-            [ngClass]="{operationFocused : operationOption == 3, teclado : operationOption != 3}">
-                Price
-            </div>
-            <div (click)="backspace()" class="teclado back">
-                <mat-icon>backspace</mat-icon>
-            </div>
+                <div (click)="executeOperation('1')" class="teclado one">
+                    1
+                </div>
+                <div (click)="executeOperation('2')" class="teclado two">
+                    2
+                </div>
+                <div (click)="executeOperation('3')" class="teclado three">
+                    3
+                </div>
+                <div (click)="executeOperation('4')" class="teclado four">
+                    4
+                </div>
+                <div (click)="executeOperation('5')" class="teclado five">
+                    5
+                </div>
+                <div (click)="executeOperation('6')" class="teclado six">
+                    6
+                </div>
+                <div (click)="executeOperation('7')" class="teclado seven">
+                    7
+                </div>
+                <div (click)="executeOperation('8')" class="teclado eight">
+                    8
+                </div>
+                <div (click)="executeOperation('9')" class="teclado nine">
+                    9
+                </div>
+                <div class="teclado plus" (click)="addPlusOrNegative()">
+                    +/-
+                </div>
+                <div (click)="executeOperation('0')" class="teclado zero">
+                    0
+                </div>
+                <div class="teclado point" (click)="executeOperation('.')">
+                    .
+                </div>
+                <div class="customer teclado" (click)="openClients()">
+                    <mat-icon>account_circle</mat-icon>
+                    <span class='nameIcon'>{{ listCustomers[currentCustomer].client == null ? 'Cliente' : listCustomers[currentCustomer].client.Nombre
+                        }}</span>
+                </div>
+                <div class="payment teclado" (click)="openPayment()">
+                    <mat-icon>payment</mat-icon>
+                    <span class='nameIcon'>Payment</span>
+                </div>
+                <div class="qty" (click)="changeOperationType(1)" [ngClass]="{operationFocused : operationOption == 1, teclado : operationOption != 1}">
+                    Qty
+                </div>
+                <div class="disc" (click)="changeOperationType(2)" [ngClass]="{operationFocused : operationOption == 2, teclado : operationOption != 2}">
+                    Disc
+                </div>
+                <div class="price2" (click)="changeOperationType(3)" [ngClass]="{operationFocused : operationOption == 3, teclado : operationOption != 3}">
+                    Price
+                </div>
+                <div (click)="backspace()" class="teclado back">
+                    <mat-icon>backspace</mat-icon>
+                </div>
             </div>
         </div>
-        <div class="filtro" [formGroup]="movimientoForm" >
-            <div class="flex">      
+        <div class="filtro" [formGroup]="movimientoForm">
+            <div class="flex">
                 <mat-form-field class="full-width2">
-                    <mat-select #almOrigen placeholder="Almacenes" panelClass="example-panel-blue" (change)="filtrarProductos(almOrigen.value)" [(ngModel)]='selectedWarehouse' [ngModelOptions]="{standalone: true}">
+                    <mat-select #almOrigen placeholder="Almacenes" panelClass="example-panel-blue" (change)="filtrarProductos(almOrigen.value)"
+                        [(ngModel)]='selectedWarehouse' [ngModelOptions]="{standalone: true}">
                         <mat-option class="w3-indigo w3-hover-gray" *ngFor="let almacen_d of almacenes" [value]="almacen_d.Nombre">{{ almacen_d.Nombre }}</mat-option>
                     </mat-select>
                     <mat-icon class="warehouseIcon" matPrefix>account_balance</mat-icon>
                 </mat-form-field>
-                <mat-slide-toggle [disabled]="disabledToogle" [checked]="checked" matTooltip="Solo para los productos" matTooltipPosition="above" labelPosition = 'before' (change)="slideToogleChange($event)">{{ optionDisplay == 1 ? 'Nombre' : 'Codigo' }}</mat-slide-toggle>
+                <mat-slide-toggle [disabled]="disabledToogle" [checked]="checked" matTooltip="Solo para los productos" matTooltipPosition="above"
+                    labelPosition='before' (change)="slideToogleChange($event)">{{ optionDisplay == 1 ? 'Nombre' : 'Codigo' }}</mat-slide-toggle>
             </div>
             <mat-tab-group (selectedTabChange)="onTabClick($event)">
                 <mat-tab label="Productos">
-                    <div class="insideFiltro">  
+                    <div class="insideFiltro">
                         <div class="productOptions">
                             <mat-form-field class="full-width">
                                 <input matInput (keyup)="pushKeyProducts()" [matAutocomplete]="auto" #prod formControlName="Producto" placeholder="Buscar productos">
@@ -242,7 +242,7 @@
                     </div>
                 </mat-tab>
                 <mat-tab label="Paquetes">
-                    <div class="insideFiltro">  
+                    <div class="insideFiltro">
                         <div class="productOptions">
                             <mat-form-field class="full-width">
                                 <input matInput (keyup)="pushKeyPackage()" [matAutocomplete]="auto2" #packNombre formControlName="Paquete" placeholder="Buscar paquetes">
@@ -264,17 +264,19 @@
             </div>
             <ul style='padding-left: 0;'>
                 <div @cardProduct *ngFor="let product of listCustomers[currentCustomer].listAction; let i = index">
-                    <li class="productList" (click)='clickProductList(i)' [ngClass]="{'newBackground' : listCustomers[currentCustomer].lastItemClicked == product.id }" [ngClass]="{'newBackground' : listCustomers[currentCustomer].lastItemClicked == product.id }">
+                    <li class="productList" (click)='clickProductList(i)' [ngClass]="{'newBackground' : listCustomers[currentCustomer].lastItemClicked == product.id }"
+                        [ngClass]="{'newBackground' : listCustomers[currentCustomer].lastItemClicked == product.id }">
                         <span class="productName">{{product.product}}</span>
                         <span class="productClass">$ {{product.price == '' ? '0' : product.price}}</span>
-                        <span class="productInfo">{{product.units == '' ? '0' : product.units}} {{ product.units == '1' ? 'unidad' : 'unidades'}} a $ {{product.unitPrice == '' ? '0' : product.unitPrice }} c/u</span> 
-                        <span *ngIf="product.dsc != ''" class="productInfo">{{product.dsc}}% de descuento</span> 
+                        <span class="productInfo">{{product.units == '' ? '0' : product.units}} {{ product.units == '1' ? 'unidad' : 'unidades'}} a
+                            $ {{product.unitPrice == '' ? '0' : product.unitPrice }} c/u</span>
+                        <span *ngIf="product.dsc != ''" class="productInfo">{{product.dsc}}% de descuento</span>
                         <span *ngIf="product.products" class="productInfo">Items en el paquete:</span>
-                            <span class="productInfo2" *ngFor="let product of product.products">
-                                {{product}}
-                            </span>
+                        <span class="productInfo2" *ngFor="let product of product.products">
+                            {{product}}
+                        </span>
                     </li>
-                    <hr style="margin: 10px;"/> 
+                    <hr style="margin: 10px;" />
                 </div>
             </ul>
             <div @totalTaxes *ngIf="listCustomers[currentCustomer].listAction.length != 0" class='listSummary'>
@@ -291,20 +293,20 @@
             </div>
         </div>
         <div class="tab">
-            <mat-tab-group [(selectedIndex)]="selectedIndex"  (selectedTabChange)="tabChanged($event)" #tab>
-            <mat-tab *ngFor="let customer of listCustomers; let i = index">
-                <ng-template mat-tab-label >
-                    <a @tab class="tabName" (click)="onSelectCustomer(i)">
-                        {{i+1}}
-                    </a>
-                    <mat-icon @tab *ngIf="i != 0" class="tabIcon" (click)="eraseCustomer(i)">highlight_off</mat-icon>
-                </ng-template>
-            </mat-tab>
-            <mat-tab>
-                <ng-template mat-tab-label>
-                    <mat-icon class="tabIcon tabName" (click)="addCustomer()">add_circle</mat-icon>
-                </ng-template>
-            </mat-tab>
+            <mat-tab-group [(selectedIndex)]="selectedIndex" (selectedTabChange)="tabChanged($event)" #tab>
+                <mat-tab *ngFor="let customer of listCustomers; let i = index">
+                    <ng-template mat-tab-label>
+                        <a @tab class="tabName" (click)="onSelectCustomer(i)">
+                            {{i+1}}
+                        </a>
+                        <mat-icon @tab *ngIf="i != 0" class="tabIcon" (click)="eraseCustomer(i)">highlight_off</mat-icon>
+                    </ng-template>
+                </mat-tab>
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon class="tabIcon tabName" (click)="addCustomer()">add_circle</mat-icon>
+                    </ng-template>
+                </mat-tab>
             </mat-tab-group>
         </div>
     </div>

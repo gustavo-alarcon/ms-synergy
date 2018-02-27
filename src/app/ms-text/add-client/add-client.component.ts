@@ -79,7 +79,7 @@ export class AddClientComponent implements OnInit {
   addClient(){
     this.isLoadingResults=true;
     if(this.date.invalid){
-      this.toastr.error('Tiene que escoger una fecha valida superior o igual a la actual','Error');
+      this.toastr.error('Tiene que escoger una fecha valida','Error');
       this.isLoadingResults=false;
     }
     else{

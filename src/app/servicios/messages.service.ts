@@ -43,4 +43,8 @@ export class MessagesService {
     return this.http.get('http://www.meraki-s.com/rent/ms-synergy/php/handler-getTextValues.php?db='+JSON.parse(this.bd));
   }
 
+  getMessages(db): Observable<any>{
+    return this.http.get("http://www.meraki-s.com/rent/ms-synergy/php/handler-getcustomers-sms.php?db="+JSON.parse(db));
+  }
+
 }

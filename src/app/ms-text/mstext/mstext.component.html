@@ -2,7 +2,8 @@
   <mat-sidenav mode="over" #sidenav class="w3-row">
     <div class="w3-row w3-padding meraki-font-s5 w3-pink">Menu</div>
     <button mat-button class="w3-block w3-left-align" (click)="changePage(1)"><mat-icon>message</mat-icon> Mensajes</button><br>
-    <button mat-button class="w3-block w3-left-align" (click)="changePage(2)"><mat-icon>build</mat-icon> Contactenos</button><br>
+    <button mat-button class="w3-block w3-left-align" (click)="changePage(2)"><mat-icon>assignment</mat-icon> Historial</button><br>
+    <button mat-button class="w3-block w3-left-align" (click)="changePage(3)"><mat-icon>build</mat-icon> Contactenos</button><br>
   </mat-sidenav>
   <div class="w3-container w3-white w3-card-4 w3-animate-top" style="margin-left:5vw;margin-right:5vw;border-radius:0px 0px 10px 10px">
     <div class="row middle-xs w3-bar" style="padding:12px 24px">
@@ -14,7 +15,8 @@
   <div>
     <div class="container" [@routerAnimation]="getRouteAnimation()">
       <section *ngIf="toogle=='1'"><messages></messages></section>
-      <section *ngIf="toogle=='2'"><contact></contact></section>
+      <section *ngIf="toogle=='2'"><history></history></section>
+      <section *ngIf="toogle=='3'"><contact></contact></section>
     </div>
   </div>
 </mat-sidenav-container>

@@ -1,5 +1,366 @@
-<div class="w3-container w3-white w3-card-4 w3-animate-top" style="margin-left:5vw;margin-right:5vw;border-radius:0px 0px 10px 10px">
-    <div class="row middle-xs w3-bar" style="padding:12px 24px">
-        <span class="w3-xlarge meraki-font-s5">Historial de ventas</span>
+<div class="w3-sand">
+    <div class="w3-container w3-white w3-card-4 w3-animate-top" style="margin-left:5vw;margin-right:5vw;border-radius:0px 0px 10px 10px">
+        <div class="row middle-xs w3-bar" style="padding:12px 24px">
+            <span class="w3-xlarge meraki-font-s5">Historial de ventas</span>
+        </div>
     </div>
+    <mat-card>
+        <mat-card-header class="button-row">
+            <h2>Historial de ventas</h2>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-tab-group>
+                <mat-tab label="Programados">
+                    <section style="margin: 10px 0px;">
+                        <div class="input button-row">
+                            <mat-form-field>
+                                <mat-icon matPrefix>filter_list</mat-icon>
+                                <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtrar">
+                            </mat-form-field>
+                            <mat-slide-toggle style=" margin-left : 15px" [checked]="edit" (change)="slideToogleChange($event)" labelPosition='before'>Editar</mat-slide-toggle>
+                        </div>
+                        <div class="loadingSpinner" *ngIf="isLoadingResults">
+                            <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+                        </div>
+                        <mat-table [dataSource]="dataSource" *ngIfMediaQuery="'(min-width: 500px)'" style="text-align: center;">
+                            <ng-container matColumnDef="name">
+                                <mat-header-cell *matHeaderCellDef>Nombre</mat-header-cell>
+                                <mat-cell *matCellDef="let cliente" [satPopoverAnchorFor]="p" (click)=" edit ? p.open(): null">
+                                    <ng-container *ngIf="cliente.Name">
+                                        {{cliente.Name}}
+                                    </ng-container>
+                                    <span class="add-comment" *ngIf="!cliente.Name">
+                                        Editar nombre
+                                    </span>
+                                    <sat-popover #p hasBackdrop xAlign="start" yAlign="start">
+                                        <inline-edit-history [value]="cliente.Name"></inline-edit-history>
+                                    </sat-popover>
+                                </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="mail">
+                                <mat-header-cell *matHeaderCellDef>Email</mat-header-cell>
+                                <mat-cell *matCellDef="let cliente" [satPopoverAnchorFor]="p" (click)=" edit ? p.open(): null">
+                                    <ng-container *ngIf="cliente.Mail">
+                                        {{cliente.Mail}}
+                                    </ng-container>
+                                    <span class="add-comment" *ngIf="!cliente.Mail">
+                                        Editar correo
+                                    </span>
+                                    <sat-popover #p hasBackdrop xAlign="start" yAlign="start">
+                                        <inline-edit-history [value]="cliente.Mail"></inline-edit-history>
+                                    </sat-popover>
+                                </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="phone">
+                                <mat-header-cell *matHeaderCellDef>Telefono</mat-header-cell>
+                                <mat-cell *matCellDef="let cliente" [satPopoverAnchorFor]="p" (click)=" edit ? p.open(): null">
+                                    <ng-container *ngIf="cliente.Phone">
+                                        {{cliente.Phone}}
+                                    </ng-container>
+                                    <span class="add-comment" *ngIf="!cliente.Phone">
+                                        Editar telefono
+                                    </span>
+                                    <sat-popover #p hasBackdrop xAlign="start" yAlign="start">
+                                        <inline-edit-history [value]="cliente.Phone"></inline-edit-history>
+                                    </sat-popover>
+                                </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="place">
+                                <mat-header-cell *matHeaderCellDef>Lugar</mat-header-cell>
+                                <mat-cell *matCellDef="let cliente" [satPopoverAnchorFor]="p" (click)=" edit ? p.open(): null">
+                                    <ng-container *ngIf="cliente.Place">
+                                        {{cliente.Place}}
+                                    </ng-container>
+                                    <span class="add-comment" *ngIf="!cliente.Place">
+                                        Editar lugar
+                                    </span>
+                                    <sat-popover #p hasBackdrop xAlign="start" yAlign="start">
+                                        <inline-edit-history [value]="cliente.Place"></inline-edit-history>
+                                    </sat-popover>
+                                </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="birthday">
+                                <mat-header-cell *matHeaderCellDef>Fecha de nacimiento</mat-header-cell>
+                                <mat-cell *matCellDef="let cliente" [satPopoverAnchorFor]="p" (click)=" edit ? p.open(): null">
+                                    <ng-container *ngIf="cliente.Birthday">
+                                        {{cliente.Birthday}}
+                                    </ng-container>
+                                    <span class="add-comment" *ngIf="!cliente.Birthday">
+                                        Editar cumpleaños
+                                    </span>
+                                    <sat-popover #p hasBackdrop xAlign="start" yAlign="start">
+                                        <inline-edit-history [value]="cliente.Birthday"></inline-edit-history>
+                                    </sat-popover>
+                                </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="type">
+                                <mat-header-cell *matHeaderCellDef>Tipo</mat-header-cell>
+                                <mat-cell *matCellDef="let cliente" [satPopoverAnchorFor]="p" (click)=" edit ? p.open(): null" class="type">
+                                    <ng-container *ngIf="cliente.Type">
+                                        <span *ngIf="cliente.Type=='1'">Franquicia</span>
+                                        <span *ngIf="cliente.Type=='2'">Promociones</span>
+                                    </ng-container>
+                                    <span class="add-comment" *ngIf="!cliente.Type">
+                                        Editar tipo
+                                    </span>
+                                    <sat-popover #p hasBackdrop xAlign="start" yAlign="start">
+                                        <inline-edit-history [value]="cliente.Type"></inline-edit-history>
+                                    </sat-popover>
+                                </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="seleccionar">
+                                <mat-header-cell *matHeaderCellDef>Seleccionar</mat-header-cell>
+                                <mat-cell *matCellDef="let cliente; let i=index">
+                                    <mat-checkbox [(ngModel)]="cliente.select" (change)="confirmAll($event,cliente.Type)"></mat-checkbox>
+                                </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="eliminar">
+                                <mat-header-cell *matHeaderCellDef>Eliminar</mat-header-cell>
+                                <mat-cell *matCellDef="let cliente; let i=index">
+                                    <mat-icon>remove_circle</mat-icon>
+                                </mat-cell>
+                            </ng-container>
+                            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                            <mat-row [matTooltip]="message1" matTooltipPosition="above" *matRowDef="let cliente; columns: displayedColumns;"></mat-row>
+                        </mat-table>
+                        <mat-table [dataSource]="dataSource" *ngIfMediaQuery="'(max-width: 499px)'" style="text-align: center;">
+                            <ng-container matColumnDef="name">
+                                <mat-header-cell *matHeaderCellDef>Nombre</mat-header-cell>
+                                <mat-cell *matCellDef="let cliente" [satPopoverAnchorFor]="p" (click)=" edit ? p.open(): null">
+                                    <ng-container *ngIf="cliente.Name">
+                                        {{cliente.Name}}
+                                    </ng-container>
+                                    <span class="add-comment" *ngIf="!cliente.Name">
+                                        Editar nombre
+                                    </span>
+                                    <sat-popover #p hasBackdrop xAlign="start" yAlign="start">
+                                        <inline-edit-history [value]="cliente.Name"></inline-edit-history>
+                                    </sat-popover>
+                                </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="phone">
+                                <mat-header-cell *matHeaderCellDef>Telefono</mat-header-cell>
+                                <mat-cell *matCellDef="let cliente" [satPopoverAnchorFor]="p" (click)=" edit ? p.open(): null">
+                                    <ng-container *ngIf="cliente.Phone">
+                                        {{cliente.Phone}}
+                                    </ng-container>
+                                    <span class="add-comment" *ngIf="!cliente.Phone">
+                                        Editar telefono
+                                    </span>
+                                    <sat-popover #p hasBackdrop xAlign="start" yAlign="start">
+                                        <inline-edit-history [value]="cliente.Phone"></inline-edit-history>
+                                    </sat-popover>
+                                </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="type">
+                                <mat-header-cell *matHeaderCellDef>Tipo</mat-header-cell>
+                                <mat-cell *matCellDef="let cliente" [satPopoverAnchorFor]="p" (click)=" edit ? p.open(): null" class="type">
+                                    <ng-container *ngIf="cliente.Type">
+                                        <span *ngIf="cliente.Type=='1'">Franquicia</span>
+                                        <span *ngIf="cliente.Type=='2'">Promociones</span>
+                                    </ng-container>
+                                    <span class="add-comment" *ngIf="!cliente.Type">
+                                        Editar tipo
+                                    </span>
+                                    <sat-popover #p hasBackdrop xAlign="start" yAlign="start">
+                                        <inline-edit-history [value]="cliente.Type"></inline-edit-history>
+                                    </sat-popover>
+                                </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="seleccionar">
+                                <mat-header-cell *matHeaderCellDef>Seleccionar</mat-header-cell>
+                                <mat-cell *matCellDef="let cliente; let i=index">
+                                    <mat-checkbox [(ngModel)]="cliente.select" (change)="confirmAll($event,cliente.Type)"></mat-checkbox>
+                                </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="eliminar">
+                                <mat-header-cell *matHeaderCellDef>Eliminar</mat-header-cell>
+                                <mat-cell *matCellDef="let cliente; let i=index">
+                                    <mat-icon>remove_circle</mat-icon>
+                                </mat-cell>
+                            </ng-container>
+                            <mat-header-row *matHeaderRowDef="displayedColumns2"></mat-header-row>
+                            <mat-row [matTooltip]=" edit ? message1 : message2 " matTooltipPosition="above" *matRowDef="let cliente; columns: displayedColumns2;"></mat-row>
+                        </mat-table>
+                        <mat-paginator [pageSizeOptions]="[5,10]"></mat-paginator>
+                    </section>
+                </mat-tab>
+                <mat-tab label="Enviados">
+                    <section style="margin: 10px 0px;">
+                        <div class="input button-row">
+                            <mat-form-field>
+                                <mat-icon matPrefix>filter_list</mat-icon>
+                                <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtrar">
+                            </mat-form-field>
+                            <mat-slide-toggle style=" margin-left : 15px" [checked]="edit" (change)="slideToogleChange($event)" labelPosition='before'>Editar</mat-slide-toggle>
+                        </div>
+                        <div class="loadingSpinner" *ngIf="isLoadingResults">
+                            <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+                        </div>
+                        <mat-table [dataSource]="dataSource" *ngIfMediaQuery="'(min-width: 500px)'" style="text-align: center;">
+                            <ng-container matColumnDef="name">
+                                <mat-header-cell *matHeaderCellDef>Nombre</mat-header-cell>
+                                <mat-cell *matCellDef="let cliente" [satPopoverAnchorFor]="p" (click)=" edit ? p.open(): null">
+                                    <ng-container *ngIf="cliente.Name">
+                                        {{cliente.Name}}
+                                    </ng-container>
+                                    <span class="add-comment" *ngIf="!cliente.Name">
+                                        Editar nombre
+                                    </span>
+                                    <sat-popover #p hasBackdrop xAlign="start" yAlign="start">
+                                        <inline-edit-history [value]="cliente.Name"></inline-edit-history>
+                                    </sat-popover>
+                                </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="mail">
+                                <mat-header-cell *matHeaderCellDef>Email</mat-header-cell>
+                                <mat-cell *matCellDef="let cliente" [satPopoverAnchorFor]="p" (click)=" edit ? p.open(): null">
+                                    <ng-container *ngIf="cliente.Mail">
+                                        {{cliente.Mail}}
+                                    </ng-container>
+                                    <span class="add-comment" *ngIf="!cliente.Mail">
+                                        Editar correo
+                                    </span>
+                                    <sat-popover #p hasBackdrop xAlign="start" yAlign="start">
+                                        <inline-edit-history [value]="cliente.Mail"></inline-edit-history>
+                                    </sat-popover>
+                                </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="phone">
+                                <mat-header-cell *matHeaderCellDef>Telefono</mat-header-cell>
+                                <mat-cell *matCellDef="let cliente" [satPopoverAnchorFor]="p" (click)=" edit ? p.open(): null">
+                                    <ng-container *ngIf="cliente.Phone">
+                                        {{cliente.Phone}}
+                                    </ng-container>
+                                    <span class="add-comment" *ngIf="!cliente.Phone">
+                                        Editar telefono
+                                    </span>
+                                    <sat-popover #p hasBackdrop xAlign="start" yAlign="start">
+                                        <inline-edit-history [value]="cliente.Phone"></inline-edit-history>
+                                    </sat-popover>
+                                </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="place">
+                                <mat-header-cell *matHeaderCellDef>Lugar</mat-header-cell>
+                                <mat-cell *matCellDef="let cliente" [satPopoverAnchorFor]="p" (click)=" edit ? p.open(): null">
+                                    <ng-container *ngIf="cliente.Place">
+                                        {{cliente.Place}}
+                                    </ng-container>
+                                    <span class="add-comment" *ngIf="!cliente.Place">
+                                        Editar lugar
+                                    </span>
+                                    <sat-popover #p hasBackdrop xAlign="start" yAlign="start">
+                                        <inline-edit-history [value]="cliente.Place"></inline-edit-history>
+                                    </sat-popover>
+                                </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="birthday">
+                                <mat-header-cell *matHeaderCellDef>Fecha de nacimiento</mat-header-cell>
+                                <mat-cell *matCellDef="let cliente" [satPopoverAnchorFor]="p" (click)=" edit ? p.open(): null">
+                                    <ng-container *ngIf="cliente.Birthday">
+                                        {{cliente.Birthday}}
+                                    </ng-container>
+                                    <span class="add-comment" *ngIf="!cliente.Birthday">
+                                        Editar cumpleaños
+                                    </span>
+                                    <sat-popover #p hasBackdrop xAlign="start" yAlign="start">
+                                        <inline-edit-history [value]="cliente.Birthday"></inline-edit-history>
+                                    </sat-popover>
+                                </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="type">
+                                <mat-header-cell *matHeaderCellDef>Tipo</mat-header-cell>
+                                <mat-cell *matCellDef="let cliente" [satPopoverAnchorFor]="p" (click)=" edit ? p.open(): null" class="type">
+                                    <ng-container *ngIf="cliente.Type">
+                                        <span *ngIf="cliente.Type=='1'">Franquicia</span>
+                                        <span *ngIf="cliente.Type=='2'">Promociones</span>
+                                    </ng-container>
+                                    <span class="add-comment" *ngIf="!cliente.Type">
+                                        Editar tipo
+                                    </span>
+                                    <sat-popover #p hasBackdrop xAlign="start" yAlign="start">
+                                        <inline-edit-history [value]="cliente.Type"></inline-edit-history>
+                                    </sat-popover>
+                                </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="seleccionar">
+                                <mat-header-cell *matHeaderCellDef>Seleccionar</mat-header-cell>
+                                <mat-cell *matCellDef="let cliente; let i=index">
+                                    <mat-checkbox [(ngModel)]="cliente.select" (change)="confirmAll($event,cliente.Type)"></mat-checkbox>
+                                </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="eliminar">
+                                <mat-header-cell *matHeaderCellDef>Eliminar</mat-header-cell>
+                                <mat-cell *matCellDef="let cliente; let i=index">
+                                    <mat-icon>remove_circle</mat-icon>
+                                </mat-cell>
+                            </ng-container>
+                            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                            <mat-row [matTooltip]="message1" matTooltipPosition="above" *matRowDef="let cliente; columns: displayedColumns;"></mat-row>
+                        </mat-table>
+                        <mat-table [dataSource]="dataSource" *ngIfMediaQuery="'(max-width: 499px)'" style="text-align: center;">
+                            <ng-container matColumnDef="name">
+                                <mat-header-cell *matHeaderCellDef>Nombre</mat-header-cell>
+                                <mat-cell *matCellDef="let cliente" [satPopoverAnchorFor]="p" (click)=" edit ? p.open(): null">
+                                    <ng-container *ngIf="cliente.Name">
+                                        {{cliente.Name}}
+                                    </ng-container>
+                                    <span class="add-comment" *ngIf="!cliente.Name">
+                                        Editar nombre
+                                    </span>
+                                    <sat-popover #p hasBackdrop xAlign="start" yAlign="start">
+                                        <inline-edit-history [value]="cliente.Name"></inline-edit-history>
+                                    </sat-popover>
+                                </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="phone">
+                                <mat-header-cell *matHeaderCellDef>Telefono</mat-header-cell>
+                                <mat-cell *matCellDef="let cliente" [satPopoverAnchorFor]="p" (click)=" edit ? p.open(): null">
+                                    <ng-container *ngIf="cliente.Phone">
+                                        {{cliente.Phone}}
+                                    </ng-container>
+                                    <span class="add-comment" *ngIf="!cliente.Phone">
+                                        Editar telefono
+                                    </span>
+                                    <sat-popover #p hasBackdrop xAlign="start" yAlign="start">
+                                        <inline-edit-history [value]="cliente.Phone"></inline-edit-history>
+                                    </sat-popover>
+                                </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="type">
+                                <mat-header-cell *matHeaderCellDef>Tipo</mat-header-cell>
+                                <mat-cell *matCellDef="let cliente" [satPopoverAnchorFor]="p" (click)=" edit ? p.open(): null" class="type">
+                                    <ng-container *ngIf="cliente.Type">
+                                        <span *ngIf="cliente.Type=='1'">Franquicia</span>
+                                        <span *ngIf="cliente.Type=='2'">Promociones</span>
+                                    </ng-container>
+                                    <span class="add-comment" *ngIf="!cliente.Type">
+                                        Editar tipo
+                                    </span>
+                                    <sat-popover #p hasBackdrop xAlign="start" yAlign="start">
+                                        <inline-edit-history [value]="cliente.Type"></inline-edit-history>
+                                    </sat-popover>
+                                </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="seleccionar">
+                                <mat-header-cell *matHeaderCellDef>Seleccionar</mat-header-cell>
+                                <mat-cell *matCellDef="let cliente; let i=index">
+                                    <mat-checkbox [(ngModel)]="cliente.select" (change)="confirmAll($event,cliente.Type)"></mat-checkbox>
+                                </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="eliminar">
+                                <mat-header-cell *matHeaderCellDef>Eliminar</mat-header-cell>
+                                <mat-cell *matCellDef="let cliente; let i=index">
+                                    <mat-icon>remove_circle</mat-icon>
+                                </mat-cell>
+                            </ng-container>
+                            <mat-header-row *matHeaderRowDef="displayedColumns2"></mat-header-row>
+                            <mat-row [matTooltip]=" edit ? message1 : message2 " matTooltipPosition="above" *matRowDef="let cliente; columns: displayedColumns2;"></mat-row>
+                        </mat-table>
+                        <mat-paginator [pageSizeOptions]="[5,10]"></mat-paginator>
+                    </section>
+                </mat-tab>
+            </mat-tab-group>
+        </mat-card-content>
+    </mat-card>
 </div>
