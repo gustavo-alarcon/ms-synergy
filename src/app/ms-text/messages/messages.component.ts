@@ -7,11 +7,13 @@ import { ToastrService } from 'ngx-toastr';
 import { AddClientComponent } from '../add-client/add-client.component';
 import { MessagesService } from '../../servicios/messages.service'
 import * as crypto from 'crypto-js';
+import { trigger, state, style, transition, animate, keyframes, query, stagger } from '@angular/animations';
+
 
 @Component({
   selector: 'messages',
   templateUrl: './messages.component.html',
-  styleUrls: ['./messages.component.css']
+  styleUrls: ['./messages.component.css'],
 })
 export class MessagesComponent implements OnInit {
   // dataSource:dataSource;
@@ -58,6 +60,7 @@ export class MessagesComponent implements OnInit {
       this.clientsSales = data.records;
       for (let i = 0; i < data.length; i++) {
         this.clientsSales.push({
+          ID: data.ID,
           Name: data.Name,
           Mail: data.Mail,
           Phone: data.Phone,
@@ -137,7 +140,7 @@ export class MessagesComponent implements OnInit {
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          this.toastr.success("Se programaron los mensajes para la fecha indicada", "Exito");
+          this.toastr.success("Se programaron los mensajes para la fecha y hora indicada", "Exito");
         }
       });
     }
@@ -156,7 +159,7 @@ export class MessagesComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
           if (result) {
-            this.toastr.success("Se programaron los mensajes para la fecha indicada", "Exito");
+            this.toastr.success("Se programaron los mensajes para la fecha y hora indicada", "Exito");
             this.getBubbleValues();
           }
         });
@@ -247,10 +250,24 @@ export class MessagesComponent implements OnInit {
     });
   }
 
+  deleteCustomer(cliente) {
+    if (confirm("¿Esta seguro de eliminar al cliente " + cliente.Name + "?")) {
+      this.clientService.deleteClient(this.bd, cliente).subscribe(data => {
+        if(data=="true"){
+          this.toastr.success("Se elimino al cliente con exito","Exito");
+          this.getClients();
+        }
+        else
+        this.toastr.error("Hubo un error","Error");
+      })
+    }
+  }
+
 }
 
 
 export interface Client {
+  ID: any;
   Name: string;
   Mail: string;
   Phone: string;

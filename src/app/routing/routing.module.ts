@@ -35,49 +35,49 @@ import { MsTextComponent } from '../ms-text/mstext/mstext.component';
 import { SalesHistoryComponent } from '../sales-history/sales-history.component';
 
 const appRoutes: Routes = [
-    { path: 'welcome', component: WelcomeComponent, data: { animation: 'welcome' }},
-    { path: 'login', component: LoginComponent, data: { animation: 'login' } },
-    { path: 'landing',canActivate: [AuthGuard], component: LandingComponent, data: { animation: 'landing' }},
-    { path: 'config', canActivate: [AuthGuard], component: ConfigAccountComponent, data: { animation: 'config' },
+    { path: 'welcome', component: WelcomeComponent, data: { animation: 'welcome', depth: 1 }},
+    { path: 'login', component: LoginComponent, data: { animation: 'login', depth: 2 } },
+    { path: 'landing',canActivate: [AuthGuard], component: LandingComponent, data: { animation: 'landing', depth: 3 }},
+    { path: 'config', canActivate: [AuthGuard], component: ConfigAccountComponent, data: { animation: 'config', depth: 4 },
       children: [
-        { path: 'crear-account', component: CrearAccountComponent , data: { animation: 'crear-account' }},
+        { path: 'crear-account', component: CrearAccountComponent , data: { animation: 'crear-account', depth: 5 }},
       ]
     },
-    { path: 'inventarios',canActivate: [AuthGuard], component: InventariosComponent, data: { animation: 'inventarios' },
+    { path: 'inventarios',canActivate: [AuthGuard], component: InventariosComponent, data: { animation: 'inventarios', depth: 4 },
       children: [
-        { path: '', component: DashboardComponent , data: { animation: 'init' }},
-        { path: 'dashboard', component: DashboardComponent , data: { animation: 'dashboard' }},
-        { path: 'almacenes', component: AlmacenesComponent, data: { animation: 'almacenes' },
+        { path: '', component: DashboardComponent , data: { animation: 'init', depth: 5 }},
+        { path: 'dashboard', component: DashboardComponent , data: { animation: 'dashboard', depth: 5 }},
+        { path: 'almacenes', component: AlmacenesComponent, data: { animation: 'almacenes', depth: 5 },
           children: [
-            { path: 'crear-almacen', component: CrearAlmacenComponent, data: { animation: 'crear-almacen' } }
+            { path: 'crear-almacen', component: CrearAlmacenComponent, data: { animation: 'crear-almacen', depth: 5 } }
           ] },
-        { path: 'terceros', component: TercerosComponent, data: { animation: 'terceros' },
+        { path: 'terceros', component: TercerosComponent, data: { animation: 'terceros' , depth: 5},
           children: [
-            { path: 'crear-tercero', component: CrearTerceroComponent , data: { animation: 'crear-terceros' }}
+            { path: 'crear-tercero', component: CrearTerceroComponent , data: { animation: 'crear-terceros', depth: 5}}
           ] },
-        { path: 'documentos', component: DocumentosComponent, data: { animation: 'documentos' },
+        { path: 'documentos', component: DocumentosComponent, data: { animation: 'documentos' , depth: 5},
         children: [
-            { path: 'crear-documento', component: CrearDocumentoComponent , data: { animation: 'crear-documentos' }}
+            { path: 'crear-documento', component: CrearDocumentoComponent , data: { animation: 'crear-documentos' , depth: 5}}
           ] },
-        { path: 'grupos', component: GruposComponent, data: { animation: 'grupos' },
+        { path: 'grupos', component: GruposComponent, data: { animation: 'grupos' , depth: 5},
           children: [
-              { path: 'crear-grupo', component: CrearGrupoComponent , data: { animation: 'crear-grupos' }}
+              { path: 'crear-grupo', component: CrearGrupoComponent , data: { animation: 'crear-grupos', depth: 5 }}
             ] },
-        { path: 'productos', component: ProductosComponent, data: { animation: 'productos' },
+        { path: 'productos', component: ProductosComponent, data: { animation: 'productos', depth: 5 },
           children: [
-              { path: 'crear-producto', component: CrearProductoComponent, data: { animation: 'crear-producto' } },
-              { path: 'crear-paquete', component: CrearPaqueteComponent, data: { animation: 'crear-paquete' } }
+              { path: 'crear-producto', component: CrearProductoComponent, data: { animation: 'crear-producto', depth: 5 } },
+              { path: 'crear-paquete', component: CrearPaqueteComponent, data: { animation: 'crear-paquete', depth: 5 } }
             ] },
-        { path: 'movimientos', component: MovimientosComponent, data: { animation: 'movimientos' } },
-        { path: 'kardex', component: KardexComponent, data: { animation: 'kardex' } },
-        { path: 'stock', component: StockComponent , data: { animation: 'stock' }},
-        { path: 'reportemov', component: ReportemovComponent, data: { animation: 'reportemov' } },
+        { path: 'movimientos', component: MovimientosComponent, data: { animation: 'movimientos', depth: 5 } },
+        { path: 'kardex', component: KardexComponent, data: { animation: 'kardex' , depth: 5} },
+        { path: 'stock', component: StockComponent , data: { animation: 'stock' , depth: 5}},
+        { path: 'reportemov', component: ReportemovComponent, data: { animation: 'reportemov', depth: 5 } },
       ] },
-    { path: 'puntoVenta', component: PuntoVentaComponent, data: { animation: 'puntoVenta' }}, 
-    { path: 'historialVentas', component: SalesHistoryComponent, data: { animation: 'historialVentas' }}, 
-    { path: 'ms-text',component: MsTextComponent, data: { animation: 'ms-text' }},
-    { path: '', component: WelcomeComponent , data: { animation: 'primera' }},
-    { path: '**', component: WelcomeComponent, data: { animation: 'random' } }
+    { path: 'puntoVenta', component: PuntoVentaComponent, data: { animation: 'puntoVenta' , depth: 4}}, 
+    { path: 'historialVentas', component: SalesHistoryComponent, data: { animation: 'historialVentas' , depth: 4}}, 
+    { path: 'ms-text',component: MsTextComponent, data: { animation: 'ms-text', depth: 4}},
+    { path: '', component: WelcomeComponent , data: { animation: 'primera' , depth: 1}},
+    { path: '**', component: WelcomeComponent, data: { animation: 'random' , depth: 1} }
   ];
  
 @NgModule({

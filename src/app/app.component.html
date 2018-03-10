@@ -1,5 +1,5 @@
 
 <app-main-nav></app-main-nav>
-<div class="w3-row" [@routerAnimation]="getRouteAnimation(route)">
+<div class="w3-row route-container" [@routerAnimation]="getDepth(route)">
   <router-outlet #route="outlet"></router-outlet>
 </div>

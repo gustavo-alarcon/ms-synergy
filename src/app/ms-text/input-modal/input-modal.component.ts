@@ -97,7 +97,6 @@ export class InputModalComponent implements OnInit {
         else{
           this.completeData.time =  String(this.completeData.time) + ":00:00";
           this.messageService.sendMessages(this.completeData).subscribe(data=>{
-            console.log(data);
             this.completeData={
               message:"",
               time:null,

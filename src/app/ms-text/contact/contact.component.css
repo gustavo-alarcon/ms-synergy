@@ -25,6 +25,7 @@ mat-card-header{
 
 mat-card{
     margin: 15px;
+    border-radius: 15px;
 }
 
 .contactenos{

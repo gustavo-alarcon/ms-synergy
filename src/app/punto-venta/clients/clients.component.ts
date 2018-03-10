@@ -28,13 +28,10 @@ export class ClientsComponent implements OnInit {
     private clientService:ClientsService,
     private dialog : MatDialog,
 
-  ) {
-      
-    this.getClients();  
-
-   }
+  ) { }
 
   ngOnInit() {
+    this.getClients();  
   }
 
   onNoClick(){

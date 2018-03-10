@@ -23,4 +23,11 @@ export class ClientsService {
     return this.http.get('http://www.meraki-s.com/rent/ms-synergy/php/terceros_mysql.php?db='+JSON.parse(db));
   }
 
+  updateClient(db,client):Observable<any>{
+    return this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-updateClient.php?db='+JSON.parse(db),JSON.stringify(client),{responseType:'text'})
+  }
+
+  deleteClient(db,client):Observable<any>{
+    return this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-deleteCustomer.php?db='+JSON.parse(db),JSON.stringify(client),{responseType:'text'})
+  }
 }

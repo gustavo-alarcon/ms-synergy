@@ -48,6 +48,19 @@ import { trigger, state, style, transition, animate, keyframes, query, stagger }
         style({ opacity: 1, transform: 'translateX(0)', offset: 1.0 }),
       ])))
     ]),
+    trigger('menuInOut',[
+      state('close',style({opacity : 0, display : 'none'})),
+      transition('close => open', animate('500ms ease-in', keyframes([
+        style({display:'block' , opacity: 0, offset: 0}),
+        style({opacity: 0.5, offset: 0.5}),
+        style({opacity: 1, offset: 1.0}),
+      ]))),
+      transition('open => close',animate('500ms ease-in', keyframes([
+        style({opacity: 1, offset: 0}),
+        style({opacity: 0.5,  offset: 0.5}),
+        style({opacity: 0, display:'none' , offset: 1.0}),
+      ]))),
+    ])
   ]
 })
 
@@ -61,7 +74,7 @@ export class PuntoVentaComponent implements OnInit {
   productos: any[] = [];
   paquetes_filtrado: any[] = [];
   paquetes: any[] = [];
-  filteredOptions: string[];
+  filteredOptions: any[];
   movimientoForm: FormGroup;
   filteredPackages: string[];
   tabNumber: number = 1;
@@ -77,6 +90,7 @@ export class PuntoVentaComponent implements OnInit {
   operationOption: number = 1;
   igvType: number = 1;
   numerosSerie: any[][];
+  hideProducts : boolean = false;
 
   constructor(
     private inventariosService: InventariosService,
@@ -241,7 +255,6 @@ export class PuntoVentaComponent implements OnInit {
     }
 
     if (this.igvType == 2) {
-      console.log(this.igvType);
       for (let i = 0; i < this.listCustomers[this.currentCustomer].listAction.length; i++) {
         this.listCustomers[this.currentCustomer].total += +(this.listCustomers[this.currentCustomer].listAction[i].price);
       }
@@ -446,7 +459,11 @@ export class PuntoVentaComponent implements OnInit {
       }
       else {
         this.pack_nombre[_position].Venta = parseFloat(this.pack_nombre[_position].Venta) + parseFloat(this.paquetes_filtrado[i].Venta);
-        this.pack_nombre[_position].Productos.push(this.paquetes_filtrado[i].Nombre);
+        this.pack_nombre[_position].Productos.push({
+          'nombre':this.paquetes_filtrado[i].Nombre,
+          'precio': this.paquetes_filtrado[i].Venta,
+          'cantidad': this.paquetes_filtrado[i].Cantidad,
+        });
       }
     }
     this.filteredOptions = this.productos_filtrado;
@@ -475,6 +492,23 @@ export class PuntoVentaComponent implements OnInit {
   filterPackage(val): string[] {
     return this.pack_nombre.filter(option =>
       option.Nombre.toLowerCase().indexOf(val.toLowerCase()) === 0);
+  }
+
+  enterProduct(){
+    let index;
+    if(this.filteredOptions.length == 0)
+      this.toastr.warning("No hay ningun producto", "Cuidado");
+    else{
+      if(this.filteredOptions.length == 1){
+        for(let i = 0 ; i < this.productos_filtrado.length ; i++){
+          if(this.productos_filtrado[i].ID == this.filteredOptions[0].ID)
+            index = i;
+        }
+        this.addToList(index);
+      }
+    }
+    this.movimientoForm.reset();
+    this.filteredOptions = this.productos_filtrado;
   }
 
   addCustomer() {
@@ -602,6 +636,7 @@ export class PuntoVentaComponent implements OnInit {
     if (this.listCustomers[this.currentCustomer].listAction.length == 0)
       this.toastr.warning("No hay ningun producto o paquete seleccionado", "Cuidado");
   }
+
 }
 
 interface ListCustomers {

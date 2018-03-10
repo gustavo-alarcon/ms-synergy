@@ -5,9 +5,12 @@
         </div>
     </div>
     <div class="container">
-        <div class="products">
+        <div *ngIfMediaQuery="'(max-width: 700px)'" class="hide" (click)="hideProducts = !hideProducts" >
+            <mat-icon>last_page</mat-icon>
+        </div>
+        <div class="products" [ngClass]="{hideProducts : hideProducts}">
             <div *ngIfMediaQuery="'(max-width: 700px)'">
-                <mat-grid-list cols="2" rowHeight="150px" gutterSize="5px">
+                <mat-grid-list cols="2" rowHeight="150px" gutterSize="3px">
                     <div *ngIf='productsOrPackages==0'>
                         <mat-grid-tile @images (click)="addToList(i)" *ngFor="let option of filteredOptions; let i = index">
                             <mat-grid-tile-header>
@@ -30,7 +33,7 @@
                             <span class="packageProducts">
                                 Productos :
                                 <span *ngFor="let product of option.Productos">
-                                    {{product}}
+                                    {{product.nombre}}
                                 </span>
                             </span>
                             <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
@@ -43,7 +46,7 @@
                 </mat-grid-list>
             </div>
             <div *ngIfMediaQuery="'(min-width: 701px) and (max-width: 1000px)'">
-                <mat-grid-list cols="3" rowHeight="200px" gutterSize="5px">
+                <mat-grid-list cols="3" rowHeight="200px" gutterSize="3px">
                     <div *ngIf='productsOrPackages==0'>
                         <mat-grid-tile @images (click)="addToList(i)" *ngFor="let option of filteredOptions ; let i = index">
                             <mat-grid-tile-header>
@@ -66,7 +69,7 @@
                             <span class="packageProducts">
                                 Productos :
                                 <span *ngFor="let product of option.Productos">
-                                    {{product}}
+                                    {{product.nombre}}
                                 </span>
                             </span>
                             <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
@@ -79,7 +82,7 @@
                 </mat-grid-list>
             </div>
             <div *ngIfMediaQuery="'(min-width: 1001px) and (max-width: 1299px)'">
-                <mat-grid-list cols="4" rowHeight="200px" gutterSize="5px">
+                <mat-grid-list cols="4" rowHeight="200px" gutterSize="3px">
                     <div *ngIf='productsOrPackages==0'>
                         <mat-grid-tile @images (click)="addToList(i)" *ngFor="let option of filteredOptions ; let i = index">
                             <mat-grid-tile-header>
@@ -102,7 +105,7 @@
                             <span class="packageProducts">
                                 Productos :
                                 <span *ngFor="let product of option.Productos">
-                                    {{product}}
+                                    {{product.nombre}}
                                 </span>
                             </span>
                             <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
@@ -115,7 +118,7 @@
                 </mat-grid-list>
             </div>
             <div *ngIfMediaQuery="'(min-width: 1300px)'">
-                <mat-grid-list cols="5" rowHeight="200px" gutterSize="5px">
+                <mat-grid-list cols="5" rowHeight="200px" gutterSize="3px">
                     <div *ngIf='productsOrPackages==0'>
                         <mat-grid-tile @images (click)="addToList(i)" *ngFor="let option of filteredOptions ; let i = index">
                             <mat-grid-tile-header>
@@ -138,7 +141,7 @@
                             <span class="packageProducts">
                                 Productos :
                                 <span *ngFor="let product of option.Productos">
-                                    {{product}}
+                                    {{product.nombre}}
                                 </span>
                             </span>
                             <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
@@ -151,7 +154,7 @@
                 </mat-grid-list>
             </div>
         </div>
-        <div class="panel">
+        <div class="panel" [ngClass]="{expandPanel : hideProducts}">
             <div class="panelInt">
                 <div (click)="executeOperation('1')" class="teclado one">
                     1
@@ -192,7 +195,8 @@
                 <div class="customer teclado" (click)="openClients()">
                     <mat-icon>account_circle</mat-icon>
                     <span class='nameIcon'>{{ listCustomers[currentCustomer].client == null ? 'Cliente' : listCustomers[currentCustomer].client.Nombre
-                        }}</span>
+                        }}
+                    </span>
                 </div>
                 <div class="payment teclado" (click)="openPayment()">
                     <mat-icon>payment</mat-icon>
@@ -212,7 +216,7 @@
                 </div>
             </div>
         </div>
-        <div class="filtro" [formGroup]="movimientoForm">
+        <div class="filtro" [formGroup]="movimientoForm" [ngClass]="{hideFilter : hideProducts}">
             <div class="flex">
                 <mat-form-field class="full-width2">
                     <mat-select #almOrigen placeholder="Almacenes" panelClass="example-panel-blue" (change)="filtrarProductos(almOrigen.value)"
@@ -229,7 +233,7 @@
                     <div class="insideFiltro">
                         <div class="productOptions">
                             <mat-form-field class="full-width">
-                                <input matInput (keyup)="pushKeyProducts()" [matAutocomplete]="auto" #prod formControlName="Producto" placeholder="Buscar productos">
+                                <input matInput (keyup)="pushKeyProducts()" (keyup.enter)="enterProduct()" [matAutocomplete]="auto" #prod formControlName="Producto" placeholder="Buscar productos">
                                 <mat-autocomplete #auto="matAutocomplete">
                                     <mat-option (click)="pushKeyProducts()" class="w3-indigo w3-hover-gray" *ngFor="let option of filteredOptions" [value]=" optionDisplay == 2 ? option.Codigo : option.Nombre ">
                                         <span style="font-size: 13px;">{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</span> |
@@ -258,23 +262,38 @@
                 </mat-tab>
             </mat-tab-group>
         </div>
-        <div class="check">
+        <div class="check" [ngClass]="{expandCheck : hideProducts}">
             <div class="customerMedia" *ngIfMediaQuery="'(max-width: 850px)'">
                 {{ listCustomers[currentCustomer].client == null ? 'Cliente' : listCustomers[currentCustomer].client.Nombre }}
             </div>
             <ul style='padding-left: 0;'>
                 <div @cardProduct *ngFor="let product of listCustomers[currentCustomer].listAction; let i = index">
-                    <li class="productList" (click)='clickProductList(i)' [ngClass]="{'newBackground' : listCustomers[currentCustomer].lastItemClicked == product.id }"
-                        [ngClass]="{'newBackground' : listCustomers[currentCustomer].lastItemClicked == product.id }">
+                    <li class="productList" (click)='clickProductList(i)' 
+                    [ngClass]="{'newBackground' : listCustomers[currentCustomer].lastItemClicked == product.id }">
                         <span class="productName">{{product.product}}</span>
                         <span class="productClass">$ {{product.price == '' ? '0' : product.price}}</span>
                         <span class="productInfo">{{product.units == '' ? '0' : product.units}} {{ product.units == '1' ? 'unidad' : 'unidades'}} a
                             $ {{product.unitPrice == '' ? '0' : product.unitPrice }} c/u</span>
                         <span *ngIf="product.dsc != ''" class="productInfo">{{product.dsc}}% de descuento</span>
                         <span *ngIf="product.products" class="productInfo">Items en el paquete:</span>
-                        <span class="productInfo2" *ngFor="let product of product.products">
-                            {{product}}
-                        </span>
+                        <div *ngIf="product.products" class="tableProducts">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Precio</th>
+                                        <th>Cantidad</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let product of product.products">
+                                        <td style="border-radius: 5px;">{{product.nombre}}</td>
+                                        <td style="border-radius: 5px;">{{product.precio}}</td>
+                                        <td style="border-radius: 5px;">{{product.cantidad}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </li>
                     <hr style="margin: 10px;" />
                 </div>
@@ -299,7 +318,7 @@
                         <a @tab class="tabName" (click)="onSelectCustomer(i)">
                             {{i+1}}
                         </a>
-                        <mat-icon @tab *ngIf="i != 0" class="tabIcon" (click)="eraseCustomer(i)">highlight_off</mat-icon>
+                        <mat-icon @tab *ngIf="i != 0" class="tabIcon" (click)="eraseCustomer(i)" >highlight_off</mat-icon>
                     </ng-template>
                 </mat-tab>
                 <mat-tab>

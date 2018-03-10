@@ -41,7 +41,6 @@ export class PaymentComponent implements OnInit {
           }
         }
       });
-      console.log(this.documentos);
     });
 
   }
@@ -51,8 +50,6 @@ export class PaymentComponent implements OnInit {
   }
   
   changeDocument(){
-    console.log(this.selectedDocument);
-    console.log(this.serieSeleccionado);
     this.correlativo = this.selectedDocument.Correlativo_actual;
   }
 
@@ -95,7 +92,7 @@ export class PaymentComponent implements OnInit {
   }
 
   confirm(){
-    return (this.entregado < this.customer.total || this.paymentType == '');
+    return (this.entregado < this.customer.total || this.paymentType == '' || this.selectedDocument == '' || this.serieSeleccionado == '');
   }
 
   confirmSale(){

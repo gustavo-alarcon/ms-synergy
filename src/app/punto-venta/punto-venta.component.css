@@ -4,6 +4,7 @@
 
 .main{
     height: 100vh;
+    width: 100vw;
 }
 
 .container{
@@ -20,12 +21,14 @@
         "panel products";
 }
 
-.mat-grid-tile{
+mat-grid-tile{
     background: #bdcfb5;
+    transition: transform .3s;
+    cursor: pointer;
 }
 
-.mat-grid-tile .mat-grid-tile-header, 
-.mat-grid-tile .mat-grid-tile-footer {
+mat-grid-tile mat-grid-tile-header, 
+mat-grid-tile mat-grid-tile-footer {
     display: flex;
     align-items: center;
     height: 40px;
@@ -63,6 +66,8 @@ mat-radio-button{
     /*grid-template-columns: repeat(auto-fit,minmax(200px,1fr));*/
     grid-gap: 1em;
     padding: 15px;
+    min-width: 60vw;
+    max-width: 60vw;
 }
 
 .panel{
@@ -72,6 +77,8 @@ mat-radio-button{
     background : #73877B;
     grid-column: 1/5;
     grid-row: 7/13;
+    min-width: 40vw;
+    max-width: 40vw;
 }
 
 .panelInt{
@@ -104,6 +111,8 @@ mat-radio-button{
     align-items: center;
     display: flex;
     flex-wrap: wrap;
+    min-width: 60vw;
+    max-width: 60vw;
 }
 
 .insideFiltro{
@@ -120,10 +129,7 @@ mat-form-field{
     grid-area: filtro;
 }
 
-mat-grid-tile{
-    transition: transform .3s;
-    cursor: pointer;
-}
+
 
 mat-tab-group{
     width: 100%;
@@ -143,24 +149,23 @@ mat-tab-group{
     background: rgba(75, 75, 255, 0.5);
   }
 
-mat-grid-tile {
-    background: lightblue;
-  }
-
 .check{
-    min-width: 32vw;
     grid-area: check;
     background : #BDCFB5;
     grid-column: 1/5;
     grid-row: 2/7;
     border-right: 5px solid rgb(111, 111, 111);
     overflow: auto;
+    min-width: 40vw;
+    max-width: 40vw;
 }
 
 .tab{
     grid-area: tab;
     background : #b7ebc7;
     grid-column: 1/13;
+    min-width: 99vw;
+    max-width: 99vw;
 }
 
 .teclado{
@@ -186,7 +191,7 @@ mat-grid-tile {
 }
 
 .full-width{
-    width: 100%;
+    width: 97%;
     padding: 5px 5px 0 5px;
 }
 
@@ -256,16 +261,43 @@ img{
 
 .packageProducts{
     position: absolute;
-    z-index: 9999;
-    transition: opacity 0.4s; 
-    opacity: 0;
+    -webkit-transition: opacity 0.4s;
+    transition: opacity 0.4s;
     display: flex;
     flex-direction: column;
     background: rgba(0,0,0,0.4);
     color: white;
     padding: 10px;
     font-size: 14px;
+    min-height: 120px;
+    overflow: auto;
+    top: 40px;
+    max-height: 60%;
+    opacity: 0;
+    z-index: 5;
+    max-width: 100%;
+    min-width: 100%;
 }
+
+tr:nth-child(even) {
+    background-color: #cbffd6
+}
+
+.tableProducts{
+    overflow: auto;
+    width: 100%;
+    padding: 10px;
+    padding-left: 25px;
+}
+
+table {
+    width: 100%;
+    padding: 5px 20px;
+    border: 2px solid;
+    border-radius: 10px;
+    text-align: center;
+}
+
 
 mat-grid-tile:hover .packageProducts{
     opacity: 1;
@@ -273,11 +305,12 @@ mat-grid-tile:hover .packageProducts{
 
 .flex{
     display: flex;
-    width: 100%;
+    width: 96%;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-around;
     align-items: center;
+    padding-top: 10px;
 }
 
 mat-slide-toggle{
@@ -382,7 +415,44 @@ mat-icon{
     font-size: 16px;
     color: #555555;
     outline:none;
+    transition: all .4s;
 }
+
+.hide{
+    position: fixed;
+    right: -15px ;
+    top: 50%;
+    border-bottom-left-radius: 90px;
+    border-top-left-radius: 90px;
+    background: #9e978e;
+    display: inline-block;
+    margin: 0 1em 1em 0;
+    height: 90px;
+    width: 45px;
+    opacity: 0.7;
+    cursor: pointer;
+    z-index: 7;
+}
+
+.hide mat-icon{
+    font-size: 40px;
+    margin-top: 22px;
+    margin-left: 5px;
+}
+
+.hide:hover{
+    opacity: 1;
+}
+
+.hideProducts, .hideFilter{
+    display: none;
+}
+
+.expandCheck, .expandPanel {
+    max-width: 100vw !important;
+    min-width: 100vw !important;
+}
+
 
 .newBackground {
     background: rgb(207, 240, 194);
@@ -430,6 +500,7 @@ mat-icon{
     display: inline-block;
     padding-left: 7%;
     color: #888;
+    word-break: break-word;
 }
 
 .productInfo2{
@@ -529,6 +600,13 @@ mat-icon{
     }
 }
 
+@media screen and (max-width : 700px) {
+    .packageProducts{
+        min-height: 70px;
+        max-height: 45%;
+    }
+}
+
 @media screen and (max-width : 710px) {
     .products{
         grid-column: 6/13;
@@ -595,7 +673,7 @@ mat-icon{
     }
 
     .full-width2{
-        width: 100%;
+        width: 97%;
         order : 2;
     }
 
