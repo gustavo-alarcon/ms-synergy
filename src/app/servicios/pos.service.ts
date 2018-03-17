@@ -1,0 +1,39 @@
+import { Injectable } from '@angular/core';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import { Observable } from 'rxjs/Observable';
+import { ResponseType } from '@angular/http';
+
+@Injectable()
+export class PosService {
+
+  constructor(private http : HttpClient) { }
+
+  getWarehouse(db): Observable<any>{
+    return this.http.get('http://www.meraki-s.com/rent/ms-synergy/php/ZS_mysql.php?db='+JSON.parse(db));
+  }
+
+  getProducts(db): Observable<any>{
+    return this.http.get('http://www.meraki-s.com/rent/ms-synergy/php/productos_mysql.php?db='+JSON.parse(db));
+  }
+
+  getPackages(db): Observable<any>{
+    return this.http.get('http://www.meraki-s.com/rent/ms-synergy/php/paquetes_mysql.php?db='+JSON.parse(db));
+  }
+
+  getDocuments(db): Observable<any> {
+    return this.http.get('http://www.meraki-s.com/rent/ms-synergy/php/documentos_mysql.php?db='+JSON.parse(db));
+  }
+
+  actualizarStock(db, data) : Observable<any>{   
+    return this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-productos-stock.php?db='+JSON.parse(db), JSON.stringify(data), {responseType : 'text'});
+  }
+
+  getSalesHistory(db): Observable<any>{
+    return this.http.get('http://www.meraki-s.com/rent/ms-synergy/php/handler-movimientos-historial.php?db='+JSON.parse(db));
+  }
+
+  regMovimiento(db, data):Observable<any>{
+    return this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/test/handler-movimientos-reg.php?db='+JSON.parse(db), JSON.stringify(data), { responseType : 'text' });
+  }
+
+}

@@ -1,4 +1,4 @@
-import { Directive, TemplateRef, ViewContainerRef } from "@angular/core";
+import { Directive, TemplateRef, ViewContainerRef, ChangeDetectorRef } from "@angular/core";
 
 
 /**
@@ -19,7 +19,10 @@ export class NgIfMediaQuery {
 
   private mql: MediaQueryList;
   private mqlListener: (mql: MediaQueryList) => void;   // reference kept for cleaning up in ngOnDestroy()
-  constructor(private viewContainer: ViewContainerRef, private templateRef: TemplateRef<Object>) {}
+  constructor(
+    private viewContainer: ViewContainerRef,
+     private templateRef: TemplateRef<Object>,
+     private cd: ChangeDetectorRef) {}
 
   /**
    * Called whenever the media query input value changes.
@@ -50,6 +53,7 @@ export class NgIfMediaQuery {
     if (matches && (this.isBlank(this.prevCondition) || !this.prevCondition)) {
       this.prevCondition = true;
       this.viewContainer.createEmbeddedView(this.templateRef);
+      this.cd.markForCheck();
     } else if (!matches && (this.isBlank(this.prevCondition) || this.prevCondition)) {
       this.prevCondition = false;
       this.viewContainer.clear();

@@ -1,32 +1,35 @@
-<div mat-dialog-content>
-    <h1 mat-dialog-title>Personalize su mensaje</h1>
-    <hr>
+<div>
+  <h1 mat-dialog-title>Personalize su mensaje</h1>
+  <hr>
+  <mat-dialog-content>
     <div class="loadingSpinner" *ngIf="isLoadingResults">
       <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
     </div>
     <mat-form-field class="full-width">
-        <textarea matInput maxlength="100" placeholder="Ingrese su mensaje" matTextareaAutosize matAutosizeMinRows="1"
-                  matAutosizeMaxRows="5" [(ngModel)]="completeData.message" required></textarea>
-                  <mat-hint align="start"><strong>Por defecto el mensaje tendra de inicio: Hola, (nombreDelCliente)</strong> </mat-hint>
-                  <mat-hint align="end">{{completeData.message.length}} / 100</mat-hint>
+      <textarea matInput maxlength="100" placeholder="Ingrese su mensaje" matTextareaAutosize matAutosizeMinRows="1" matAutosizeMaxRows="5"
+        [(ngModel)]="completeData.message" required></textarea>
+      <mat-hint align="start">
+        <strong>Por defecto el mensaje tendra de inicio: Hola, (nombreDelCliente)</strong>
+      </mat-hint>
+      <mat-hint align="end">{{completeData.message.length}} / 100</mat-hint>
     </mat-form-field>
-    <br/>
     <mat-form-field class="full-width">
       <input matInput [matDatepicker]="picker" placeholder="Escoja una fecha" [formControl]="date" [min]="minDate">
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker touchUi="true" #picker ngDefaultControl></mat-datepicker>
     </mat-form-field>
-    <br/>
     <mat-form-field class="full-width">
       <mat-select placeholder="Selecciona una Hora" [(ngModel)]="completeData.time" ngDefaultControl>
         <mat-option>Por defecto</mat-option>
         <mat-option *ngFor="let hora of horas" [value]="hora">{{hora}}</mat-option>
       </mat-select>
-      <mat-hint align="start"><strong>Si selecciona por defecto o ninguna, la hora sera a las 10am</strong> </mat-hint>
+      <mat-hint align="start">
+        <strong>Si selecciona por defecto o ninguna, la hora sera a las 10am</strong>
+      </mat-hint>
     </mat-form-field>
-    <div mat-dialog-actions>
-      <button mat-raised-button color="accent" (click)="onNoClick()" >Cancelar</button>
-      <button mat-raised-button color="primary" (click)="sendMessages()">Programar</button>
-    </div>
+  </mat-dialog-content>
+  <div mat-dialog-actions>
+    <button style="margin-bottom: 10px;" mat-raised-button color="accent" (click)="onNoClick()">Cancelar</button>
+    <button style="margin-bottom: 10px;" mat-raised-button color="primary" (click)="sendMessages()">Programar</button>
   </div>
-  
+</div>

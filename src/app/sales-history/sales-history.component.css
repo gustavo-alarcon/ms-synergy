@@ -16,7 +16,6 @@ mat-form-field{
     width: 95%;
 }
 
-
 .column{
     float: left;
     width: 30%;
@@ -111,7 +110,7 @@ button{
 
 mat-card{
     padding: 20px 0px;
-    margin: 30px 5vw;
+    margin: 20px 5vw;
     border-radius: 10px;
 }
 
@@ -164,6 +163,11 @@ mat-cell{
 
     mat-header-cell{
         text-align: center;
+        width: 70px;
+    }
+
+    mat-table{
+        display: grid;
     }
 }
 

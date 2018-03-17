@@ -12,10 +12,6 @@ mat-form-field{
     width: 100%;
 }
 
-mat-dialog-title, h1{
-    margin: 0 !important;
-}
-
 mat-icon{
     cursor: pointer;
 }
@@ -24,12 +20,18 @@ mat-icon{
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-size: 10px;
 }
 
-.full{
-    height: 100%;
+.mat-dialog-title{
+    margin: 0 0 5px;
 }
 
-.mat-dialog-content{
-    max-height: 80vh;
+h1{
+    margin: 0;
 }
+
+hr {
+    margin-bottom: 5px;
+}
+

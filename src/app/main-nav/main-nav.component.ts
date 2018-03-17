@@ -36,6 +36,10 @@ export class MainNavComponent implements OnInit {
   logout() {
     this.loginService.logout();
     this.loginService.clean();
+    localStorage.removeItem('web');
+    localStorage.removeItem('db');
+    localStorage.removeItem('user');
+    localStorage.removeItem('page');
   }
 
 }

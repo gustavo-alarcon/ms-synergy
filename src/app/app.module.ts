@@ -31,7 +31,8 @@ import {  MatToolbarModule,
           MatGridListModule,
           MatSlideToggleModule,
           MatTooltipModule,
-          MatRadioModule
+          MatRadioModule,
+          MatSortModule
         } from '@angular/material';
 
 import { AppComponent } from './app.component';
@@ -91,8 +92,15 @@ import { SalesHistoryComponent } from './sales-history/sales-history.component';
 import { SatPopoverModule } from '@ncstate/sat-popover';
 import { InlineEditComponent } from './ms-text/inline-edit/inline-edit.component';
 import { HistoryComponent } from './ms-text/history/history.component';
-import { InlineEditHistoryComponent } from './ms-text/history/inline-edit-history/inline-edit-history.component'
+import { InlineEditHistoryComponent } from './ms-text/history/inline-edit-history/inline-edit-history.component';
+import { PosService } from './servicios/pos.service';
 
+import {MAT_AUTOCOMPLETE_SCROLL_STRATEGY} from '@angular/material'; 
+import { Platform } from '@angular/cdk/platform'; 
+import { Overlay } from '@angular/cdk/overlay';
+
+
+export function MAT_AUTOCOMPLETE_SCROLL_STRATEGY_FACTORY(overlay: Overlay, platform: Platform) { return () => platform.IOS ? overlay.scrollStrategies.block() : overlay.scrollStrategies.reposition(); }
 
 @NgModule({
   declarations: [
@@ -175,7 +183,8 @@ import { InlineEditHistoryComponent } from './ms-text/history/inline-edit-histor
     MatSlideToggleModule,
     MatTooltipModule,
     MatRadioModule,
-    SatPopoverModule 
+    SatPopoverModule ,
+    MatSortModule
   ],
   entryComponents:[
     InputModalComponent,
@@ -193,9 +202,13 @@ import { InlineEditHistoryComponent } from './ms-text/history/inline-edit-histor
     AuthService,
     Auth2Guard,
     AuthLoginGuard,
+    PosService,
     {
       provide: LocationStrategy, useClass: HashLocationStrategy
-    }
+    },
+    { provide: MAT_AUTOCOMPLETE_SCROLL_STRATEGY, 
+      deps: [Overlay, Platform],
+      useFactory: MAT_AUTOCOMPLETE_SCROLL_STRATEGY_FACTORY, }
   ],
   bootstrap: [AppComponent]
 })

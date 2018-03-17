@@ -422,17 +422,18 @@ export class InventariosService {
   }
 
   actualizarStock(data: JSON) {
+    console.log(data);
     this.queryLoading(true);    
     this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-productos-stock.php?db='+this.db, JSON.stringify(data))
       .subscribe(
         res => {
          
-          this.toastr.warning(res.text(), 'Cerrar');
+          this.toastr.success(res.text(), 'Cerrar');
           this.getProductos();
         },
         err => {
           
-          this.toastr.warning('Error de conexión', 'Cerrar');
+          this.toastr.error('Error de conexión', 'Cerrar');
           this.queryLoading(false);
         }
       );
@@ -446,11 +447,11 @@ export class InventariosService {
       .subscribe(
         res => {
           let message = res.text();
-          this.toastr.warning(message, 'Cerrar');
+          this.toastr.success(message, 'Cerrar');
           this.getProductos();
         },
         err => {
-          this.toastr.warning('Error de conexión', 'Cerrar');
+          this.toastr.error('Error de conexión', 'Cerrar');
           this.queryLoading(false);
         }
       );
@@ -472,7 +473,7 @@ export class InventariosService {
         
       },
       err => {
-        this.toastr.warning('Error de conexión', 'Cerrar');
+        this.toastr.error('Error de conexión', 'Cerrar');
         this.queryLoading(false);
       });
   }
@@ -484,12 +485,12 @@ export class InventariosService {
     this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-paquetes-cre.php?db='+this.db, JSON.stringify(data))
       .subscribe(
         res => {
-          this.toastr.warning(res.text(), 'Cerrar');
+          this.toastr.success(res.text(), 'Cerrar');
           this.getPaquetes();
           this.router.navigate(['inventarios/productos']);
         },
         err => {
-          this.toastr.warning('Error de conexión', 'Cerrar');
+          this.toastr.error('Error de conexión', 'Cerrar');
           this.queryLoading(false);
         }
       );

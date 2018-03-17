@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Inject } from '@angular/core';
-import { MatPaginator, MatTableDataSource } from '@angular/material';
+import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
 import { ClientsService } from '../../servicios/clients.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { InputModalComponent } from '../input-modal/input-modal.component';
@@ -8,6 +8,7 @@ import { AddClientComponent } from '../add-client/add-client.component';
 import { MessagesService } from '../../servicios/messages.service'
 import * as crypto from 'crypto-js';
 import { trigger, state, style, transition, animate, keyframes, query, stagger } from '@angular/animations';
+import { Client } from '../../classes/client';
 
 
 @Component({
@@ -20,10 +21,10 @@ export class MessagesComponent implements OnInit {
   all: boolean = false;
   fran: boolean = false;
   prom: boolean = false;
-  clientsSales: Client[];
+  clientsSales: Client[] = [];
   displayedColumns = ['name', 'mail', 'phone', 'place', 'birthday', 'type', 'seleccionar', 'eliminar'];
   displayedColumns2 = ['name', 'phone', 'type', 'seleccionar', 'eliminar'];
-  dataSource: MatTableDataSource<any>;
+  dataSource: MatTableDataSource<Client>;
   isLoadingResults = false;
   isLoadingBubbles = false;
   bytes = crypto.AES.decrypt(localStorage.getItem('db'), 'meraki');
@@ -35,6 +36,7 @@ export class MessagesComponent implements OnInit {
   message1: string = "Haga click para personalizar un mensaje";
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   constructor(
     private clientService: ClientsService,
@@ -55,24 +57,27 @@ export class MessagesComponent implements OnInit {
   }
 
   getClients() {
+    this.clientsSales = [];
     this.isLoadingResults = true;
     this.clientService.getBdClient(this.bd).subscribe(data => {
-      this.clientsSales = data.records;
-      for (let i = 0; i < data.length; i++) {
+      console.log(data);
+      for (let i = 0; i < data.records.length; i++) {
         this.clientsSales.push({
-          ID: data.ID,
-          Name: data.Name,
-          Mail: data.Mail,
-          Phone: data.Phone,
-          Place: data.Place,
+          ID: parseInt(data.records[i].ID),
+          Name: data.records[i].Name.toString(),
+          Mail: data.records[i].Mail.toString(),
+          Phone: parseInt(data.records[i].Phone),
+          Place: data.records[i].Place.toString(),
           select: false,
-          Birthday: data.Birthday,
-          Type: data.Type,
+          Birthday: data.records[i].Birthday,
+          Type: parseInt(data.records[i].Type),
         });
       }
+      console.log(this.clientsSales);
       this.isLoadingResults = false;
       this.dataSource = new MatTableDataSource(this.clientsSales);
       this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
     });
   }
 
@@ -134,8 +139,9 @@ export class MessagesComponent implements OnInit {
         }
       }
       let dialogRef = this.dialog.open(InputModalComponent, {
-        width: '500px',
-        data: datos
+        width: 'auto',
+        data: datos,
+        autoFocus: false
       });
 
       dialogRef.afterClosed().subscribe(result => {
@@ -198,7 +204,7 @@ export class MessagesComponent implements OnInit {
 
   changeFranchise(e) {
     for (let i = 0; i < this.clientsSales.length; i++) {
-      if (this.clientsSales[i].Type == '1') {
+      if (this.clientsSales[i].Type == 1) {
         if (e.checked == true)
           this.clientsSales[i].select = true;
         else
@@ -219,7 +225,7 @@ export class MessagesComponent implements OnInit {
 
   changeProm(e) {
     for (let i = 0; i < this.clientsSales.length; i++) {
-      if (this.clientsSales[i].Type == '2') {
+      if (this.clientsSales[i].Type == 2) {
         if (e.checked == true)
           this.clientsSales[i].select = true;
         else
@@ -240,8 +246,9 @@ export class MessagesComponent implements OnInit {
 
   openClient() {
     let dialogRef = this.dialog.open(AddClientComponent, {
-      width: '500px',
-      data: null
+      width: 'auto',
+      data: null,
+      autoFocus: false
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -263,16 +270,4 @@ export class MessagesComponent implements OnInit {
     }
   }
 
-}
-
-
-export interface Client {
-  ID: any;
-  Name: string;
-  Mail: string;
-  Phone: string;
-  Place: string;
-  Birthday: string;
-  Type: string;
-  select: boolean;
 }

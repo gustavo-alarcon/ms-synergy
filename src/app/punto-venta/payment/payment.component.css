@@ -1,5 +1,4 @@
 .full{
-    height: 100%;
     display: grid;
     grid-template-columns: repeat(12,minmax(0.0833333%,1fr));
     grid-template-rows: repeat(12,1fr);
@@ -7,11 +6,10 @@
         "title title"
         "list contentModal"
         "panel contentModal"
-        "actions actions"
 }
 
 .mat-dialog-content{
-    max-height: 100vh;
+    max-height: 75vh;
 }
 
 h1, hr {
@@ -37,7 +35,7 @@ h1, hr {
 
 .panel{
     grid-area: panel;
-    grid-row: 8/12;
+    grid-row: 8/13;
     grid-column: 1/6;
     border: 2px solid #b0b0b0;
     border-radius: 5px;
@@ -45,18 +43,12 @@ h1, hr {
 
 .content{
     grid-area: contentModal;
-    grid-row: 2/12;
+    grid-row: 2/13;
     grid-column: 6/13;
     border: 2px solid #b0b0b0;
     border-radius: 5px;
     margin-left: 2px;
     overflow: auto;
-}
-
-.actions{   
-    grid-area: actions;
-    grid-row: 12/13;
-    grid-column: 1/13;
 }
 
 .panelInt{
@@ -111,6 +103,10 @@ h1, hr {
     flex-direction: row;
 }
 
+.containerTotal{
+    display: flex;
+}
+
 .listSummary{
     text-align: right;
     border-top: solid 2px;
@@ -122,7 +118,7 @@ h1, hr {
 }
 
 .listTotal{
-    width: 100%;
+    width: 95%;
     display: inline-block;
     text-align: left;
     margin-bottom: 30%;
@@ -131,18 +127,22 @@ h1, hr {
     font-weight: bold;
     text-decoration: underline;
     margin-top: 20px;
-    padding-left: 30px;
+    padding-left: 10px;
+    word-break: break-word;
+    text-align: center;
 }
 
 .listIGV{
-    width: 100%;
+    width: 95%;
     display: inline-block;
     text-align: left;
     margin-bottom: 50px;
     font-weight: bold;
     font-size: 20px;
     margin-top: 20px;
-    padding-left: 30px;
+    padding-left: 10px;
+    word-break: break-word; 
+    text-align: center;
 }
 
 mat-icon{
@@ -226,12 +226,50 @@ mat-icon{
     grid-area: back;
 }
 
+.contentTotal{
+    width: 50%;
+}
+
+.contentTotalColor1{
+    background-color : #bda6a6;
+}
+
+.contentTotalColor2{
+    background-color : #de8787;
+}
+
 @media screen and (min-width : 800px) {
     .teclado {
         font-size: 15px;
     }
 }
 
+@media screen and (max-width : 650px) {
+    .contentTotalColor1 {
+        order: 1;
+    }
+
+    .contentTotal{
+        width: 100%;
+    }
+
+    .listIGV {
+        padding-left: 0px;
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }
+
+    .listTotal {
+        padding-left: 0px;
+        margin-top: 15px;
+        margin-bottom: 15px;
+
+    }
+
+    .containerTotal {
+        flex-direction: column;
+    }
+}
 
 @media screen and (max-width : 550px) {
     .listIGV {
@@ -248,6 +286,6 @@ mat-icon{
         grid-row: 2/7;
     }
     .panel{
-        grid-row: 7/12; 
+        grid-row: 7/13; 
     }
 }

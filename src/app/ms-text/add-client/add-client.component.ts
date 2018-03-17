@@ -59,6 +59,10 @@ export class AddClientComponent implements OnInit {
     private messageService : MessagesService,
     private formBuilder: FormBuilder,
   ) { 
+    
+  }
+
+  ngOnInit() {
     this.clientForm = this.formBuilder.group({
       'name': [null,Validators.compose([Validators.required,Validators.pattern('^[a-zA-ZñÑáéíóúÁÉÍÓÚ\\s]+$')])],
       'mail': [null,Validators.compose([Validators.required, Validators.email])],
@@ -67,9 +71,6 @@ export class AddClientComponent implements OnInit {
       'type': [null,Validators.compose([Validators.required])],
 
     });
-  }
-
-  ngOnInit() {
   }
 
   onNoClick(): void {

@@ -160,7 +160,7 @@ mat-cell{
 
 @media screen and (max-width: 499px){
     mat-cell{
-        padding: 1px;
+        padding: 3px;
         font-size: 11px;
         word-wrap: break-word;
         text-align: center;    

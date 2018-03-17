@@ -1,10 +1,10 @@
-<div class="full" mat-dialog-content>
-  <div class="header">  
-    <h1 mat-dialog-title>Lista de clientes</h1>
-    <mat-icon matTooltip="Agregar un cliente" matTooltipPosition="above" (click)="addClient()">add_box</mat-icon>
+<div>
+  <div mat-dialog-title class="header">  
+    <h1 style="width: 80%;">Lista de clientes</h1>
+    <mat-icon matTooltip="Agregar un cliente" matTooltipPosition="left" (click)="addClient()">add_box</mat-icon>
   </div>
   <hr>
-  <section>
+  <mat-dialog-content>
     <mat-form-field>
       <mat-icon matPrefix>filter_list</mat-icon>
       <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtrar">
@@ -49,8 +49,8 @@
       <mat-row (click)="selectCustomer(cliente)" matTooltip="Seleccione un cliente" matTooltipPosition="above" *matRowDef="let cliente; columns: displayedColumns2;" ></mat-row>      
     </mat-table>
     <mat-paginator [pageSizeOptions]="[5,10]"></mat-paginator>
-  </section>
+  </mat-dialog-content>
   <div mat-dialog-actions align="end">
-    <button mat-raised-button color="warn" (click)="onNoClick()">Cancelar</button>
+    <button style="margin-bottom: 15px;" mat-raised-button color="warn" (click)="onNoClick()">Cancelar</button>
   </div>
 </div>

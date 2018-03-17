@@ -1,10 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
 import { MatDialogRef, MatDialog } from '@angular/material';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { ClientsService } from '../../servicios/clients.service';
 import {MatPaginator,  MatTableDataSource} from '@angular/material';
 import * as crypto from 'crypto-js';
 import { AddClient2Component } from './add-client/add-client.component';
+import { Client } from '../../classes/client';
 
 @Component({
   selector: 'app-clients',
@@ -42,10 +43,6 @@ export class ClientsComponent implements OnInit {
     this.DialogRef.close(client);
   }
 
-  withoutClient(){
-    this.DialogRef.close('sin');
-  }
-
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase();
@@ -58,6 +55,7 @@ export class ClientsComponent implements OnInit {
       this.clientsSales = data.records;
       for(let i=0;i<data.length;i++){
         this.clientsSales.push({
+          ID : data.ID,
           Name : data.Name,
           Mail : data.Mail,
           Phone : data.Phone,
@@ -75,8 +73,9 @@ export class ClientsComponent implements OnInit {
 
   addClient(){
     let dialogRef = this.dialog.open(AddClient2Component,{
-      width : '80%',
-      data : 'text' 
+      width : 'auto',
+      data : 'text',
+      autoFocus: false       
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -86,14 +85,4 @@ export class ClientsComponent implements OnInit {
     });
   }
 
-}
-
-export interface Client{
-  Name:string;
-  Mail:string;
-  Phone:string;
-  Place:string;
-  Birthday:string;
-  Type:string;
-  select:boolean;
 }

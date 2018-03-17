@@ -1,11 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { InventariosService } from '../servicios/almacenes/inventarios.service';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormControl, Validators, FormGroup, FormBuilder } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { ClientsComponent } from './clients/clients.component';
 import { PaymentComponent } from './payment/payment.component';
 import { trigger, state, style, transition, animate, keyframes, query, stagger } from '@angular/animations';
+import { ListCustomers } from '../classes/listCustomers';
+import { PosService } from '../servicios/pos.service';
+import * as crypto from 'crypto-js';
 
 @Component({
   selector: 'app-punto-venta',
@@ -48,17 +50,17 @@ import { trigger, state, style, transition, animate, keyframes, query, stagger }
         style({ opacity: 1, transform: 'translateX(0)', offset: 1.0 }),
       ])))
     ]),
-    trigger('menuInOut',[
-      state('close',style({opacity : 0, display : 'none'})),
+    trigger('menuInOut', [
+      state('close', style({ opacity: 0, display: 'none' })),
       transition('close => open', animate('500ms ease-in', keyframes([
-        style({display:'block' , opacity: 0, offset: 0}),
-        style({opacity: 0.5, offset: 0.5}),
-        style({opacity: 1, offset: 1.0}),
+        style({ display: 'block', opacity: 0, offset: 0 }),
+        style({ opacity: 0.5, offset: 0.5 }),
+        style({ opacity: 1, offset: 1.0 }),
       ]))),
-      transition('open => close',animate('500ms ease-in', keyframes([
-        style({opacity: 1, offset: 0}),
-        style({opacity: 0.5,  offset: 0.5}),
-        style({opacity: 0, display:'none' , offset: 1.0}),
+      transition('open => close', animate('500ms ease-in', keyframes([
+        style({ opacity: 1, offset: 0 }),
+        style({ opacity: 0.5, offset: 0.5 }),
+        style({ opacity: 0, display: 'none', offset: 1.0 }),
       ]))),
     ])
   ]
@@ -89,14 +91,19 @@ export class PuntoVentaComponent implements OnInit {
   checked: boolean;
   operationOption: number = 1;
   igvType: number = 1;
-  numerosSerie: any[][];
-  hideProducts : boolean = false;
+  numerosSerie: any[];
+  hideProducts: boolean = false;
+  bytes = crypto.AES.decrypt(localStorage.getItem('db'), 'meraki');
+  bd = this.bytes.toString(crypto.enc.Utf8);
+  client: FormControl;
+  isLoadingResults = true;
 
   constructor(
-    private inventariosService: InventariosService,
+    private posService: PosService,
     private fb: FormBuilder,
     private toastr: ToastrService,
     private dialog: MatDialog,
+    private cd: ChangeDetectorRef
   ) {
 
     this.listCustomers.push({
@@ -105,31 +112,45 @@ export class PuntoVentaComponent implements OnInit {
       taxes: 0,
       subtotal: 0,
       lastItemClicked: null,
-      client: null
+      client: { Nombre: 'Cliente' }
     });
 
     this.movimientoForm = this.fb.group({
       Producto: '',
-      Paquete: '',
+      Paquete: ''
     });
 
-    this.inventariosService.currentDataAlmacenes.subscribe(res => {
-      this.almacenes = res;
-      this.almacenes.sort(this.sortBy('Nombre'));
-    });
+    this.loadWarehouse();
 
-    this.inventariosService.currentDataProductos.subscribe(res => {
-      this.productos = res;
-      this.productos.sort(this.sortBy('Nombre'));
-    });
-
-    this.inventariosService.currentDataPaquetes.subscribe(res => {
-      this.paquetes = res;
-
-    });
+    this.client = new FormControl({ value: this.listCustomers[this.currentCustomer].client.Nombre, disabled: true });
   }
 
   ngOnInit() {
+  }
+
+  loadWarehouse() {
+    this.isLoadingResults = true;
+    this.posService.getWarehouse(this.bd).subscribe(res => {
+      this.almacenes = res.records;
+      this.almacenes.sort(this.sortBy('Nombre'));
+      this.getProductsBD();
+    });
+  }
+
+  getProductsBD() {
+    this.posService.getProducts(this.bd).subscribe(res => {
+      this.productos = res.records;
+      this.productos.sort(this.sortBy('Nombre'));
+      this.getPackagesBD();
+    });
+  }
+
+  getPackagesBD() {
+    this.posService.getPackages(this.bd).subscribe(res => {
+      this.isLoadingResults = false;
+      this.paquetes = res.records;
+      this.cd.markForCheck();
+    });
   }
 
   onTabClick(e) {
@@ -145,6 +166,7 @@ export class PuntoVentaComponent implements OnInit {
 
   onSelectCustomer(e) {
     this.currentCustomer = e;
+    this.client.patchValue(this.listCustomers[this.currentCustomer].client.Nombre);
   }
 
   changeOperationType(i) {
@@ -156,6 +178,7 @@ export class PuntoVentaComponent implements OnInit {
       this.listCustomers.splice(i, 1);
       this.currentCustomer = i - 1;
       this.selectedIndex = this.currentCustomer;
+      this.client.patchValue(this.listCustomers[this.currentCustomer].client.Nombre);
     }
   }
 
@@ -429,7 +452,6 @@ export class PuntoVentaComponent implements OnInit {
 
     this.productos_filtrado = [];
     this.paquetes_filtrado = [];
-
     this.productos.forEach(element => {
       if (element['Zona'] === alm) {
         this.productos_filtrado.push(element);
@@ -441,7 +463,6 @@ export class PuntoVentaComponent implements OnInit {
         this.paquetes_filtrado.push(element);
       }
     });
-
     let _nombre = '';
     let _position = 0;
     this.pack_nombre = [];
@@ -453,16 +474,23 @@ export class PuntoVentaComponent implements OnInit {
           'ID': this.paquetes_filtrado[i].ID,
           'Productos': []
         });
-        this.pack_nombre[this.pack_nombre.length - 1].Productos.push(this.paquetes_filtrado[i].Nombre);
+        this.pack_nombre[this.pack_nombre.length - 1].Productos.push({
+          'nombre': this.paquetes_filtrado[i].Nombre,
+          'precio': this.paquetes_filtrado[i].Venta,
+          'cantidad': this.paquetes_filtrado[i].Cantidad,
+          'id': this.paquetes_filtrado[i].IDProducto
+
+        });
         _nombre = this.paquetes_filtrado[i].Paquete;
         _position = this.pack_nombre.length - 1;
       }
       else {
         this.pack_nombre[_position].Venta = parseFloat(this.pack_nombre[_position].Venta) + parseFloat(this.paquetes_filtrado[i].Venta);
         this.pack_nombre[_position].Productos.push({
-          'nombre':this.paquetes_filtrado[i].Nombre,
+          'nombre': this.paquetes_filtrado[i].Nombre,
           'precio': this.paquetes_filtrado[i].Venta,
           'cantidad': this.paquetes_filtrado[i].Cantidad,
+          'id': this.paquetes_filtrado[i].IDProducto
         });
       }
     }
@@ -494,14 +522,14 @@ export class PuntoVentaComponent implements OnInit {
       option.Nombre.toLowerCase().indexOf(val.toLowerCase()) === 0);
   }
 
-  enterProduct(){
+  enterProduct() {
     let index;
-    if(this.filteredOptions.length == 0)
+    if (this.filteredOptions.length == 0)
       this.toastr.warning("No hay ningun producto", "Cuidado");
-    else{
-      if(this.filteredOptions.length == 1){
-        for(let i = 0 ; i < this.productos_filtrado.length ; i++){
-          if(this.productos_filtrado[i].ID == this.filteredOptions[0].ID)
+    else {
+      if (this.filteredOptions.length == 1) {
+        for (let i = 0; i < this.productos_filtrado.length; i++) {
+          if (this.productos_filtrado[i].ID == this.filteredOptions[0].ID)
             index = i;
         }
         this.addToList(index);
@@ -518,9 +546,10 @@ export class PuntoVentaComponent implements OnInit {
       taxes: 0,
       subtotal: 0,
       lastItemClicked: null,
-      client: null
+      client: { Nombre: 'Cliente' }
     });
     this.currentCustomer = this.listCustomers.length - 1;
+    this.client.patchValue(this.listCustomers[this.currentCustomer].client.Nombre);
   }
 
   tabChanged(e) {
@@ -544,7 +573,25 @@ export class PuntoVentaComponent implements OnInit {
           units: '1',
           id: this.productos_filtrado[i].Codigo,
           dsc: '',
-          unitPrice: '' + this.productos_filtrado[i].Venta
+          unitPrice: '' + this.productos_filtrado[i].Venta,
+          idReal: this.productos_filtrado[i].ID,
+          package: 0,
+          AlmacenDestino: '',
+          AlmacenOrigen: this.productos_filtrado[i].Zona,
+          Cantidad: '1',
+          Compra: this.productos_filtrado[i].Compra,
+          Correlativo: null,
+          Documento: null,
+          Serie: null,
+          Moneda: this.productos_filtrado[i].Moneda,
+          Movimiento: 'SALIDA',
+          Paquete: '',
+          Producto: this.productos_filtrado[i].Nombre,
+          IDProducto: this.productos_filtrado[i].ID,
+          Tercero: null,
+          Unidad: this.productos_filtrado[i].Unidad,
+          Venta: this.productos_filtrado[i].Venta,
+          Usuario: null
         });
         this.listCustomers[this.currentCustomer].total += +(this.listCustomers[this.currentCustomer].listAction[this.listCustomers[this.currentCustomer].listAction.length - 1].price);
         this.listCustomers[this.currentCustomer].subtotal = (this.listCustomers[this.currentCustomer].total / 1.18);
@@ -573,7 +620,24 @@ export class PuntoVentaComponent implements OnInit {
           id: this.pack_nombre[i].ID,
           dsc: '',
           unitPrice: '' + this.pack_nombre[i].Venta,
-          products: this.pack_nombre[i].Productos
+          products: this.pack_nombre[i].Productos,
+          package: 1,
+          AlmacenDestino: '',
+          AlmacenOrigen: this.pack_nombre[i].Almacen,
+          Cantidad: '1',
+          Compra: this.pack_nombre[i].Compra,
+          Correlativo: null,
+          Documento: null,
+          Serie: null,
+          Moneda: this.pack_nombre[i].Moneda,
+          Movimiento: 'SALIDA',
+          Paquete: this.pack_nombre[i].Paquete,
+          Producto: this.pack_nombre[i].Nombre,
+          IDProducto: this.pack_nombre[i].IDProducto,
+          Tercero: null,
+          Unidad: this.pack_nombre[i].Unidad,
+          Venta: this.pack_nombre[i].Venta,
+          Usuario: null
         });
         this.listCustomers[this.currentCustomer].total += +(this.listCustomers[this.currentCustomer].listAction[this.listCustomers[this.currentCustomer].listAction.length - 1].price);
         this.listCustomers[this.currentCustomer].subtotal = (this.listCustomers[this.currentCustomer].total / 1.18);
@@ -591,26 +655,25 @@ export class PuntoVentaComponent implements OnInit {
 
   openClients() {
     let dialogRef = this.dialog.open(ClientsComponent, {
-      width: '80%',
-      data: 'text'
+      width: 'auto',
+      data: 'text',
+      autoFocus: false
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result != 'close') {
-        if (result == 'sin')
-          this.listCustomers[this.currentCustomer].client = null;
-        else
-          this.listCustomers[this.currentCustomer].client = result;
+    dialogRef.beforeClose().subscribe(result => {
+      if (result != 'close' && result != undefined) {
+        this.listCustomers[this.currentCustomer].client = result;
+        this.client.patchValue(result.Nombre);
       }
     });
   }
 
   openPayment() {
-    if (this.listCustomers[this.currentCustomer].listAction.length != 0 && this.listCustomers[this.currentCustomer].client != null) {
+    if (this.listCustomers[this.currentCustomer].listAction.length != 0 && this.listCustomers[this.currentCustomer].client.Nombre != 'Cliente') {
       let dialogRef = this.dialog.open(PaymentComponent, {
-        width: '95%',
-        height: '90vh',
-        data: this.listCustomers[this.currentCustomer]
+        width: 'auto',
+        data: this.listCustomers[this.currentCustomer],
+        autoFocus: false
       });
 
       dialogRef.afterClosed().subscribe(result => {
@@ -618,6 +681,7 @@ export class PuntoVentaComponent implements OnInit {
           if (this.currentCustomer != 0) {
             this.listCustomers.splice(this.currentCustomer, 1);
             this.currentCustomer = this.currentCustomer - 1;
+            this.selectedIndex = this.currentCustomer;
           }
           else {
             this.listCustomers[this.currentCustomer].listAction = [];
@@ -625,35 +689,37 @@ export class PuntoVentaComponent implements OnInit {
               this.listCustomers[this.currentCustomer].taxes = 0,
               this.listCustomers[this.currentCustomer].subtotal = 0,
               this.listCustomers[this.currentCustomer].lastItemClicked = null,
-              this.listCustomers[this.currentCustomer].client = null
+              this.listCustomers.splice(0, 1);
+            this.addCustomer()
           }
+          this.cd.markForCheck();
+          this.isLoadingResults = true;
+          this.getAllProducts(this.selectedWarehouse);
         }
       });
     }
     else
-      if (this.listCustomers[this.currentCustomer].client == null)
+      if (this.listCustomers[this.currentCustomer].client.Nombre == 'Cliente')
         this.toastr.warning("Seleccione un cliente", "Cuidado");
     if (this.listCustomers[this.currentCustomer].listAction.length == 0)
       this.toastr.warning("No hay ningun producto o paquete seleccionado", "Cuidado");
   }
 
+  hideProductsChange() {
+    this.hideProducts = !this.hideProducts;
+  }
+
+  getAllProducts(alm: string) {
+    this.posService.getProducts(this.bd).subscribe(res => {
+      this.productos = res.records;
+      this.productos.sort(this.sortBy('Nombre'));
+      this.posService.getPackages(this.bd).subscribe(res => {
+        this.isLoadingResults = false;
+        this.paquetes = res.records;
+        this.cd.markForCheck();
+        this.filtrarProductos(alm);
+      });
+    });
+  }
 }
 
-interface ListCustomers {
-  listAction: ListAction[];
-  total: number;
-  taxes: number;
-  subtotal: number;
-  lastItemClicked: any;
-  client: any;
-}
-
-interface ListAction {
-  product: string;
-  price: any;
-  units: string;
-  id: number;
-  dsc: string;
-  unitPrice: string;
-  products?: string[];
-}
