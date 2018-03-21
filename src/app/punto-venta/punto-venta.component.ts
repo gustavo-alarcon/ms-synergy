@@ -95,8 +95,15 @@ export class PuntoVentaComponent implements OnInit {
   hideProducts: boolean = false;
   bytes = crypto.AES.decrypt(localStorage.getItem('db'), 'meraki');
   bd = this.bytes.toString(crypto.enc.Utf8);
+  nameBytes = crypto.AES.decrypt(localStorage.getItem('user'), 'meraki');
+  user = this.nameBytes.toString(crypto.enc.Utf8);
   client: FormControl;
   isLoadingResults = true;
+  listBytes : any = null;
+  list : any = null;
+  tabBytes : any = null;
+  tab : any = null;
+
 
   constructor(
     private posService: PosService,
@@ -105,15 +112,35 @@ export class PuntoVentaComponent implements OnInit {
     private dialog: MatDialog,
     private cd: ChangeDetectorRef
   ) {
-
-    this.listCustomers.push({
-      listAction: [],
-      total: 0,
-      taxes: 0,
-      subtotal: 0,
-      lastItemClicked: null,
-      client: { Nombre: 'Cliente' }
-    });
+    if (JSON.parse(localStorage.getItem('tab')) != null) {
+      this.selectedIndex = JSON.parse(localStorage.getItem('tab'));
+      this.currentCustomer = this.selectedIndex;
+    }
+      
+    if (localStorage.getItem('list') == null) {
+      this.listCustomers.push({
+        listAction: [],
+        total: 0,
+        taxes: 0,
+        subtotal: 0,
+        lastItemClicked: null,
+        client: { Nombre: 'Cliente' },
+        igvType: 1,
+        documento: null,
+        serie: null,
+        correlativo: null,
+        given: null,
+        change: null,
+        paymentType: null,
+        user: JSON.parse(this.user),
+        date: null
+      });
+    }
+    else {
+      this.listBytes = crypto.AES.decrypt(localStorage.getItem('list'), 'meraki');;
+      this.list = this.listBytes.toString(crypto.enc.Utf8);
+      this.listCustomers = JSON.parse(this.list);
+    }
 
     this.movimientoForm = this.fb.group({
       Producto: '',
@@ -167,6 +194,8 @@ export class PuntoVentaComponent implements OnInit {
   onSelectCustomer(e) {
     this.currentCustomer = e;
     this.client.patchValue(this.listCustomers[this.currentCustomer].client.Nombre);
+    let list = crypto.AES.encrypt(JSON.stringify(this.listCustomers), 'meraki');
+    localStorage.setItem('list', list);
   }
 
   changeOperationType(i) {
@@ -178,8 +207,11 @@ export class PuntoVentaComponent implements OnInit {
       this.listCustomers.splice(i, 1);
       this.currentCustomer = i - 1;
       this.selectedIndex = this.currentCustomer;
+      localStorage.setItem('tab', JSON.stringify(this.selectedIndex));
       this.client.patchValue(this.listCustomers[this.currentCustomer].client.Nombre);
     }
+    let list = crypto.AES.encrypt(JSON.stringify(this.listCustomers), 'meraki');
+    localStorage.setItem('list', list);
   }
 
   clickProductList(i) {
@@ -208,9 +240,13 @@ export class PuntoVentaComponent implements OnInit {
             else
               this.listCustomers[this.currentCustomer].listAction[i].price = '';
             this.calculateTotalAndTaxes();
+            let list = crypto.AES.encrypt(JSON.stringify(this.listCustomers), 'meraki');
+            localStorage.setItem('list', list);
             return;
           }
           else {
+            let list = crypto.AES.encrypt(JSON.stringify(this.listCustomers), 'meraki');
+            localStorage.setItem('list', list);
             return;
           }
         }
@@ -232,6 +268,8 @@ export class PuntoVentaComponent implements OnInit {
           else
             this.listCustomers[this.currentCustomer].listAction[i].price = '';
           this.calculateTotalAndTaxes();
+          let list = crypto.AES.encrypt(JSON.stringify(this.listCustomers), 'meraki');
+          localStorage.setItem('list', list);
           return;
         }
         if (this.listCustomers[this.currentCustomer].lastItemClicked == this.listCustomers[this.currentCustomer].listAction[i].id && this.operationOption == 3) {
@@ -253,10 +291,14 @@ export class PuntoVentaComponent implements OnInit {
           else
             this.listCustomers[this.currentCustomer].listAction[i].price = '';
           this.calculateTotalAndTaxes();
+          let list = crypto.AES.encrypt(JSON.stringify(this.listCustomers), 'meraki');
+          localStorage.setItem('list', list);
           return;
         }
       }
     }
+    let list = crypto.AES.encrypt(JSON.stringify(this.listCustomers), 'meraki');
+    localStorage.setItem('list', list);
   }
 
   calculateTotalAndTaxes() {
@@ -305,8 +347,11 @@ export class PuntoVentaComponent implements OnInit {
         if (this.listCustomers[this.currentCustomer].lastItemClicked == this.listCustomers[this.currentCustomer].listAction[i].id && this.operationOption == 1) {
           if (this.listCustomers[this.currentCustomer].listAction[i].units == '') {
             this.listCustomers[this.currentCustomer].listAction.splice(i, 1);
-            if (this.listCustomers[this.currentCustomer].listAction.length >= 1)
+            if (this.listCustomers[this.currentCustomer].listAction.length > 1)
               this.listCustomers[this.currentCustomer].lastItemClicked = this.listCustomers[this.currentCustomer].listAction[i - 1].id;
+            else
+              if (this.listCustomers[this.currentCustomer].listAction.length != 0)
+                this.listCustomers[this.currentCustomer].lastItemClicked = this.listCustomers[this.currentCustomer].listAction[0].id;
           }
           else {
             if (this.listCustomers[this.currentCustomer].listAction[i].units.length != 0) {
@@ -327,13 +372,18 @@ export class PuntoVentaComponent implements OnInit {
             }
           }
           this.calculateTotalAndTaxes();
+          let list = crypto.AES.encrypt(JSON.stringify(this.listCustomers), 'meraki');
+          localStorage.setItem('list', list);
           return;
         }
         if (this.listCustomers[this.currentCustomer].lastItemClicked == this.listCustomers[this.currentCustomer].listAction[i].id && this.operationOption == 2) {
           if (this.listCustomers[this.currentCustomer].listAction[i].dsc == '') {
             this.listCustomers[this.currentCustomer].listAction.splice(i, 1);
-            if (this.listCustomers[this.currentCustomer].listAction.length >= 1)
+            if (this.listCustomers[this.currentCustomer].listAction.length > 1)
               this.listCustomers[this.currentCustomer].lastItemClicked = this.listCustomers[this.currentCustomer].listAction[i - 1].id;
+            else
+              if (this.listCustomers[this.currentCustomer].listAction.length != 0)
+                this.listCustomers[this.currentCustomer].lastItemClicked = this.listCustomers[this.currentCustomer].listAction[0].id;
           }
           else {
             if (this.listCustomers[this.currentCustomer].listAction[i].dsc.length != 0) {
@@ -354,13 +404,18 @@ export class PuntoVentaComponent implements OnInit {
             }
           }
           this.calculateTotalAndTaxes();
+          let list = crypto.AES.encrypt(JSON.stringify(this.listCustomers), 'meraki');
+          localStorage.setItem('list', list);
           return;
         }
         if (this.listCustomers[this.currentCustomer].lastItemClicked == this.listCustomers[this.currentCustomer].listAction[i].id && this.operationOption == 3) {
           if (this.listCustomers[this.currentCustomer].listAction[i].unitPrice == '') {
             this.listCustomers[this.currentCustomer].listAction.splice(i, 1);
-            if (this.listCustomers[this.currentCustomer].listAction.length >= 1)
+            if (this.listCustomers[this.currentCustomer].listAction.length > 1)
               this.listCustomers[this.currentCustomer].lastItemClicked = this.listCustomers[this.currentCustomer].listAction[i - 1].id;
+            else
+              if (this.listCustomers[this.currentCustomer].listAction.length != 0)
+                this.listCustomers[this.currentCustomer].lastItemClicked = this.listCustomers[this.currentCustomer].listAction[0].id
           }
           else {
             if (this.listCustomers[this.currentCustomer].listAction[i].unitPrice.length != 0) {
@@ -385,10 +440,14 @@ export class PuntoVentaComponent implements OnInit {
             }
           }
           this.calculateTotalAndTaxes();
+          let list = crypto.AES.encrypt(JSON.stringify(this.listCustomers), 'meraki');
+          localStorage.setItem('list', list);
           return;
         }
       }
     }
+    let list = crypto.AES.encrypt(JSON.stringify(this.listCustomers), 'meraki');
+    localStorage.setItem('list', list);
   }
 
   verifyValue(i) {
@@ -416,14 +475,20 @@ export class PuntoVentaComponent implements OnInit {
             }
           }
           this.calculateTotalAndTaxes();
+          let list = crypto.AES.encrypt(JSON.stringify(this.listCustomers), 'meraki');
+          localStorage.setItem('list', list);
           return;
         }
       }
     }
+    let list = crypto.AES.encrypt(JSON.stringify(this.listCustomers), 'meraki');
+    localStorage.setItem('list', list);
   }
 
   changeIGVType() {
     this.calculateTotalAndTaxes();
+    let list = crypto.AES.encrypt(JSON.stringify(this.listCustomers), 'meraki');
+    localStorage.setItem('list', list);
   }
 
   sortBy(key) {
@@ -546,16 +611,28 @@ export class PuntoVentaComponent implements OnInit {
       taxes: 0,
       subtotal: 0,
       lastItemClicked: null,
-      client: { Nombre: 'Cliente' }
+      client: { Nombre: 'Cliente' },
+      igvType: 1,
+      documento: null,
+      serie: null,
+      correlativo: null,
+      given: null,
+      change: null,
+      paymentType: null,
+      user: JSON.parse(this.user),
+      date: null
     });
     this.currentCustomer = this.listCustomers.length - 1;
     this.client.patchValue(this.listCustomers[this.currentCustomer].client.Nombre);
+    let list = crypto.AES.encrypt(JSON.stringify(this.listCustomers), 'meraki');
+    localStorage.setItem('list', list);
   }
 
   tabChanged(e) {
     if (e.index == this.listCustomers.length) {
       this.selectedIndex = this.listCustomers.length - 1;
     }
+    localStorage.setItem('tab', JSON.stringify(this.selectedIndex));
   }
 
   addToList(i) {
@@ -576,22 +653,14 @@ export class PuntoVentaComponent implements OnInit {
           unitPrice: '' + this.productos_filtrado[i].Venta,
           idReal: this.productos_filtrado[i].ID,
           package: 0,
-          AlmacenDestino: '',
           AlmacenOrigen: this.productos_filtrado[i].Zona,
           Cantidad: '1',
-          Compra: this.productos_filtrado[i].Compra,
-          Correlativo: null,
-          Documento: null,
-          Serie: null,
           Moneda: this.productos_filtrado[i].Moneda,
-          Movimiento: 'SALIDA',
           Paquete: '',
           Producto: this.productos_filtrado[i].Nombre,
           IDProducto: this.productos_filtrado[i].ID,
-          Tercero: null,
           Unidad: this.productos_filtrado[i].Unidad,
           Venta: this.productos_filtrado[i].Venta,
-          Usuario: null
         });
         this.listCustomers[this.currentCustomer].total += +(this.listCustomers[this.currentCustomer].listAction[this.listCustomers[this.currentCustomer].listAction.length - 1].price);
         this.listCustomers[this.currentCustomer].subtotal = (this.listCustomers[this.currentCustomer].total / 1.18);
@@ -622,22 +691,14 @@ export class PuntoVentaComponent implements OnInit {
           unitPrice: '' + this.pack_nombre[i].Venta,
           products: this.pack_nombre[i].Productos,
           package: 1,
-          AlmacenDestino: '',
           AlmacenOrigen: this.pack_nombre[i].Almacen,
           Cantidad: '1',
-          Compra: this.pack_nombre[i].Compra,
-          Correlativo: null,
-          Documento: null,
-          Serie: null,
           Moneda: this.pack_nombre[i].Moneda,
-          Movimiento: 'SALIDA',
           Paquete: this.pack_nombre[i].Paquete,
           Producto: this.pack_nombre[i].Nombre,
           IDProducto: this.pack_nombre[i].IDProducto,
-          Tercero: null,
           Unidad: this.pack_nombre[i].Unidad,
           Venta: this.pack_nombre[i].Venta,
-          Usuario: null
         });
         this.listCustomers[this.currentCustomer].total += +(this.listCustomers[this.currentCustomer].listAction[this.listCustomers[this.currentCustomer].listAction.length - 1].price);
         this.listCustomers[this.currentCustomer].subtotal = (this.listCustomers[this.currentCustomer].total / 1.18);
@@ -651,6 +712,8 @@ export class PuntoVentaComponent implements OnInit {
         this.toastr.warning('El paquete ya esta en la lista de venta, haga click en el para aumentar la cantidad', 'Cuidado');
       }
     }
+    let list = crypto.AES.encrypt(JSON.stringify(this.listCustomers), 'meraki');
+    localStorage.setItem('list', list);
   }
 
   openClients() {
@@ -664,6 +727,8 @@ export class PuntoVentaComponent implements OnInit {
       if (result != 'close' && result != undefined) {
         this.listCustomers[this.currentCustomer].client = result;
         this.client.patchValue(result.Nombre);
+        let list = crypto.AES.encrypt(JSON.stringify(this.listCustomers), 'meraki');
+        localStorage.setItem('list', list);
       }
     });
   }
@@ -682,6 +747,7 @@ export class PuntoVentaComponent implements OnInit {
             this.listCustomers.splice(this.currentCustomer, 1);
             this.currentCustomer = this.currentCustomer - 1;
             this.selectedIndex = this.currentCustomer;
+            localStorage.setItem('tab', JSON.stringify(this.selectedIndex));
           }
           else {
             this.listCustomers[this.currentCustomer].listAction = [];
@@ -695,6 +761,8 @@ export class PuntoVentaComponent implements OnInit {
           this.cd.markForCheck();
           this.isLoadingResults = true;
           this.getAllProducts(this.selectedWarehouse);
+          let list = crypto.AES.encrypt(JSON.stringify(this.listCustomers), 'meraki');
+          localStorage.setItem('list', list);
         }
       });
     }

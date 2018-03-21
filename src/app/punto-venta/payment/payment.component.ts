@@ -60,17 +60,17 @@ export class PaymentComponent implements OnInit {
   }
 
   changeDocument() {
-    this.correlativo = this.selectedDocument.Correlativo_actual;
-    for (let i = 0; i < this.customer.listAction.length; i++) {
-      this.customer.listAction[i].Correlativo = this.selectedDocument.Correlativo_actual;
-      this.customer.listAction[i].Documento = this.selectedDocument.Nombre;
-    }
+    this.correlativo =this.selectedDocument.Correlativo_actual;
+    this.customer.correlativo = this.selectedDocument.Correlativo_actual;
+    this.customer.documento = this.selectedDocument.Nombre;
   }
 
   changeSerie() {
-    for (let i = 0; i < this.customer.listAction.length; i++) {
-      this.customer.listAction[i].Serie = this.serieSeleccionado;
-    }
+    this.customer.serie = this.serieSeleccionado;
+  }
+
+  changePaymentType(){
+    this.customer.paymentType = this.paymentType;
   }
 
   onNoClick() {
@@ -119,11 +119,16 @@ export class PaymentComponent implements OnInit {
 
   confirmSale() {
     this.isLoadingResults = true;
-    this.posService.regMovimiento(this.bd, this.customer.listAction).subscribe(data => {
+    this.customer.date = this.currentDate();
+    this.customer.given = this.entregado;
+    this.customer.change = this.vuelto;
+    this.posService.regMovimiento(this.bd, this.customer).subscribe(data => {
       for (let i = 0; i < this.salesArray.length; i++) {
         this.posService.actualizarStock(this.bd, this.salesArray[i]).subscribe(data2 => {
         });
       }
+      this.posService.updateCorrelativo(this.bd,this.selectedDocument).subscribe(data =>{
+      });
       this.isLoadingResults = false;
       this.toastr.success("Se realizo la venta con exito", "Exito");
       this.DialogRef.close(true);
@@ -153,8 +158,43 @@ export class PaymentComponent implements OnInit {
     for (let i = 0; i < this.customer.listAction.length; i++) {
       this.customer.listAction[i].Cantidad = this.customer.listAction[i].units;
       this.customer.listAction[i].Venta = this.customer.listAction[i].price;
-      this.customer.listAction[i].Tercero = this.customer.client.Nombre;
-      this.customer.listAction[i].Usuario = this.customer.client.Nombre;
     }
+  }
+
+  currentDate() {
+    const currentDate = new Date();
+    
+    if(31 < 31){
+      if(31 + 1 < 10){
+        if(currentDate.getMonth()+1 < 10){
+          var limite = currentDate.getFullYear()+'-0'+(currentDate.getMonth()+1)+'-0'+((31+1)%31);
+        }else{
+          var limite = currentDate.getFullYear()+'-'+(currentDate.getMonth()+1)+'-0'+((31+1)%31);
+        }
+      }else{
+        if(currentDate.getMonth()+1 < 10){
+          var limite = currentDate.getFullYear()+'-0'+(currentDate.getMonth()+1)+'-'+((31+1)%31);
+        }else{
+          var limite = currentDate.getFullYear()+'-'+(currentDate.getMonth()+1)+'-'+((31+1)%31);
+        }
+      }
+    }else{
+      if(currentDate.getMonth()+1 < 12){
+        if((currentDate.getMonth()+2)%13 + 1 < 10){
+          var limite = currentDate.getFullYear()+'-0'+(((currentDate.getMonth()+2)%13)+1)+'-0'+(1);
+        }else{
+          var limite = currentDate.getFullYear()+'-'+(((currentDate.getMonth()+2)%13)+1)+'-0'+(1);
+        }
+      }else{
+        if((currentDate.getMonth()+2)%13 + 1 < 10){
+          var limite = (currentDate.getFullYear()+1) +'-0'+(((currentDate.getMonth()+2)%13)+1)+'-0'+(1);
+        }else{
+          var limite = (currentDate.getFullYear()+1) +'-'+(((currentDate.getMonth()+2)%13)+1)+'-0'+(1);
+        }
+      }
+      
+    }
+
+    return currentDate;
   }
 }

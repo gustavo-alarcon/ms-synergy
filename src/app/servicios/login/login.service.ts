@@ -79,7 +79,6 @@ export class LoginService {
             localStorage.setItem("web", this.web.toString());
             localStorage.setItem("db", this.db.toString());
             localStorage.setItem("user", this.name.toString());
-            localStorage.setItem('page', '1');
             this.userInfo.next(this.loginData);
             this.getCurrentPermissions(this.loginData, "check");
             this.toast.success('Bienvenido ' + res_json.records[0].Name + ' ' + res_json.records[0].Lastname, 'Exito');

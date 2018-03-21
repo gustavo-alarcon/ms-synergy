@@ -60,7 +60,6 @@ export class MessagesComponent implements OnInit {
     this.clientsSales = [];
     this.isLoadingResults = true;
     this.clientService.getBdClient(this.bd).subscribe(data => {
-      console.log(data);
       for (let i = 0; i < data.records.length; i++) {
         this.clientsSales.push({
           ID: parseInt(data.records[i].ID),
@@ -73,7 +72,6 @@ export class MessagesComponent implements OnInit {
           Type: parseInt(data.records[i].Type),
         });
       }
-      console.log(this.clientsSales);
       this.isLoadingResults = false;
       this.dataSource = new MatTableDataSource(this.clientsSales);
       this.dataSource.paginator = this.paginator;

@@ -40,6 +40,8 @@ export class MainNavComponent implements OnInit {
     localStorage.removeItem('db');
     localStorage.removeItem('user');
     localStorage.removeItem('page');
+    localStorage.removeItem('list');
+    localStorage.removeItem('tab');
   }
 
 }

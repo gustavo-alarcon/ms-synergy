@@ -43,4 +43,8 @@ export class LandingComponent implements OnInit {
       this.menu = (this.menu === 'close' ? 'open' : 'close');
   }
 
+  createPage(){
+    localStorage.setItem('page', '1');
+  }
+
 }

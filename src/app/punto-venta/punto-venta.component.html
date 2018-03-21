@@ -1,5 +1,5 @@
 <div class='main w3-sand'>
-    <div class="w3-container w3-white w3-card-4 w3-animate-top" style="margin-left:5vw;margin-right:5vw;border-radius:0px 0px 10px 10px">
+    <div class="w3-container w3-white w3-card-4" style="margin-left:5vw;margin-right:5vw;border-radius:0px 0px 10px 10px; z-index : 1">
         <div class="row middle-xs w3-bar" style=" padding:12px 24px ; display : flex ; justify-content : space-between">
             <span style="width: 100% ; display : flex ; justify-content : space-between" class="w3-xlarge meraki-font-s5">
                 <div>
@@ -13,7 +13,7 @@
             </span>
         </div>
     </div>
-    <div class="container">
+    <div class="container" [ngClass]="{containerExpand : hideProducts}">
         <div *ngIfMediaQuery="'(max-width: 700px)'" class="hide" (click)="hideProductsChange()">
             <mat-icon [ngClass]="{ rotateIcon : hideProducts}">last_page</mat-icon>
         </div>
@@ -310,7 +310,7 @@
             </ul>
             <div @totalTaxes *ngIf="listCustomers[currentCustomer].listAction.length != 0" class='listSummary'>
                 <div class="listRadios">
-                    <mat-radio-group [(ngModel)]="igvType" (change)="changeIGVType()">
+                    <mat-radio-group [(ngModel)]="listCustomers[currentCustomer].igvType" (change)="changeIGVType()">
                         <mat-radio-button value=1>Incluir IGV</mat-radio-button>
                         <mat-radio-button value=2>Calcular IGV</mat-radio-button>
                         <mat-radio-button value=3>Sin IGV</mat-radio-button>

@@ -22,7 +22,7 @@
 }
 
 mat-grid-tile{
-    background: #bdcfb5;
+    background: #ded7ca;
     transition: transform .3s;
     cursor: pointer;
 }
@@ -59,7 +59,7 @@ mat-radio-button{
     display: grid;
     position: relative;
     grid-area: products;
-    background : #8a867d;
+    background : #dddddd;
     grid-column: 5/13;
     grid-row: 3/13;
     overflow: auto;
@@ -75,7 +75,7 @@ mat-radio-button{
     border-top: 5px solid rgb(111, 111, 111);
     border-right: 5px solid rgb(111, 111, 111);
     grid-area: panel;
-    background : #8a867d;
+    background : #dddddd;
     grid-column: 1/5;
     grid-row: 7/13;
     min-width: 40vw;
@@ -112,7 +112,7 @@ mat-radio-button{
 
 .filtro{
     grid-area: filtros;
-    background : #ded7ca;
+    background : #f1f1f1;
     grid-column: 5/13;
     grid-row: 2/2; 
     justify-content: center;
@@ -155,7 +155,7 @@ mat-tab-group{
   
 .check{
     grid-area: check;
-    background : #fdf5e6;
+    background : #fff;
     grid-column: 1/5;
     grid-row: 2/7;
     border-right: 5px solid rgb(111, 111, 111);
@@ -166,7 +166,7 @@ mat-tab-group{
 
 .tab{
     grid-area: tab;
-    background : #aaa7a1;
+    background : #ded7ca;
     grid-column: 1/13;
     min-width: 100vw;
     max-width: 100vw;
@@ -228,30 +228,6 @@ img{
     max-height: 100px;
     cursor: pointer;
 }
-
-.team-member img {
-  width: 100%;
-  display: block;
-  border-radius: 10px;
-}
-.team-member figcaption {
-  position: absolute;
-  top: 3px;
-  bottom: 3px;
-  right: 3px;
-  left: 3px;
-  color: #0b2027;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  flex-direction: column;
-  border-radius: 10px;
-}
-
-.team-member figcaption {
-    display: flex;
-    flex-direction: column;
-  }
   
 .price{
     align-self: flex-end;
@@ -268,10 +244,6 @@ img{
     margin-top: 57px;
     margin-left: 5px;
     color: #fff;
-}
-
-.team-member:hover figcaption {
-  opacity: 1;
 }
 
 .packageProducts{
@@ -312,7 +284,6 @@ table {
     border-radius: 10px;
     text-align: center;
 }
-
 
 mat-grid-tile:hover .packageProducts{
     opacity: 1;
@@ -478,9 +449,22 @@ mat-icon{
     min-width: 100vw !important;
 }
 
+.expandCheck {
+    grid-row: 2/9;
+}
+
+.expandPanel {
+    grid-row: 9/13;
+}
+
+.containerExpand {
+    min-height: 100vh;
+    max-height: 100vh;
+}
+
 
 .newBackground {
-    background: #dddddd;
+    background: #f1f1f1;
     border-radius: 15px;
 }
 
@@ -685,7 +669,7 @@ mat-icon{
 .customerMedia{
     display: flex;
     height: 15%;
-    background: #fdf5e6;
+    background: #fff;
     align-items: center;
     justify-content: center;
     border-radius: 0 0 10px 10px;

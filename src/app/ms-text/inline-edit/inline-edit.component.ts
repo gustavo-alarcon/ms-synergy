@@ -68,6 +68,7 @@ export class InlineEditComponent {
   get value(): string { return this._value; }
   set value(x: string) {
     this.comment = this._value = x;
+    this.comment = this.comment.toString();
     this.date = new FormControl(moment(this.comment).format());
   }
   private _value = '';

@@ -73,11 +73,6 @@ mat-form-field{
     justify-content: center;
   }
 
-  mat-row:hover{
-      background: rgb(201, 199, 199);
-      cursor: pointer;
-  }
-
   h1{
       justify-content: center;
       margin: 30px 10px;
@@ -119,6 +114,15 @@ mat-card{
 }
 mat-cell{
     padding: 5px;
+    overflow: auto;
+}
+
+table {
+    width: 100%;
+    padding: 5px 5px;
+    border: 2px solid;
+    border-radius: 10px;
+    text-align: center;
 }
 
 .add-comment {
@@ -153,7 +157,7 @@ mat-cell{
     }
 }
 
-@media screen and (max-width: 499px){
+/*@media screen and (max-width: 499px){
     mat-cell{
         padding: 1px;
         font-size: 11px;
@@ -169,6 +173,6 @@ mat-cell{
     mat-table{
         display: grid;
     }
-}
+}*/
 
 

@@ -1,5 +1,5 @@
 <div class="w3-sand">
-    <div class="w3-container w3-white w3-card-4 w3-animate-top" style="margin-left:5vw;margin-right:5vw;border-radius:0px 0px 10px 10px">
+    <div class="w3-container w3-white w3-card-4" style="margin-left:5vw;margin-right:5vw;border-radius:0px 0px 10px 10px">
         <div class="row middle-xs w3-bar" style=" padding:12px 24px ; display : flex ; justify-content : space-between">
             <span style="width: 100% ; display : flex ; justify-content : space-between" class="w3-xlarge meraki-font-s5">
                 <div>
@@ -31,43 +31,48 @@
                         <ng-container matColumnDef="correlativo">
                             <mat-header-cell *matHeaderCellDef>Correlativo</mat-header-cell>
                             <mat-cell *matCellDef="let product; let i=index">
-                                {{product.Correlativo}}
+                                {{product.correlativo}}
                             </mat-cell>
                         </ng-container>
                         <ng-container matColumnDef="fecha">
                             <mat-header-cell *matHeaderCellDef>Fecha</mat-header-cell>
                             <mat-cell *matCellDef="let product; let i=index">
-                                {{product.Fecha}}
-                            </mat-cell>
-                        </ng-container>
-                        <ng-container matColumnDef="producto">
-                            <mat-header-cell *matHeaderCellDef>Producto</mat-header-cell>
-                            <mat-cell *matCellDef="let product; let i=index">
-                                {{product.Producto}}
-                            </mat-cell>
-                        </ng-container>
-                        <ng-container matColumnDef="cantidad">
-                            <mat-header-cell *matHeaderCellDef>Cantidad</mat-header-cell>
-                            <mat-cell *matCellDef="let product; let i=index">
-                                {{product.Cantidad}}
-                            </mat-cell>
-                        </ng-container>
-                        <ng-container matColumnDef="precio">
-                            <mat-header-cell *matHeaderCellDef>Precio</mat-header-cell>
-                            <mat-cell *matCellDef="let product; let i=index">
-                                {{product.Venta}}
+                                {{product.fecha}}
                             </mat-cell>
                         </ng-container>
                         <ng-container matColumnDef="usuario">
                             <mat-header-cell *matHeaderCellDef>Usuario</mat-header-cell>
                             <mat-cell *matCellDef="let product; let i=index">
-                                {{product.Usuario}}
+                                {{product.usuario}}
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="productos">
+                            <mat-header-cell style="flex : 2" *matHeaderCellDef>Producto</mat-header-cell>
+                            <mat-cell style="flex : 2" *matCellDef="let product; let i=index">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Cantidad</th>
+                                            <th>Operacion</th>
+                                            <th>Venta</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let product of product.products">
+                                            <td style="border-radius: 5px;">{{product.producto}}</td>
+                                            <td style="border-radius: 5px;">{{product.cantidad}}</td>
+                                            <td style="border-radius: 5px;">{{product.operacion}}</td>
+                                            <td style="border-radius: 5px;">{{product.venta}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </mat-cell>
                         </ng-container>
                         <ng-container matColumnDef="eliminar">
-                            <mat-header-cell *matHeaderCellDef>Eliminar</mat-header-cell>
+                            <mat-header-cell *matHeaderCellDef>Activar / Anular</mat-header-cell>
                             <mat-cell *matCellDef="let cliente; let i=index">
-                                <mat-icon>remove_circle</mat-icon>
+                                <mat-icon matTooltip="Anular" matTooltipPosition="above">remove_circle</mat-icon>
                             </mat-cell>
                         </ng-container>
                         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

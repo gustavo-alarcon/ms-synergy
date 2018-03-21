@@ -49,6 +49,8 @@ import {
 export class MsTextComponent implements OnInit {
   toogle:string = null;
   constructor() {
+    if(localStorage.getItem('page')==null)
+      localStorage.setItem('page', '1');
     this.toogle=JSON.parse(localStorage.getItem('page'));
    }
 

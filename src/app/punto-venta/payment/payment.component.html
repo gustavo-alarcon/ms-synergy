@@ -65,7 +65,7 @@
       <div class="paymentList">
         <div class="selects">
           <mat-form-field name="paymentType" class="full-width" ngDefaultControl>
-            <mat-select placeholder="Tipo de pago" [(ngModel)]="paymentType">
+            <mat-select placeholder="Tipo de pago" [(ngModel)]="paymentType" (change)="changePaymentType()">
               <mat-option class="w3-hover-gray" value="0">Efectivo</mat-option>
             </mat-select>
           </mat-form-field>
