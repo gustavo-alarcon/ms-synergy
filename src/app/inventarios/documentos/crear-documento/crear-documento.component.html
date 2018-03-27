@@ -63,12 +63,12 @@
             </mat-form-field>
 
             <mat-form-field color="accent" style="width:100%">
-                <input matInput formControlName="CorrelativoInicial" placeholder="Correlativo">
+                <input matInput type="number" formControlName="CorrelativoInicial" placeholder="N° Correlativo">
                 <mat-error *ngIf="!crearDocumentoForm.valid">
-                    Corelativo <strong>requerido</strong> *.
+                    Número corelativo <strong>requerido</strong> *.
                 </mat-error>
                 <mat-hint>
-                    Correlativo con que empezará el documento.
+                    Número correlativo con que empezará el documento.
                 </mat-hint>
             </mat-form-field>
 
