@@ -50,7 +50,7 @@
                             <mat-header-cell *matHeaderCellDef>Número</mat-header-cell>
                             <mat-cell [ngClass]="{changeColorFont : sale.Estado == '1'}" style="display: flex; justify-content: center; align-items: center; flex-wrap : wrap"
                                 *matCellDef="let sale; let i=index" [satPopoverAnchorFor]="p">
-                                <span>{{sale.Correlativo}}-{{sale.Serie}}</span>
+                                <span>{{sale.Serie}}-{{sale.Correlativo}}</span>
                                 <button matTooltip="Detalles" matTooltipPosition="above" mat-icon-button style="margin : 0px" (click)="p.open()">
                                     <mat-icon style="margin-right: 0px;">keyboard_arrow_down</mat-icon>
                                 </button>
