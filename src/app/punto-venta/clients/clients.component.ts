@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ViewChild, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { MatDialogRef, MatDialog } from '@angular/material';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { ClientsService } from '../../servicios/clients.service';
@@ -6,6 +6,7 @@ import {MatPaginator,  MatTableDataSource} from '@angular/material';
 import * as crypto from 'crypto-js';
 import { AddClient2Component } from './add-client/add-client.component';
 import { Client } from '../../classes/client';
+import "rxjs/add/operator/takeWhile";
 
 @Component({
   selector: 'app-clients',
@@ -21,6 +22,7 @@ export class ClientsComponent implements OnInit {
   bd = this.bytes.toString(crypto.enc.Utf8);
   clientsSales:Client[];  
   dataSource: MatTableDataSource<any>; 
+  private alive: boolean = true;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
     
@@ -51,7 +53,9 @@ export class ClientsComponent implements OnInit {
 
   getClients(){
     this.isLoadingResults = true;
-    this.clientService.getTerceros(this.bd).subscribe(data=>{
+    this.clientService.getTerceros(this.bd)
+    .takeWhile(() => this.alive)
+    .subscribe(data=>{
       this.clientsSales = data.records;
       for(let i=0;i<data.length;i++){
         this.clientsSales.push({
@@ -83,6 +87,12 @@ export class ClientsComponent implements OnInit {
         this.getClients();
       }
     });
+  }
+
+  ngOnDestroy() {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    this.alive = false;
   }
 
 }

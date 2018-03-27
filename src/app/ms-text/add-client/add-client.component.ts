@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { MatDialogRef, MatDialog } from '@angular/material';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { ToastrService } from 'ngx-toastr';
@@ -9,6 +9,7 @@ import * as _moment from 'moment';
 import * as _rollupMoment from 'moment';
 import * as crypto from 'crypto-js';
 import { Validators, FormGroup, FormBuilder, FormControl, EmailValidator } from '@angular/forms';
+import "rxjs/add/operator/takeWhile";
 const moment = _rollupMoment || _moment;
 
 export const MY_FORMATS = {
@@ -51,6 +52,7 @@ export class AddClientComponent implements OnInit {
     phone:null,
     place:'',
   }
+  private alive: boolean = true;
 
   constructor(
     public dialogRef: MatDialogRef<AddClientComponent>,
@@ -85,7 +87,9 @@ export class AddClientComponent implements OnInit {
     }
     else{
       this.client.date = moment(this.date.value).format('YYYY-MM-DD');
-      this.messageService.addClient(this.client,JSON.parse(this.db)).subscribe(data => {
+      this.messageService.addClient(this.client,JSON.parse(this.db))
+      .takeWhile(() => this.alive)
+      .subscribe(data => {
         this.toastr.success('Se agrego al cliente','Exito');
         this.client= {
           date :'' ,
@@ -99,6 +103,12 @@ export class AddClientComponent implements OnInit {
         this.dialogRef.close(true);
       });
     }
+  }
+
+  ngOnDestroy() {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    this.alive = false;
   }
 
 }

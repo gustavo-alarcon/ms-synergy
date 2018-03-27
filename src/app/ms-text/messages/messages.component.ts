@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Inject } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject, OnDestroy } from '@angular/core';
 import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
 import { ClientsService } from '../../servicios/clients.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
@@ -9,7 +9,7 @@ import { MessagesService } from '../../servicios/messages.service'
 import * as crypto from 'crypto-js';
 import { trigger, state, style, transition, animate, keyframes, query, stagger } from '@angular/animations';
 import { Client } from '../../classes/client';
-
+import "rxjs/add/operator/takeWhile";
 
 @Component({
   selector: 'messages',
@@ -34,6 +34,7 @@ export class MessagesComponent implements OnInit {
   balance: string = '';
   edit: boolean = false;
   message1: string = "Haga click para personalizar un mensaje";
+  private alive: boolean = true;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -59,7 +60,9 @@ export class MessagesComponent implements OnInit {
   getClients() {
     this.clientsSales = [];
     this.isLoadingResults = true;
-    this.clientService.getBdClient(this.bd).subscribe(data => {
+    this.clientService.getBdClient(this.bd)
+    .takeWhile(() => this.alive)
+    .subscribe(data => {
       for (let i = 0; i < data.records.length; i++) {
         this.clientsSales.push({
           ID: parseInt(data.records[i].ID),
@@ -92,7 +95,9 @@ export class MessagesComponent implements OnInit {
 
   getBubbleValues() {
     this.isLoadingBubbles = true;
-    this.messageService.getBubbleValues().subscribe(data => {
+    this.messageService.getBubbleValues()
+    .takeWhile(() => this.alive)
+    .subscribe(data => {
       this.balance = data.records[0].Saldo;
       this.programmed = data.records[0].Programados;
       this.send = data.records[0].Enviados;
@@ -257,7 +262,9 @@ export class MessagesComponent implements OnInit {
 
   deleteCustomer(cliente) {
     if (confirm("¿Esta seguro de eliminar al cliente " + cliente.Name + "?")) {
-      this.clientService.deleteClient(this.bd, cliente).subscribe(data => {
+      this.clientService.deleteClient(this.bd, cliente)
+      .takeWhile(() => this.alive)
+      .subscribe(data => {
         if(data=="true"){
           this.toastr.success("Se elimino al cliente con exito","Exito");
           this.getClients();
@@ -266,6 +273,12 @@ export class MessagesComponent implements OnInit {
         this.toastr.error("Hubo un error","Error");
       })
     }
+  }
+
+  ngOnDestroy() {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    this.alive = false;
   }
 
 }

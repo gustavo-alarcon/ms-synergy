@@ -98,6 +98,7 @@ import { PosService } from './servicios/pos.service';
 import {MAT_AUTOCOMPLETE_SCROLL_STRATEGY} from '@angular/material'; 
 import { Platform } from '@angular/cdk/platform'; 
 import { Overlay } from '@angular/cdk/overlay';
+import { DetailProductsComponent } from './sales-history/detail-products/detail-products.component';
 
 
 export function MAT_AUTOCOMPLETE_SCROLL_STRATEGY_FACTORY(overlay: Overlay, platform: Platform) { return () => platform.IOS ? overlay.scrollStrategies.block() : overlay.scrollStrategies.reposition(); }
@@ -142,7 +143,8 @@ export function MAT_AUTOCOMPLETE_SCROLL_STRATEGY_FACTORY(overlay: Overlay, platf
     SalesHistoryComponent,
     InlineEditComponent,
     HistoryComponent,
-    InlineEditHistoryComponent
+    InlineEditHistoryComponent,
+    DetailProductsComponent
   ],
   imports: [
     BrowserModule,

@@ -1,11 +1,12 @@
-import { Component, OnInit, ViewChild, Inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
 import { ClientsService } from '../servicios/clients.service';
 import { ToastrService } from 'ngx-toastr';
 import { MessagesService } from '../servicios/messages.service'
 import * as crypto from 'crypto-js';
 import { PosService } from '../servicios/pos.service';
-import { HistorySales } from '../classes/history-sales'
+import { HistorySales } from '../classes/history-sales';
+import "rxjs/add/operator/takeWhile";
 
 @Component({
   selector: 'sales-history',
@@ -14,7 +15,7 @@ import { HistorySales } from '../classes/history-sales'
 })
 export class SalesHistoryComponent implements OnInit {
   history: any[] = [];
-  displayedColumns = ['correlativo', 'fecha', 'usuario', 'productos', 'eliminar'];
+  displayedColumns = ['fecha', 'type' , 'correlativo', 'cliente', 'usuario', 'eliminar'];
   dataSource: MatTableDataSource<any>;
   isLoadingResults = false;
   bytes = crypto.AES.decrypt(localStorage.getItem('db'), 'meraki');
@@ -24,6 +25,7 @@ export class SalesHistoryComponent implements OnInit {
   balance: string = '';
   edit: boolean = false;
   historyTable: HistorySales[] = [];
+  private alive: boolean = true;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -46,36 +48,65 @@ export class SalesHistoryComponent implements OnInit {
   }
 
   getHistory() {
+    this.history = [];
     this.isLoadingResults = true;
-    this.posService.getSalesHistory(this.bd).subscribe(data => {
-      for (let i = 0; i < data.records.length; i++) {
-        if (data.records[i].Movimiento == 'SALIDA') {
+    this.posService.getSalesHistory(this.bd)
+      .takeWhile(() => this.alive)
+      .subscribe(data => {
+        for (let i = 0; i < data.records.length; i++) {
           this.history.push({
             'Correlativo': parseInt(data.records[i].Correlativo),
+            'Serie': data.records[i].Serie,
+            'Documento': data.records[i].Documento,
             'Operacion': data.records[i].Operacion,
             'Fecha': data.records[i].Fecha,
-            'Producto': data.records[i].Producto,
-            'Cantidad': data.records[i].Cantidad,
-            'Venta': data.records[i].Venta,
             'Usuario': data.records[i].Usuario,
-            'Estado': data.records[i].Estado
+            'Estado': data.records[i].Estado,
+            'Total': data.records[i].Total,
+            'IGV': data.records[i].IGV,
+            'Entregado': data.records[i].Entregado,
+            'Vuelto': data.records[i].Vuelto,
+            'TipoIGV': data.records[i].Tipo_igv,
+            'TipoPago': data.records[i].Tipo_pago,
+            'SubTotal': data.records[i].Sub_total,
+            'Cliente': data.records[i].Cliente
           });
         }
-      }
-      this.orderArray();
-    },
-      err => {
+        this.history.sort(this.dynamicSort('Correlativo'));
         this.isLoadingResults = false;
-        this.toastr.error("Ocurrio un error", "Error");
-        this.cd.markForCheck();
-      })
+        this.dataSource = new MatTableDataSource(this.history);
+        this.dataSource.paginator = this.paginator;
+      },
+        err => {
+          this.isLoadingResults = false;
+          this.toastr.error("Ocurrio un error", "Error");
+          this.cd.markForCheck();
+        });
+  }
+
+  changeState(i) {
+    let erase = {
+      Operacion: null,
+      Estado: null
+    };
+    erase.Operacion = this.history[i].Operacion;
+    erase.Estado = this.history[i].Estado;
+    this.posService.removeSale(this.bd, erase)
+      .takeWhile(() => this.alive)
+      .subscribe(data => {
+        this.toastr.success("Se anulo la venta con exito", "Exito");
+        this.history[i].Estado = '1';
+      },
+        err => {
+          this.toastr.error("Hubo un error", "Error");
+        });
+
   }
 
   orderArray() {
-    let last = '';
-    let positionLast = 0;
-    this.history.sort(this.dynamicSort('Correlativo'));
-    for (let i = 0; i < this.history.length; i++) {
+    /*let last = '';
+     let positionLast = 0;*/
+    /*for (let i = 0; i < this.history.length; i++) {
       if (this.history[i].Correlativo != last) {
         this.historyTable.push({
           correlativo: this.history[i].Correlativo,
@@ -108,7 +139,8 @@ export class SalesHistoryComponent implements OnInit {
       this.isLoadingResults = false;
       this.dataSource = new MatTableDataSource(this.historyTable);
       this.dataSource.paginator = this.paginator;
-    }
+      */
+  }
 
   dynamicSort(property) {
     var sortOrder = 1;
@@ -120,5 +152,11 @@ export class SalesHistoryComponent implements OnInit {
       var result = (a[property] > b[property]) ? -1 : (a[property] < b[property]) ? 1 : 0;
       return result * sortOrder;
     }
+  }
+
+  ngOnDestroy() {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    this.alive = false;
   }
 }

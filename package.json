@@ -9,7 +9,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "project" : "ng build --prod --base-href='/test/ms-point/'"
+    "pro" : "ng build --prod --base-href='/test/ms-point/'"
   },
   "private": true,
   "dependencies": {

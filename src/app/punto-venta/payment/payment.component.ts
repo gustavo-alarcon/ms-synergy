@@ -1,10 +1,11 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { MatDialogRef, MatDialog } from '@angular/material';
 import { PosService } from '../../servicios/pos.service';
 import { ListCustomers } from "../../classes/listCustomers";
 import * as crypto from 'crypto-js';
 import { ToastrService } from 'ngx-toastr';
+import "rxjs/add/operator/takeWhile";
 
 @Component({
   selector: 'app-payment',
@@ -27,6 +28,7 @@ export class PaymentComponent implements OnInit {
   bytes = crypto.AES.decrypt(localStorage.getItem('db'), 'meraki');
   bd = this.bytes.toString(crypto.enc.Utf8);
   isLoadingResults = false;
+  private alive: boolean = true;
 
   constructor(
     public DialogRef: MatDialogRef<PaymentComponent>,
@@ -37,7 +39,9 @@ export class PaymentComponent implements OnInit {
     this.salesArray = [];
     this.customer = data;
     this.isLoadingResults = true;
-    this.posService.getDocuments(this.bd).subscribe(res => {
+    this.posService.getDocuments(this.bd)
+    .takeWhile(() => this.alive)
+    .subscribe(res => {
       let _serie = '';
       this.numerosSerie = [];
       res.records.forEach(element => {
@@ -122,12 +126,18 @@ export class PaymentComponent implements OnInit {
     this.customer.date = this.currentDate();
     this.customer.given = this.entregado;
     this.customer.change = this.vuelto;
-    this.posService.regMovimiento(this.bd, this.customer).subscribe(data => {
+    this.posService.regMovimiento(this.bd, this.customer)
+    .takeWhile(() => this.alive)
+    .subscribe(data => {
       for (let i = 0; i < this.salesArray.length; i++) {
-        this.posService.actualizarStock(this.bd, this.salesArray[i]).subscribe(data2 => {
+        this.posService.actualizarStock(this.bd, this.salesArray[i])
+        .takeWhile(() => this.alive)
+        .subscribe(data2 => {
         });
       }
-      this.posService.updateCorrelativo(this.bd,this.selectedDocument).subscribe(data =>{
+      this.posService.updateCorrelativo(this.bd,this.selectedDocument)
+      .takeWhile(() => this.alive)
+      .subscribe(data =>{
       });
       this.isLoadingResults = false;
       this.toastr.success("Se realizo la venta con exito", "Exito");
@@ -196,5 +206,11 @@ export class PaymentComponent implements OnInit {
     }
 
     return currentDate;
+  }
+
+  ngOnDestroy() {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    this.alive = false;
   }
 }

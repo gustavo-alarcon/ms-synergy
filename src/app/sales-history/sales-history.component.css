@@ -12,6 +12,21 @@
     flex-wrap: wrap;
 }
 
+.deleted {
+    transition: all .4s;
+    background: rgb(248, 109, 109);
+}
+
+.changeColorFont{
+    color: #fff;
+    transition: all .4s
+}
+
+mat-row, mat-header-row{
+    transition: all .4s;
+    padding: 10px 0;
+}
+
 mat-form-field{
     width: 95%;
 }
@@ -113,8 +128,11 @@ mat-card{
     text-transform: capitalize;
 }
 mat-cell{
+    align-items: center;
     padding: 5px;
-    overflow: auto;
+    justify-content: center;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 table {
@@ -133,6 +151,8 @@ table {
     overflow: visible;
 }
 
+
+
 @media screen and (max-width:1400px){
     .input{
         display: block;
@@ -142,10 +162,6 @@ table {
 
     mat-card{
         padding: 0px;
-    }
-
-    button{
-        margin: 15px;
     }
 
     mat-form-field{

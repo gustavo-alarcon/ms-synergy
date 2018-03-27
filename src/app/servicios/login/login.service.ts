@@ -1,16 +1,19 @@
 import { Headers, Http, Response, RequestOptions } from '@angular/http';
 import { Router } from '@angular/router';
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import 'rxjs/Rx';
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { MatSnackBar } from '@angular/material';
 import * as crypto from 'crypto-js';
 import { Observable } from 'rxjs/Observable';
 import { ToastrService } from 'ngx-toastr'
+import "rxjs/add/operator/takeWhile";
+
 
 @Injectable()
 export class LoginService {
-
+  
+  private alive: boolean = true;
   loginData: any;
   data: any[] = [];
   list: any[] = [];
@@ -63,6 +66,7 @@ export class LoginService {
 
     //this.http.post('http://localhost/meraki-rent/ms-synergy/src/app/servicios/login/checklogin.php?', JSON.stringify(this.data))
     this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/checklogin.php?', JSON.stringify(this.data))
+      .takeWhile(() => this.alive)
       .subscribe(
         res => {
           let res_json = res.json();
@@ -95,6 +99,7 @@ export class LoginService {
   getAccounts(data: any) {
     this.queryLoading(true);
     this.http.get('http://www.meraki-s.com/rent/ms-synergy/php/handler-getaccounts.php?db=' + data)
+      .takeWhile(() => this.alive)
       .subscribe(
         res => {
           let res_json = res.json();
@@ -109,6 +114,7 @@ export class LoginService {
 
   getCurrentPermissions(data: any, from: string) {
     this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-getcurrentpermissions.php?db=' + this.loginData[0]['Db'], JSON.stringify(data))
+      .takeWhile(() => this.alive)
       .subscribe(
         res => {
           let res_json = res.json();
@@ -131,6 +137,7 @@ export class LoginService {
   updateAccount(data: any) {
     this.queryLoading(true);
     this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-updateaccperm.php?db=' + this.loginData[0]['Db'], JSON.stringify(data))
+      .takeWhile(() => this.alive)
       .subscribe(
         res => {
           this.getAccounts(this.loginData[0]['Db']);
@@ -161,6 +168,7 @@ export class LoginService {
 
   createAccount(data: JSON) {
     this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-accounts-cre.php?db=' + this.userInfo.getValue()[0]['Db'], JSON.stringify(data))
+      .takeWhile(() => this.alive)
       .subscribe(
         res => {
           this.getAccounts(this.userInfo.getValue()[0]['Db']);
@@ -176,5 +184,12 @@ export class LoginService {
         }
       );
   }
+
+  ngOnDestroy() {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    this.alive = false;
+  }
+
 
 }

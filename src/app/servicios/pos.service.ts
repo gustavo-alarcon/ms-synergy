@@ -29,7 +29,7 @@ export class PosService {
   }
 
   getSalesHistory(db): Observable<any>{
-    return this.http.get('http://www.meraki-s.com/rent/ms-synergy/php/handler-movimientos-historial.php?db='+JSON.parse(db));
+    return this.http.get('http://www.meraki-s.com/rent/ms-synergy/php/handler-pos-historial.php?db='+JSON.parse(db));
   }
 
   regMovimiento(db, data):Observable<any>{
@@ -38,6 +38,14 @@ export class PosService {
 
   updateCorrelativo(db,data): Observable<any>{
     return this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-documentos-corr.php?db='+JSON.parse(db), JSON.stringify(data));
+  }
+
+  getSalesData(db,operacion) : Observable<any>{
+    return this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-pos-detalles.php?db='+JSON.parse(db), JSON.stringify(operacion));
+  }
+
+  removeSale(db, data) : Observable<any>{
+    return this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-pos-anular.php?db='+JSON.parse(db), JSON.stringify(data), { responseType : 'text' });
   }
 
 }

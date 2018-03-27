@@ -31,7 +31,8 @@
                             </mat-grid-tile-header>
                             <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
                             <mat-grid-tile-footer>
-                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
+                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }} |</h3>
+                                <span> Stock : {{option.Stock_actual}}</span>
                                 <mat-icon>star_border</mat-icon>
                             </mat-grid-tile-footer>
                         </mat-grid-tile>
@@ -50,7 +51,8 @@
                             </span>
                             <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
                             <mat-grid-tile-footer>
-                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
+                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }} |</h3>
+                                <span> Stock : {{option.Stock_actual}}</span>
                                 <mat-icon>star_border</mat-icon>
                             </mat-grid-tile-footer>
                         </mat-grid-tile>
@@ -67,7 +69,8 @@
                             </mat-grid-tile-header>
                             <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
                             <mat-grid-tile-footer>
-                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
+                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }} |</h3>
+                                <span> Stock : {{option.Stock_actual}}</span>
                                 <mat-icon>star_border</mat-icon>
                             </mat-grid-tile-footer>
                         </mat-grid-tile>
@@ -86,7 +89,8 @@
                             </span>
                             <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
                             <mat-grid-tile-footer>
-                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
+                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }} |</h3>
+                                <span> Stock : {{option.Stock_actual}}</span>
                                 <mat-icon>star_border</mat-icon>
                             </mat-grid-tile-footer>
                         </mat-grid-tile>
@@ -103,7 +107,8 @@
                             </mat-grid-tile-header>
                             <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
                             <mat-grid-tile-footer>
-                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
+                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }} |</h3>
+                                <span> Stock : {{option.Stock_actual}}</span>
                                 <mat-icon>star_border</mat-icon>
                             </mat-grid-tile-footer>
                         </mat-grid-tile>
@@ -122,7 +127,8 @@
                             </span>
                             <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
                             <mat-grid-tile-footer>
-                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
+                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }} |</h3>
+                                <span> Stock : {{option.Stock_actual}}</span>
                                 <mat-icon>star_border</mat-icon>
                             </mat-grid-tile-footer>
                         </mat-grid-tile>
@@ -139,7 +145,8 @@
                             </mat-grid-tile-header>
                             <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
                             <mat-grid-tile-footer>
-                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
+                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }} |</h3>
+                                <span> Stock : {{option.Stock_actual}}</span>
                                 <mat-icon>star_border</mat-icon>
                             </mat-grid-tile-footer>
                         </mat-grid-tile>
@@ -158,7 +165,8 @@
                             </span>
                             <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
                             <mat-grid-tile-footer>
-                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</h3>
+                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }} |</h3>
+                                <h3 mat-line> Stock : {{option.Stock_actual}}</h3>
                                 <mat-icon>star_border</mat-icon>
                             </mat-grid-tile-footer>
                         </mat-grid-tile>
@@ -248,7 +256,8 @@
                                 <mat-autocomplete #auto="matAutocomplete">
                                     <mat-option (click)="pushKeyProducts()" class="autoClass" *ngFor="let option of filteredOptions" [value]=" optionDisplay == 2 ? option.Codigo : option.Nombre ">
                                         <span style="font-size: 13px;">{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</span> |
-                                        <span style="font-size: 13px;"> {{option.Stock_actual}}</span>
+                                        <span style="font-size: 13px;"> {{option.Stock_actual}}</span> |
+                                        <span style="font-size: 13px;"> {{option.Unidad}}</span>
                                     </mat-option>
                                 </mat-autocomplete>
                                 <mat-icon class="warehouseIcon" matSuffix>search</mat-icon>
@@ -282,7 +291,7 @@
                     <li class="productList" (click)='clickProductList(i)' [ngClass]="{'newBackground' : listCustomers[currentCustomer].lastItemClicked == product.id }">
                         <span class="productName">{{product.product}}</span>
                         <span class="productClass">$ {{product.price == '' ? '0' : product.price}}</span>
-                        <span class="productInfo">{{product.units == '' ? '0' : product.units}} {{ product.units == '1' ? 'unidad' : 'unidades'}} a
+                        <span class="productInfo">{{product.units}} {{product.Unidad}}
                             $ {{product.unitPrice == '' ? '0' : product.unitPrice }} c/u</span>
                         <span *ngIf="product.dsc != ''" class="productInfo">{{product.dsc}}% de descuento</span>
                         <span *ngIf="product.products" class="productInfo">Items en el paquete:</span>
@@ -293,6 +302,7 @@
                                         <th>Nombre</th>
                                         <th>Precio</th>
                                         <th>Cantidad</th>
+                                        <th>Unidad</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -300,6 +310,7 @@
                                         <td style="border-radius: 5px;">{{product.nombre}}</td>
                                         <td style="border-radius: 5px;">{{product.precio}}</td>
                                         <td style="border-radius: 5px;">{{product.cantidad}}</td>
+                                        <td style="border-radius: 5px;">{{product.units}}</td>
                                     </tr>
                                 </tbody>
                             </table>

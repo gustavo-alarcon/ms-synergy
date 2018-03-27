@@ -13,8 +13,7 @@
           <li class="productList2">
             <span class="productName">{{product.product}}</span>
             <span class="productClass">$ {{product.price == '' ? '0' : product.price}}</span>
-            <span class="productInfo">{{product.units == '' ? '0' : product.units}} {{ product.units == '1' ? 'unidad' : 'unidades'}} a $ {{product.unitPrice
-              == '' ? '0' : product.unitPrice }} c/u</span>
+            <span class="productInfo">{{product.units}} {{product.Unidad}}</span>
             <span *ngIf="product.dsc != ''" class="productInfo">{{product.dsc}}% de descuento</span>
           </li>
           <hr style="margin: 10px;" />

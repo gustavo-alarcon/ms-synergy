@@ -1,4 +1,4 @@
-import { Component, Input, Optional, Host } from '@angular/core';
+import { Component, Input, Optional, Host, OnDestroy } from '@angular/core';
 import { SatPopover } from '@ncstate/sat-popover';
 import { ClientsService } from '../../servicios/clients.service';
 import { filter } from 'rxjs/operators/filter';
@@ -8,6 +8,7 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/materia
 import { ToastrService } from 'ngx-toastr';
 import * as _moment from 'moment';
 import * as _rollupMoment from 'moment';
+import "rxjs/add/operator/takeWhile";
 const moment = _rollupMoment || _moment;
 
 export const MY_FORMATS = {
@@ -62,6 +63,7 @@ export class InlineEditComponent {
   date: FormControl;
   pass: boolean = true;
   isLoadingResults = false;
+  private alive: boolean = true;
 
   /** Overrides the comment and provides a reset value when changes are cancelled. */
   @Input()
@@ -86,12 +88,13 @@ export class InlineEditComponent {
     @Optional() @Host() public popover: SatPopover,
     private clientServicie: ClientsService,
     private toastr: ToastrService) {
-     }
+  }
 
   ngOnInit() {
     // subscribe to cancellations and reset form value
     if (this.popover) {
       this.popover.closed.pipe(filter(val => val == null))
+        .takeWhile(() => this.alive)
         .subscribe(() => this.comment = this.value || '');
     }
   }
@@ -117,15 +120,17 @@ export class InlineEditComponent {
         else
           this.client.Birthday = moment(this.date.value).format('YYYY-MM-DD');
       }
-      if(this.pass){
+      if (this.pass) {
         this.isLoadingResults = true;
-        this.clientServicie.updateClient(this.db,this.client).subscribe(data =>{
-          if(data=="true"){
-            this.toastr.success("Se actualizo con exito","Exito");
+        this.clientServicie.updateClient(this.db, this.client)
+        .takeWhile(() => this.alive)
+        .subscribe(data => {
+          if (data == "true") {
+            this.toastr.success("Se actualizo con exito", "Exito");
             this.popover.close(this.comment);
           }
-          else{
-            this.toastr.error("Hubo un error","Error");
+          else {
+            this.toastr.error("Hubo un error", "Error");
           }
           this.isLoadingResults = false;
         });
@@ -138,4 +143,11 @@ export class InlineEditComponent {
       this.popover.close();
     }
   }
+
+  ngOnDestroy() {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    this.alive = false;
+  }
+  
 }

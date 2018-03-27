@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FormControl, Validators, FormGroup, FormBuilder } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
@@ -8,6 +8,7 @@ import { trigger, state, style, transition, animate, keyframes, query, stagger }
 import { ListCustomers } from '../classes/listCustomers';
 import { PosService } from '../servicios/pos.service';
 import * as crypto from 'crypto-js';
+import "rxjs/add/operator/takeWhile";
 
 @Component({
   selector: 'app-punto-venta',
@@ -103,7 +104,7 @@ export class PuntoVentaComponent implements OnInit {
   list : any = null;
   tabBytes : any = null;
   tab : any = null;
-
+  private alive: boolean = true;
 
   constructor(
     private posService: PosService,
@@ -157,7 +158,9 @@ export class PuntoVentaComponent implements OnInit {
 
   loadWarehouse() {
     this.isLoadingResults = true;
-    this.posService.getWarehouse(this.bd).subscribe(res => {
+    this.posService.getWarehouse(this.bd)
+    .takeWhile(() => this.alive)
+    .subscribe(res => {
       this.almacenes = res.records;
       this.almacenes.sort(this.sortBy('Nombre'));
       this.getProductsBD();
@@ -165,7 +168,9 @@ export class PuntoVentaComponent implements OnInit {
   }
 
   getProductsBD() {
-    this.posService.getProducts(this.bd).subscribe(res => {
+    this.posService.getProducts(this.bd)
+    .takeWhile(() => this.alive)
+    .subscribe(res => {
       this.productos = res.records;
       this.productos.sort(this.sortBy('Nombre'));
       this.getPackagesBD();
@@ -173,7 +178,9 @@ export class PuntoVentaComponent implements OnInit {
   }
 
   getPackagesBD() {
-    this.posService.getPackages(this.bd).subscribe(res => {
+    this.posService.getPackages(this.bd)
+    .takeWhile(() => this.alive)
+    .subscribe(res => {
       this.isLoadingResults = false;
       this.paquetes = res.records;
       this.cd.markForCheck();
@@ -561,6 +568,7 @@ export class PuntoVentaComponent implements OnInit {
     }
     this.filteredOptions = this.productos_filtrado;
     this.filteredPackages = this.pack_nombre;
+    console.log(this.filteredOptions);
   }
 
   pushKeyProducts() {
@@ -778,16 +786,26 @@ export class PuntoVentaComponent implements OnInit {
   }
 
   getAllProducts(alm: string) {
-    this.posService.getProducts(this.bd).subscribe(res => {
+    this.posService.getProducts(this.bd)
+    .takeWhile(() => this.alive)
+    .subscribe(res => {
       this.productos = res.records;
       this.productos.sort(this.sortBy('Nombre'));
-      this.posService.getPackages(this.bd).subscribe(res => {
+      this.posService.getPackages(this.bd)
+      .takeWhile(() => this.alive)
+      .subscribe(res => {
         this.isLoadingResults = false;
         this.paquetes = res.records;
         this.cd.markForCheck();
         this.filtrarProductos(alm);
       });
     });
+  }
+  
+  ngOnDestroy() {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    this.alive = false;
   }
 }
 

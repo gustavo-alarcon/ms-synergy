@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialogRef, MatDialog } from '@angular/material';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { LoginService } from './../../../servicios/login/login.service';
@@ -6,6 +6,7 @@ import { InventariosService } from './../../../servicios/almacenes/inventarios.s
 import { Router } from '@angular/router';
 import {FormControl, Validators, FormGroup, FormBuilder} from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
+import "rxjs/add/operator/takeWhile";
 
 @Component({
   selector: 'app-add-client',
@@ -33,6 +34,7 @@ export class AddClient2Component implements OnInit {
   nombreExist: boolean = false;
 
   message: string = 'Cambiar de: ';
+  private alive: boolean = true;
 
   constructor(private fb: FormBuilder,
               private router: Router,
@@ -54,7 +56,9 @@ export class AddClient2Component implements OnInit {
       Telefono: ''
     });
 
-    this.inventariosService.currentDataTerceros.subscribe(res => {
+    this.inventariosService.currentDataTerceros
+    .takeWhile(() => this.alive)
+    .subscribe(res => {
       this.terceros = res;
     });
 
@@ -96,6 +100,12 @@ export class AddClient2Component implements OnInit {
 
   onNoClick(){
     this.DialogRef.close(false);
+  }
+
+  ngOnDestroy() {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    this.alive = false;
   }
 
 }
