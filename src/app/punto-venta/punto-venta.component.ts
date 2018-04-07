@@ -880,6 +880,7 @@ export class PuntoVentaComponent implements OnInit {
         },
       }
     }
+    pdfMake.createPdf(saleTicket).download("Boleta");
     try {
       pdfMake.createPdf(saleTicket).print();
     }
@@ -889,7 +890,6 @@ export class PuntoVentaComponent implements OnInit {
       this.toastr.error("Ha bloqueado las ventas emergentes en el navegador, activelas para esta pagina para poder funcionar al 100%", "Error");
       return false;
     }
-    pdfMake.createPdf(saleTicket).download("Boleta");
     return true;
   }
 
