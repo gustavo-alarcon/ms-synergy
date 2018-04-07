@@ -17,6 +17,11 @@
     background: rgb(248, 109, 109);
 }
 
+detail-products{
+    max-height: 80vh;
+    overflow: auto;
+}
+
 .changeColorFont{
     color: #fff;
     transition: all .4s

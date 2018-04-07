@@ -2,35 +2,61 @@
   <mat-sidenav mode="over" #sidenav class="w3-row">
     <div class="w3-row w3-padding meraki-font-s5 w3-pink">Menu de Inventarios</div>
     <!--button mat-button class="w3-block w3-left-align" routerLink="dashboard"><mat-icon>dashboard</mat-icon> Dashboard</button><br-->
-    <button mat-button class="w3-block w3-left-align" (click)="sidenav.toggle()" *ngIf="perms[0]['alm_seccion']" routerLink="almacenes"><mat-icon>location_on</mat-icon> Almacenes</button><br>
-    <button mat-button class="w3-block w3-left-align" (click)="sidenav.toggle()" *ngIf="perms[0]['ter_seccion']" routerLink="terceros"><mat-icon>people</mat-icon> Terceros</button><br>
-    <button mat-button class="w3-block w3-left-align" (click)="sidenav.toggle()" *ngIf="perms[0]['doc_seccion']" routerLink="documentos"><mat-icon>insert_drive_file</mat-icon> Documentos</button><br>
-    <button mat-button class="w3-block w3-left-align" (click)="sidenav.toggle()" *ngIf="perms[0]['gru_seccion']" routerLink="grupos"><mat-icon>group_work</mat-icon> Grupos de Productos</button><br>
-    <button mat-button class="w3-block w3-left-align" (click)="sidenav.toggle()" *ngIf="perms[0]['pro_seccion']" style="border-bottom-style:solid;border-color:rgb(236, 27, 114)" routerLink="productos"><mat-icon>style</mat-icon> Productos</button><br>
-    <button mat-button class="w3-block w3-left-align" (click)="sidenav.toggle()" *ngIf="perms[0]['reg_seccion']" routerLink="movimientos"><mat-icon>book</mat-icon> Registrar Movimientos</button><br>
-    <button mat-button class="w3-block w3-left-align" (click)="sidenav.toggle()" *ngIf="perms[0]['kardex_seccion']" routerLink="kardex"><mat-icon>chrome_reader_mode</mat-icon> Kardex</button><br>
-    <button mat-button class="w3-block w3-left-align" (click)="sidenav.toggle()" *ngIf="perms[0]['stock_seccion']" routerLink="stock"><mat-icon>reorder</mat-icon> Stock</button><br>
-    <button mat-button class="w3-block w3-left-align" (click)="sidenav.toggle()" *ngIf="perms[0]['movimientos_seccion']" routerLink="reportemov"><mat-icon>attach_money</mat-icon> Movimientos</button><br>
+    <button mat-button class="w3-block w3-left-align" (click)="sidenav.toggle()" *ngIf="perms[0]['alm_seccion']" routerLink="almacenes">
+      <mat-icon>location_on</mat-icon> Almacenes</button>
+    <br>
+    <button mat-button class="w3-block w3-left-align" (click)="sidenav.toggle()" *ngIf="perms[0]['ter_seccion']" routerLink="terceros">
+      <mat-icon>people</mat-icon> Terceros</button>
+    <br>
+    <button mat-button class="w3-block w3-left-align" (click)="sidenav.toggle()" *ngIf="perms[0]['doc_seccion']" routerLink="documentos">
+      <mat-icon>insert_drive_file</mat-icon> Documentos</button>
+    <br>
+    <button mat-button class="w3-block w3-left-align" (click)="sidenav.toggle()" *ngIf="perms[0]['gru_seccion']" routerLink="grupos">
+      <mat-icon>group_work</mat-icon> Grupos de Productos</button>
+    <br>
+    <button mat-button class="w3-block w3-left-align" (click)="sidenav.toggle()" *ngIf="perms[0]['pro_seccion']" style="border-bottom-style:solid;border-color:rgb(236, 27, 114)"
+      routerLink="productos">
+      <mat-icon>style</mat-icon> Productos</button>
+    <br>
+    <button mat-button class="w3-block w3-left-align" (click)="sidenav.toggle()" *ngIf="perms[0]['reg_seccion']" routerLink="movimientos">
+      <mat-icon>book</mat-icon> Registrar Movimientos</button>
+    <br>
+    <button mat-button class="w3-block w3-left-align" (click)="sidenav.toggle()" *ngIf="perms[0]['kardex_seccion']" routerLink="kardex">
+      <mat-icon>chrome_reader_mode</mat-icon> Kardex</button>
+    <br>
+    <button mat-button class="w3-block w3-left-align" (click)="sidenav.toggle()" *ngIf="perms[0]['stock_seccion']" routerLink="stock">
+      <mat-icon>reorder</mat-icon> Stock</button>
+    <br>
+    <button mat-button class="w3-block w3-left-align" (click)="sidenav.toggle()" *ngIf="perms[0]['movimientos_seccion']" routerLink="reportemov">
+      <mat-icon>attach_money</mat-icon> Movimientos</button>
+    <br>
+    <button mat-button class="w3-block w3-left-align" (click)="sidenav.toggle()" *ngIf="perms[0]['movimientos_seccion']" routerLink="historialMov">
+      <mat-icon>assignment</mat-icon> Historial Movimientos</button>
+    <br>
   </mat-sidenav>
 
-  <div class="w3-container w3-white w3-card-4 w3-animate-top"
-       style="margin-left:5vw;margin-right:5vw;border-radius:0px 0px 10px 10px">
+  <div class="w3-container w3-white w3-card-4 w3-animate-top" style="margin-left:5vw;margin-right:5vw;border-radius:0px 0px 10px 10px">
     <div class="row middle-xs w3-bar" style="padding:12px 24px">
-        <button type="button" mat-button (click)="sidenav.open()">
-            <mat-icon>menu</mat-icon><span class="w3-xlarge meraki-font-s5"> Inventarios</span>
-        </button>
+      <button type="button" mat-button (click)="sidenav.open()">
+        <mat-icon>menu</mat-icon>
+        <span class="w3-xlarge meraki-font-s5"> Inventarios</span>
+      </button>
     </div>
   </div>
 
   <div class="w3-row" style="margin-top:10px">
-      <div class="w3-col s1 m1 l1"><p></p></div>
-      <div class="w3-col s10 m10 l10">
-        <router-outlet></router-outlet>
-      </div>
-      <div class="w3-col s1 m1 l1"><p></p></div>
+    <div class="w3-col s1 m1 l1">
+      <p></p>
+    </div>
+    <div class="w3-col s10 m10 l10">
+      <router-outlet></router-outlet>
+    </div>
+    <div class="w3-col s1 m1 l1">
+      <p></p>
+    </div>
   </div>
 
-  
-  
-  
+
+
+
 </mat-sidenav-container>

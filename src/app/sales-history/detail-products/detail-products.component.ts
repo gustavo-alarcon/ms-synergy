@@ -74,12 +74,12 @@ export class DetailProductsComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log(this.data);
     this.paymentType();
     this.posService.getSalesData(this.bd, this.operacion)
       .takeWhile(() => this.alive)
       .subscribe(data => {
         this.products = data.records;
-        console.log(this.products);
       });
     // subscribe to cancellations and reset form value
     if (this.popover) {

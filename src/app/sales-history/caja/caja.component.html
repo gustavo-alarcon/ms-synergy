@@ -1,0 +1,23 @@
+<div>
+  <h1 mat-dialog-title>Cerrar caja</h1>
+  <hr>
+  <mat-dialog-content>
+    <mat-form-field class="full-width">
+      <input matInput [matDatepicker]="picker" placeholder="Desde" [formControl]="fromDate" required disabled='true'>
+      <mat-datepicker-toggle matSuffix [for]="picker" disabled='false'></mat-datepicker-toggle>
+      <mat-datepicker touchUi="true" #picker ngDefaultControl disabled='false'></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field class="full-width">
+      <input matInput [matDatepicker]="picker2" placeholder="Hasta" [formControl]="toDate" required disabled='true'>
+      <mat-datepicker-toggle matSuffix [for]="picker2" disabled='false'></mat-datepicker-toggle>
+      <mat-datepicker touchUi="true" #picker2 ngDefaultControl disabled='false'></mat-datepicker>
+    </mat-form-field>
+  </mat-dialog-content>
+  <div @fadeList *ngIf="total != null" style="text-align: center; font-weight: 500;">
+    <p>Total en el rango: {{total}}</p>
+  </div>
+  <div mat-dialog-actions align="center">
+    <button style="margin-bottom: 15px;" mat-raised-button color="primary" (click)="onSubmit()" [disabled]="confirm()">CONFIRMAR</button>
+    <button style="margin-bottom: 15px;" mat-raised-button color="warn" (click)="onNoClick()">CERRAR</button>
+  </div>
+</div>

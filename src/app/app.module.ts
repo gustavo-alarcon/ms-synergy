@@ -99,6 +99,10 @@ import {MAT_AUTOCOMPLETE_SCROLL_STRATEGY} from '@angular/material';
 import { Platform } from '@angular/cdk/platform'; 
 import { Overlay } from '@angular/cdk/overlay';
 import { DetailProductsComponent } from './sales-history/detail-products/detail-products.component';
+import { ConfirmComponent } from './sales-history/confirm/confirm.component';
+import { Confirm2Component } from './ms-text/confirm/confirm2.component';
+import { HistorialMovimientosComponent } from './inventarios/historial-movimientos/historial-movimientos.component';
+import { CajaComponent } from './sales-history/caja/caja.component';
 
 
 export function MAT_AUTOCOMPLETE_SCROLL_STRATEGY_FACTORY(overlay: Overlay, platform: Platform) { return () => platform.IOS ? overlay.scrollStrategies.block() : overlay.scrollStrategies.reposition(); }
@@ -144,7 +148,11 @@ export function MAT_AUTOCOMPLETE_SCROLL_STRATEGY_FACTORY(overlay: Overlay, platf
     InlineEditComponent,
     HistoryComponent,
     InlineEditHistoryComponent,
-    DetailProductsComponent
+    DetailProductsComponent,
+    ConfirmComponent,
+    Confirm2Component,
+    HistorialMovimientosComponent,
+    CajaComponent
   ],
   imports: [
     BrowserModule,
@@ -193,7 +201,10 @@ export function MAT_AUTOCOMPLETE_SCROLL_STRATEGY_FACTORY(overlay: Overlay, platf
     AddClientComponent,
     ClientsComponent,
     PaymentComponent,
-    AddClient2Component
+    AddClient2Component,
+    ConfirmComponent,
+    Confirm2Component,
+    CajaComponent
   ],
   providers: [
     LoginService,

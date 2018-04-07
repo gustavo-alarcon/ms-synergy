@@ -1,6 +1,7 @@
 import { LoginService } from './../../servicios/login/login.service';
 import { InventariosService } from './../../servicios/almacenes/inventarios.service';
 import { Component, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-productos',
@@ -8,7 +9,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./productos.component.css']
 })
 export class ProductosComponent implements OnInit {
-
+  selectedIndex: any;
+  filteredOptions : any = [];
+  productoFilter : any = new FormControl();
+  prodEscogido : any = '';
   data_: any[] = [];
   productosFiltrados: any[] = [];
   paquetes: any[] = [];
@@ -55,7 +59,18 @@ export class ProductosComponent implements OnInit {
 
   constructor(private inventariosService: InventariosService,
               private loginService: LoginService) {
-    
+    this.onChanges();
+    console.log(this.prodEscogido);
+  }
+
+  onChanges(): void {
+    this.productoFilter.valueChanges.subscribe(val=>{
+      if(val!==''){
+        this.prodEscogido = val;
+      }
+      else
+        this.prodEscogido = '';
+    });
   }
 
   ngOnInit() {
@@ -66,6 +81,7 @@ export class ProductosComponent implements OnInit {
       
       this.data_ = res;
       this.productosFiltrados = res.slice();
+      this.filteredOptions = this.productosFiltrados;
 
       for (var i = 0; i < this.data_.length; i++) {
         var key = 'edit'+(i);
@@ -128,10 +144,26 @@ export class ProductosComponent implements OnInit {
     });
   }
 
+  tabChanged(e) {
+      this.selectedIndex = e.index;
+  }
+
   filterData(ref: string) {
     this.productosFiltrados = this.data_.filter( value => 
       value['Grupo'].startsWith(ref) || value['Nombre'].startsWith(ref) || value['Zona'].startsWith(ref) || value['Codigo'].startsWith(ref) || value['Unidad'].startsWith(ref) || value['Stock_inicial'].startsWith(ref) || value['Stock_actual'].startsWith(ref) || value['Stocke'].startsWith(ref) || value['Offset_stocka'].startsWith(ref) || value['Stocka'].startsWith(ref) || value['Moneda'].startsWith(ref) || value['Compra'].startsWith(ref) || value['Venta'].startsWith(ref)
     );
+  }
+
+  pushKeyProducts(){
+    this.filteredOptions = this.filterProducto(this.productoFilter.value);
+    if(this.filteredOptions.length == 0)
+      this.filteredOptions = this.productosFiltrados;
+  }
+
+  filterProducto(val): string[] {
+    console.log(val);
+    return this.productosFiltrados.filter(option =>
+      option.Nombre.toLowerCase().indexOf(val.toLowerCase()) === 0);  
   }
 
   editAction( idx: number) {

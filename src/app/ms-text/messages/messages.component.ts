@@ -10,6 +10,8 @@ import * as crypto from 'crypto-js';
 import { trigger, state, style, transition, animate, keyframes, query, stagger } from '@angular/animations';
 import { Client } from '../../classes/client';
 import "rxjs/add/operator/takeWhile";
+import { Confirm2Component } from '../confirm/confirm2.component';
+
 
 @Component({
   selector: 'messages',
@@ -61,25 +63,25 @@ export class MessagesComponent implements OnInit {
     this.clientsSales = [];
     this.isLoadingResults = true;
     this.clientService.getBdClient(this.bd)
-    .takeWhile(() => this.alive)
-    .subscribe(data => {
-      for (let i = 0; i < data.records.length; i++) {
-        this.clientsSales.push({
-          ID: parseInt(data.records[i].ID),
-          Name: data.records[i].Name.toString(),
-          Mail: data.records[i].Mail.toString(),
-          Phone: parseInt(data.records[i].Phone),
-          Place: data.records[i].Place.toString(),
-          select: false,
-          Birthday: data.records[i].Birthday,
-          Type: parseInt(data.records[i].Type),
-        });
-      }
-      this.isLoadingResults = false;
-      this.dataSource = new MatTableDataSource(this.clientsSales);
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-    });
+      .takeWhile(() => this.alive)
+      .subscribe(data => {
+        for (let i = 0; i < data.records.length; i++) {
+          this.clientsSales.push({
+            ID: parseInt(data.records[i].ID),
+            Name: data.records[i].Name.toString(),
+            Mail: data.records[i].Mail.toString(),
+            Phone: parseInt(data.records[i].Phone),
+            Place: data.records[i].Place.toString(),
+            select: false,
+            Birthday: data.records[i].Birthday,
+            Type: parseInt(data.records[i].Type),
+          });
+        }
+        this.isLoadingResults = false;
+        this.dataSource = new MatTableDataSource(this.clientsSales);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      });
   }
 
   slideToogleChange(e) {
@@ -96,13 +98,13 @@ export class MessagesComponent implements OnInit {
   getBubbleValues() {
     this.isLoadingBubbles = true;
     this.messageService.getBubbleValues()
-    .takeWhile(() => this.alive)
-    .subscribe(data => {
-      this.balance = data.records[0].Saldo;
-      this.programmed = data.records[0].Programados;
-      this.send = data.records[0].Enviados;
-      this.isLoadingBubbles = false;
-    });
+      .takeWhile(() => this.alive)
+      .subscribe(data => {
+        this.balance = data.records[0].Saldo;
+        this.programmed = data.records[0].Programados;
+        this.send = data.records[0].Enviados;
+        this.isLoadingBubbles = false;
+      });
   }
 
   applyFilter(filterValue: string) {
@@ -261,18 +263,28 @@ export class MessagesComponent implements OnInit {
   }
 
   deleteCustomer(cliente) {
-    if (confirm("¿Esta seguro de eliminar al cliente " + cliente.Name + "?")) {
-      this.clientService.deleteClient(this.bd, cliente)
-      .takeWhile(() => this.alive)
-      .subscribe(data => {
-        if(data=="true"){
-          this.toastr.success("Se elimino al cliente con exito","Exito");
-          this.getClients();
-        }
-        else
-        this.toastr.error("Hubo un error","Error");
-      })
-    }
+    let dialogRef = this.dialog.open(Confirm2Component, {
+      width: 'auto',
+      data: cliente.Name,
+    });
+
+    dialogRef.beforeClose().subscribe(result => {
+      if (result != 'close' && result != undefined) {
+        this.clientService.deleteClient(this.bd, cliente)
+          .takeWhile(() => this.alive)
+          .subscribe(data => {
+            if (data == "true") {
+              this.toastr.success("Se elimino al cliente con exito", "Exito");
+              this.getClients();
+            }
+            else
+              this.toastr.error("Hubo un error", "Error");
+          },
+        err => {
+          this.toastr.error("Hubo un error", "Error");
+        })
+      }
+    });
   }
 
   ngOnDestroy() {

@@ -7,6 +7,9 @@ import * as crypto from 'crypto-js';
 import { PosService } from '../servicios/pos.service';
 import { HistorySales } from '../classes/history-sales';
 import "rxjs/add/operator/takeWhile";
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { ConfirmComponent } from '../sales-history/confirm/confirm.component';
+import { CajaComponent } from '../sales-history/caja/caja.component';
 
 @Component({
   selector: 'sales-history',
@@ -15,7 +18,7 @@ import "rxjs/add/operator/takeWhile";
 })
 export class SalesHistoryComponent implements OnInit {
   history: any[] = [];
-  displayedColumns = ['fecha', 'type' , 'correlativo', 'cliente', 'usuario', 'eliminar'];
+  displayedColumns = ['fecha', 'type', 'correlativo', 'cliente', 'usuario', 'eliminar'];
   dataSource: MatTableDataSource<any>;
   isLoadingResults = false;
   bytes = crypto.AES.decrypt(localStorage.getItem('db'), 'meraki');
@@ -33,7 +36,8 @@ export class SalesHistoryComponent implements OnInit {
   constructor(
     private posService: PosService,
     private cd: ChangeDetectorRef,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private dialog: MatDialog,
   ) {
     this.getHistory();
   }
@@ -80,27 +84,36 @@ export class SalesHistoryComponent implements OnInit {
         err => {
           this.isLoadingResults = false;
           this.toastr.error("Ocurrio un error", "Error");
-          this.cd.markForCheck();
+          this.cd.detectChanges();
         });
   }
 
   changeState(i) {
-    let erase = {
-      Operacion: null,
-      Estado: null
-    };
-    erase.Operacion = this.history[i].Operacion;
-    erase.Estado = this.history[i].Estado;
-    this.posService.removeSale(this.bd, erase)
-      .takeWhile(() => this.alive)
-      .subscribe(data => {
-        this.toastr.success("Se anulo la venta con exito", "Exito");
-        this.history[i].Estado = '1';
-      },
-        err => {
-          this.toastr.error("Hubo un error", "Error");
-        });
+    let dialogRef = this.dialog.open(ConfirmComponent, {
+      width: 'auto',
+      data: 'text',
+    });
 
+    dialogRef.beforeClose().subscribe(result => {
+      if (result != 'close' && result != undefined) {
+        let erase = {
+          Operacion: null,
+          Estado: null
+        };
+        erase.Operacion = this.history[i].Operacion;
+        erase.Estado = this.history[i].Estado;
+        this.posService.removeSale(this.bd, erase)
+          .takeWhile(() => this.alive)
+          .subscribe(data => {
+            this.toastr.success("Se anulo la venta con exito", "Exito");
+            this.history[i].Estado = '1';
+            this.cd.detectChanges();
+          },
+            err => {
+              this.toastr.error("Hubo un error", "Error");
+            });
+      }
+    });
   }
 
   orderArray() {
@@ -152,6 +165,17 @@ export class SalesHistoryComponent implements OnInit {
       var result = (a[property] > b[property]) ? -1 : (a[property] < b[property]) ? 1 : 0;
       return result * sortOrder;
     }
+  }
+
+  abrirCaja(){
+    let dialogRef = this.dialog.open(CajaComponent, {
+      width: 'auto',
+      data: this.history,
+    });
+
+    dialogRef.beforeClose().subscribe(result => {
+      console.log(result);
+    });
   }
 
   ngOnDestroy() {

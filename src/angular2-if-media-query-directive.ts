@@ -53,7 +53,7 @@ export class NgIfMediaQuery {
     if (matches && (this.isBlank(this.prevCondition) || !this.prevCondition)) {
       this.prevCondition = true;
       this.viewContainer.createEmbeddedView(this.templateRef);
-      this.cd.markForCheck();
+      this.cd.detectChanges();
     } else if (!matches && (this.isBlank(this.prevCondition) || this.prevCondition)) {
       this.prevCondition = false;
       this.viewContainer.clear();

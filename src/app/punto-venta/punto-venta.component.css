@@ -593,7 +593,7 @@ mat-icon{
    }
 
    .teclado, .operationFocused{
-        font-size: 10px;
+        font-size: 15px;
         text-align: center;
    }
 
@@ -723,6 +723,16 @@ mat-icon{
     }
 }
 
+@media screen and (min-width: 1050px){
+    .teclado, .operationFocused{
+        font-size: 20px;
+
+   }
+   .nameIcon{
+       font-size: 15px;
+   }
+}
+
 @media screen and (min-width:1200px) {
     .check{
         grid-column: 1/5;
@@ -735,5 +745,8 @@ mat-icon{
     }
     .products{
         grid-column: 5/13;
+    } 
+    .nameIcon{
+        font-size: 18px;
     }
 }

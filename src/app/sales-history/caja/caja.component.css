@@ -1,0 +1,16 @@
+hr {
+    margin : 10px;
+}
+
+h1{
+    text-align: center;
+}
+
+h2{
+    font-size: 20px;
+    text-align: center;
+}
+
+.full-width{
+    width: 100%;
+}

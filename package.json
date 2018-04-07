@@ -9,7 +9,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "pro" : "ng build --prod --base-href='/test/ms-point/'"
+    "pro": "ng build --prod --base-href='/test/ms-point/'"
   },
   "private": true,
   "dependencies": {
@@ -42,6 +42,7 @@
     "ng2-lazyload-image": "^2.4.0",
     "ngx-toastr": "^8.1.1",
     "normalize.css": "^7.0.0",
+    "pdfmake": "^0.1.36",
     "plotly.js": "^1.31.2",
     "rxjs": "^5.5.2",
     "web-animations-js": "^2.3.1",

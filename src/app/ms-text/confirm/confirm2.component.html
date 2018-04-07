@@ -1,0 +1,11 @@
+<div>
+    <h1 mat-dialog-title>Confirmar eliminacion de cliente</h1>
+    <hr>
+    <mat-dialog-content>
+      <h2>¿Esta seguro(a) de eliminar al cliente {{name}}?</h2>
+    </mat-dialog-content>
+    <div mat-dialog-actions align="center">
+      <button style="margin-bottom: 15px;" mat-raised-button color="primary" (click)="onSubmit()">CONFIRMAR</button>
+      <button style="margin-bottom: 15px;" mat-raised-button color="warn" (click)="onNoClick()">CANCELAR</button>
+    </div>
+  </div>

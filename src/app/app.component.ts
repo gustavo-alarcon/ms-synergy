@@ -1,4 +1,4 @@
-import { Component , ChangeDetectionStrategy } from '@angular/core';
+import { Component , ChangeDetectionStrategy, HostListener } from '@angular/core';
 import {
   trigger,
   state,
@@ -84,6 +84,11 @@ export class AppComponent {
 
   constructor() {
     
+  }
+
+  @HostListener('document:contextmenu', ['$event'])
+  onDocumentRightClick(event) {
+    return false;
   }
   
   getDepth(outlet) {

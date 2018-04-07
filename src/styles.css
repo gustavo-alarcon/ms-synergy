@@ -44,6 +44,10 @@ h1.example-app-name {
     border-radius: 10px;
 }
 
+.custom-dialog .mat-dialog-container {
+  background: #fdf5e6;
+}
+
 .container-loadingSpinner {
     display: flex;
     flex-direction: column;

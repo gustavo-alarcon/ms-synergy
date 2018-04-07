@@ -38,23 +38,24 @@ export class PaymentComponent implements OnInit {
   ) {
     this.salesArray = [];
     this.customer = data;
+    console.log(this.customer);
     this.isLoadingResults = true;
     this.posService.getDocuments(this.bd)
-    .takeWhile(() => this.alive)
-    .subscribe(res => {
-      let _serie = '';
-      this.numerosSerie = [];
-      res.records.forEach(element => {
-        if (element.Naturaleza == 'SALIDA') {
-          this.documentos.push(element);
-          if (element['Numtienda'] != _serie && this.numerosSerie.indexOf(element['Numtienda']) < 0) {
-            this.numerosSerie.push(element['Numtienda']);
-            _serie = element['Numtienda'];
+      .takeWhile(() => this.alive)
+      .subscribe(res => {
+        let _serie = '';
+        this.numerosSerie = [];
+        res.records.forEach(element => {
+          if (element.Naturaleza == 'SALIDA') {
+            this.documentos.push(element);
+            if (element['Numtienda'] != _serie && this.numerosSerie.indexOf(element['Numtienda']) < 0) {
+              this.numerosSerie.push(element['Numtienda']);
+              _serie = element['Numtienda'];
+            }
           }
-        }
+        });
+        this.isLoadingResults = false;
       });
-      this.isLoadingResults = false;
-    });
     this.getArraySale();
     this.fixArray();
   }
@@ -64,7 +65,7 @@ export class PaymentComponent implements OnInit {
   }
 
   changeDocument() {
-    this.correlativo =this.selectedDocument.Correlativo_actual;
+    this.correlativo = this.selectedDocument.Correlativo_actual;
     this.customer.correlativo = this.selectedDocument.Correlativo_actual;
     this.customer.documento = this.selectedDocument.Nombre;
   }
@@ -73,7 +74,7 @@ export class PaymentComponent implements OnInit {
     this.customer.serie = this.serieSeleccionado;
   }
 
-  changePaymentType(){
+  changePaymentType() {
     this.customer.paymentType = this.paymentType;
   }
 
@@ -127,22 +128,22 @@ export class PaymentComponent implements OnInit {
     this.customer.given = this.entregado;
     this.customer.change = this.vuelto;
     this.posService.regMovimiento(this.bd, this.customer)
-    .takeWhile(() => this.alive)
-    .subscribe(data => {
-      for (let i = 0; i < this.salesArray.length; i++) {
-        this.posService.actualizarStock(this.bd, this.salesArray[i])
-        .takeWhile(() => this.alive)
-        .subscribe(data2 => {
-        });
-      }
-      this.posService.updateCorrelativo(this.bd,this.selectedDocument)
       .takeWhile(() => this.alive)
-      .subscribe(data =>{
+      .subscribe(data => {
+        for (let i = 0; i < this.salesArray.length; i++) {
+          this.posService.actualizarStock(this.bd, this.salesArray[i])
+            .takeWhile(() => this.alive)
+            .subscribe(data2 => {
+            });
+        }
+        this.posService.updateCorrelativo(this.bd, this.selectedDocument)
+          .takeWhile(() => this.alive)
+          .subscribe(data => {
+          });
+        this.isLoadingResults = false;
+        this.toastr.success("Se realizo la venta con exito", "Exito");
+        this.DialogRef.close(true);
       });
-      this.isLoadingResults = false;
-      this.toastr.success("Se realizo la venta con exito", "Exito");
-      this.DialogRef.close(true);
-    });
   }
 
   getArraySale() {
@@ -167,42 +168,41 @@ export class PaymentComponent implements OnInit {
   fixArray() {
     for (let i = 0; i < this.customer.listAction.length; i++) {
       this.customer.listAction[i].Cantidad = this.customer.listAction[i].units;
-      this.customer.listAction[i].Venta = this.customer.listAction[i].price;
     }
   }
 
   currentDate() {
     const currentDate = new Date();
-    
-    if(31 < 31){
-      if(31 + 1 < 10){
-        if(currentDate.getMonth()+1 < 10){
-          var limite = currentDate.getFullYear()+'-0'+(currentDate.getMonth()+1)+'-0'+((31+1)%31);
-        }else{
-          var limite = currentDate.getFullYear()+'-'+(currentDate.getMonth()+1)+'-0'+((31+1)%31);
+
+    if (31 < 31) {
+      if (31 + 1 < 10) {
+        if (currentDate.getMonth() + 1 < 10) {
+          var limite = currentDate.getFullYear() + '-0' + (currentDate.getMonth() + 1) + '-0' + ((31 + 1) % 31);
+        } else {
+          var limite = currentDate.getFullYear() + '-' + (currentDate.getMonth() + 1) + '-0' + ((31 + 1) % 31);
         }
-      }else{
-        if(currentDate.getMonth()+1 < 10){
-          var limite = currentDate.getFullYear()+'-0'+(currentDate.getMonth()+1)+'-'+((31+1)%31);
-        }else{
-          var limite = currentDate.getFullYear()+'-'+(currentDate.getMonth()+1)+'-'+((31+1)%31);
-        }
-      }
-    }else{
-      if(currentDate.getMonth()+1 < 12){
-        if((currentDate.getMonth()+2)%13 + 1 < 10){
-          var limite = currentDate.getFullYear()+'-0'+(((currentDate.getMonth()+2)%13)+1)+'-0'+(1);
-        }else{
-          var limite = currentDate.getFullYear()+'-'+(((currentDate.getMonth()+2)%13)+1)+'-0'+(1);
-        }
-      }else{
-        if((currentDate.getMonth()+2)%13 + 1 < 10){
-          var limite = (currentDate.getFullYear()+1) +'-0'+(((currentDate.getMonth()+2)%13)+1)+'-0'+(1);
-        }else{
-          var limite = (currentDate.getFullYear()+1) +'-'+(((currentDate.getMonth()+2)%13)+1)+'-0'+(1);
+      } else {
+        if (currentDate.getMonth() + 1 < 10) {
+          var limite = currentDate.getFullYear() + '-0' + (currentDate.getMonth() + 1) + '-' + ((31 + 1) % 31);
+        } else {
+          var limite = currentDate.getFullYear() + '-' + (currentDate.getMonth() + 1) + '-' + ((31 + 1) % 31);
         }
       }
-      
+    } else {
+      if (currentDate.getMonth() + 1 < 12) {
+        if ((currentDate.getMonth() + 2) % 13 + 1 < 10) {
+          var limite = currentDate.getFullYear() + '-0' + (((currentDate.getMonth() + 2) % 13) + 1) + '-0' + (1);
+        } else {
+          var limite = currentDate.getFullYear() + '-' + (((currentDate.getMonth() + 2) % 13) + 1) + '-0' + (1);
+        }
+      } else {
+        if ((currentDate.getMonth() + 2) % 13 + 1 < 10) {
+          var limite = (currentDate.getFullYear() + 1) + '-0' + (((currentDate.getMonth() + 2) % 13) + 1) + '-0' + (1);
+        } else {
+          var limite = (currentDate.getFullYear() + 1) + '-' + (((currentDate.getMonth() + 2) % 13) + 1) + '-0' + (1);
+        }
+      }
+
     }
 
     return currentDate;

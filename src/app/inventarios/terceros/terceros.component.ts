@@ -8,7 +8,7 @@ import { Component, OnInit} from '@angular/core';
   styleUrls: ['./terceros.component.css']
 })
 export class TercerosComponent implements OnInit {
-
+  tipoTercero : string = null;
   data_: any[] = [];
   tercerosFiltrados: any[] = [];
   edit: any[] = [];
@@ -77,6 +77,12 @@ export class TercerosComponent implements OnInit {
   filterData(ref: string) {
     this.tercerosFiltrados = this.data_.filter( value => 
       value['Identi'].startsWith(ref) || value['IdentiClass'].startsWith(ref) || value['TerceroClass'].startsWith(ref) || value['Nombre'].startsWith(ref) || value['Ciudad'].startsWith(ref) || value['Direccion'].startsWith(ref) || value['Contacto'].startsWith(ref) || value['Mail'].startsWith(ref) || value['Telefono'].startsWith(ref)
+    );
+  }
+
+  filterTercero(){
+    this.tercerosFiltrados = this.data_.filter( value => 
+      value['TerceroClass'].toLowerCase().startsWith(this.tipoTercero.toLowerCase()) 
     );
   }
 

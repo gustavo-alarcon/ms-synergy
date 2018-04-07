@@ -5,217 +5,214 @@
   </div>
   <br>
   <div class="w3-row">
-    <button mat-raised-button
-            style="margin-bottom:15px"
-            *ngIf="perms[0]['pro_b_crearPaquete']"
-            color="primary"
-            routerLink="crear-paquete">Crear nuevo - Paquete</button>
-    <button mat-raised-button
-            style="margin-bottom:15px"
-            *ngIf="perms[0]['pro_b_crearProducto']"
-            color="primary"
-            routerLink="crear-producto">Crear nuevo - Producto</button>
-    
-    <mat-form-field floatPlaceholder="never">
-      <input matInput type="text" (input)="filterData($event.target.value)" placeholder="filtrar contenido">
-      <mat-hint>
-        Escribe una palabra
-      </mat-hint>
+    <button mat-raised-button style="margin-bottom:15px" *ngIf="perms[0]['pro_b_crearPaquete']" color="primary" routerLink="crear-paquete">Crear nuevo - Paquete</button>
+    <button mat-raised-button style="margin-bottom:15px" *ngIf="perms[0]['pro_b_crearProducto']" color="primary" routerLink="crear-producto">Crear nuevo - Producto</button>
+    <mat-form-field color="accent" style="width:100%" *ngIf="selectedIndex == 1">
+      <input matInput (keyup)="pushKeyProducts()" [matAutocomplete]="auto" #prod [formControl]="productoFilter" placeholder="Producto" [value]="prodEscogido === '' ? '' : prodEscogido">
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option (click)="pushKeyProducts()" class="w3-indigo w3-hover-gray" *ngFor="let option of filteredOptions" [value]="option.Nombre">
+          <span style="font-size: 13px;">{{ option.Nombre }}</span>
+        </mat-option>
+      </mat-autocomplete>
     </mat-form-field>
   </div>
   <router-outlet></router-outlet>
   <br>
   <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
-  <mat-tab-group>
+  <mat-tab-group [(selectedIndex)]="selectedIndex" (selectedTabChange)="tabChanged($event)">
     <mat-tab label="Paquetes" *ngIf="perms[0]['pro_p_paquetes']">
 
       <mat-accordion multi="false">
 
         <mat-expansion-panel *ngFor="let pack of pack_nombre" class="w3-border">
-              <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    {{ pack }}
-                  </mat-panel-title>
-                  <mat-panel-description>
-                    <!--ESPACIO LIBRE-->
-                  </mat-panel-description>
-                </mat-expansion-panel-header>
-                
-                <div>
-                  <table class="w3-table-all">
-                    <thead>
-                      <tr>
-                        <th>Item</th>
-                        <th *ngIf="perms[0]['pro_d_cantidad']" class="w3-center">Cantidad</th>
-                        <th *ngIf="perms[0]['pro_d_precio']" class="w3-center">P. Unitario</th>
-                        <th *ngIf="perms[0]['pro_b_editarPaquete']" class="w3-center">Editar</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr *ngFor="let item of paquetes; let i = index">
-                        <td *ngIf="item.Paquete === pack && !editPack[i]['value']">{{ item.Nombre }}</td>
-                        <td *ngIf="item.Paquete === pack && !editPack[i]['value'] && perms[0]['pro_d_cantidad']" style="text-align:center">{{ item.Cantidad }}</td>
-                        <td *ngIf="item.Paquete === pack && !editPack[i]['value'] && perms[0]['pro_d_precio']" style="text-align:center">{{ item.PrecioUnitario }}</td>
-                        <td *ngIf="item.Paquete === pack && !editPack[i]['value'] && perms[0]['pro_b_editarPaquete']" style="text-align:center"> <button mat-mini-fab
-                                                                                            color="accent"
-                                                                                            *ngIf="perms[0]['pro_b_editarPaquete']"
-                                                                                            class="w3-animate-zoom"
-                                                                                            style="margin:1px"
-                                                                                            (click)="editarPaq(i)"><mat-icon>edit</mat-icon></button></td>
-                        <!--EDIT MODE-->
-                        
-                        <td *ngIf="item.Paquete === pack && editPack[i]['value']">
-                          <input class="w3-input" type="text" (input)="modData_paquete['Nombre'] = $event.target.value" [value]="item.Nombre" [placeholder]="item.Nombre" style="width:90%" disabled>
-                        </td>
-                        <td *ngIf="item.Paquete === pack && editPack[i]['value'] && perms[0]['pro_d_cantidad']">
-                          <input class="w3-input" type="number" (input)="modData_paquete['Cantidad'] = $event.target.value" [value]="item.Cantidad" [placeholder]="item.Cantidad" style="width:90%">
-                        </td>
-                        <td *ngIf="item.Paquete === pack && editPack[i]['value'] && perms[0]['pro_d_precio']">
-                          <input class="w3-input" type="number" (input)="modData_paquete['PrecioUnitario'] = $event.target.value" [value]="item.PrecioUnitario" [placeholder]="item.PrecioUnitario" style="width:90%">
-                        </td>
-                        <td *ngIf="item.Paquete === pack && editPack[i]['value'] && perms[0]['pro_b_editarPaquete']" class="w3-padding-small" style="text-align: center"><button   mat-mini-fab
-                                                                                                                                                color="primary"
-                                                                                                                                                *ngIf="perms[0]['pro_b_guardarPaquete']"
-                                                                                                                                                class="w3-animate-zoom"
-                                                                                                                                                style="margin:1px"
-                                                                                                                                                (click)="savePack(i)"><mat-icon>save</mat-icon></button>
-                                                                                                                                        <button mat-mini-fab
-                                                                                                                                                color="warn"
-                                                                                                                                                class="w3-animate-zoom"
-                                                                                                                                                style="margin:1px"
-                                                                                                                                                (click)="cancelPack(i)"><mat-icon>cancel</mat-icon></button></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <mat-action-row>
-                  <button mat-raised-button color="warn" (click)="borrarPaq(pack)" *ngIf="perms[0]['pro_b_borrarPaquete']">Borrar</button>
-                </mat-action-row>
-        </mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{ pack }}
+            </mat-panel-title>
+            <mat-panel-description>
+              <!--ESPACIO LIBRE-->
+            </mat-panel-description>
+          </mat-expansion-panel-header>
 
-      </mat-accordion>
-      <div *ngIf="loading" class="w3-container w3-padding-large meraki-empty-bg" style="width:100%">
-        <h2 class="w3-margin w3-center meraki-font-s2"><mat-icon class="w3-margin" style="font-size: 36px">style</mat-icon>Cargando ...</h2>
-      </div>
-      <div *ngIf="paquetes.length == 0 && !loading" class="w3-container w3-padding-large meraki-empty-bg" style="width:100%">
-          <h2 class="w3-margin w3-center meraki-font-s2"><mat-icon class="w3-margin" style="font-size: 36px">style</mat-icon>No hay paquetes en la tabla</h2>
-      </div>
-    </mat-tab>
-
-    <mat-tab label="Productos" *ngIf="perms[0]['pro_p_productos']">
-        <div class="w3-responsive" style="max-height:50vh">
+          <div>
             <table class="w3-table-all">
               <thead>
                 <tr>
-                  <th [attr.rowspan]="rows" class="w3-center w3-border">N°</th>
-                  <th [attr.rowspan]="rows" class="w3-center w3-border">Grupo</th>
-                  <th [attr.rowspan]="rows" class="w3-center w3-border">Almacen</th>
-                  <th [attr.rowspan]="rows" class="w3-center w3-border">Código</th>
-                  <th [attr.rowspan]="rows" class="w3-center w3-border">Nombre</th>
-                  <th [attr.rowspan]="rows" class="w3-center w3-border">U.Medida</th>
-                  <th [attr.colspan]="cols_stock" *ngIf="cols_stock" class="w3-center w3-border">Stock</th>
-                  <th [attr.rowspan]="rows" *ngIf="perms[0]['pro_t_moneda']" class="w3-center w3-border">Moneda</th>
-                  <th [attr.colspan]="cols_precio" *ngIf="cols_precio" class="w3-center w3-border">Precio</th>
-                  <th [attr.rowspan]="rows" *ngIf="perms[0]['pro_b_editarProducto']" class="w3-center w3-border">Editar</th>
-                </tr>
-                <tr>
-                  <th *ngIf="perms[0]['pro_t_stockInicial']" class="w3-center w3-border">Inicial</th>
-                  <th *ngIf="perms[0]['pro_t_stockActual']" class="w3-center w3-border">Actual</th>
-                  <th *ngIf="perms[0]['pro_t_stockEmergencia']" class="w3-center w3-border">Emergencia</th>
-                  <th *ngIf="perms[0]['pro_t_stockAlerta']" class="w3-center w3-border">Alerta</th>
-                  <th *ngIf="perms[0]['pro_t_precioCompra']" class="w3-center w3-border">Compra</th>
-                  <th *ngIf="perms[0]['pro_t_precioVenta']" class="w3-center w3-border">Venta</th>
+                  <th>Item</th>
+                  <th *ngIf="perms[0]['pro_d_cantidad']" class="w3-center">Cantidad</th>
+                  <th *ngIf="perms[0]['pro_d_precio']" class="w3-center">P. Unitario</th>
+                  <th *ngIf="perms[0]['pro_b_editarPaquete']" class="w3-center">Editar</th>
                 </tr>
               </thead>
-              <tbody class="meraki-font-s5">
-                <tr *ngFor="let row of productosFiltrados; let i = index">
-                  <td *ngIf="!edit[i]['value']">{{i + 1}}</td>
-                  <td *ngIf="!edit[i]['value']">{{row.Grupo}}</td>
-                  <td *ngIf="!edit[i]['value']">{{row.Zona}}</td>
-                  <td *ngIf="!edit[i]['value']">{{row.Codigo}}</td>
-                  <td *ngIf="!edit[i]['value']">{{row.Nombre}}</td>
-                  <td *ngIf="!edit[i]['value']">{{row.Unidad}}</td>
-                  <td *ngIf="!edit[i]['value'] && perms[0]['pro_t_stockInicial']" class="w3-right-align w3-border-left">{{ row.Stock_inicial | number: '.2-2' }}</td>
-                  <td *ngIf="!edit[i]['value'] && perms[0]['pro_t_stockActual']" class="w3-right-align w3-border-left">{{ row.Stock_actual | number: '.2-2' }}</td>
-                  <td *ngIf="!edit[i]['value'] && perms[0]['pro_t_stockEmergencia']" class="w3-right-align w3-border-left">{{ row.Stocke | number: '.2-2' }}</td>
-                  <td *ngIf="!edit[i]['value'] && perms[0]['pro_t_stockAlerta']" class="w3-right-align w3-border-left w3-border-right">{{ row.Stocka | number: '.2-2' }}</td>
-                  <td *ngIf="!edit[i]['value'] && perms[0]['pro_t_moneda']" class="w3-center">{{row.Moneda}}</td>
-                  <td *ngIf="!edit[i]['value'] && perms[0]['pro_t_precioCompra']" class="w3-right-align w3-border-left">{{ row.Compra | number: '.2-2' }}</td>
-                  <td *ngIf="!edit[i]['value'] && perms[0]['pro_t_precioVenta']" class="w3-right-align w3-border-left w3-border-right">{{ row.Venta | number: '.2-2' }}</td>
-                  <td *ngIf="!edit[i]['value'] && perms[0]['pro_b_editarProducto']" style="text-align: center"><button  mat-mini-fab
-                                                                                    color="accent"
-                                                                                    *ngIf="perms[0]['pro_b_editarProducto']"
-                                                                                    class="w3-animate-zoom"
-                                                                                    style="margin:1px"
-                                                                                    (click)="editAction(i)"><mat-icon>edit</mat-icon></button></td>
-                  <td *ngIf="edit[i]['value']">{{i + 1}}</td>
-                  <td *ngIf="edit[i]['value']">
-                    <input class="w3-input" type="text" (input)="modData['Grupo'] = $event.target.value" [value]="row.Grupo" [placeholder]="row.Grupo">
+              <tbody>
+                <tr *ngFor="let item of paquetes; let i = index">
+                  <td *ngIf="item.Paquete === pack && !editPack[i]['value']">{{ item.Nombre }}</td>
+                  <td *ngIf="item.Paquete === pack && !editPack[i]['value'] && perms[0]['pro_d_cantidad']" style="text-align:center">{{ item.Cantidad }}</td>
+                  <td *ngIf="item.Paquete === pack && !editPack[i]['value'] && perms[0]['pro_d_precio']" style="text-align:center">{{ item.PrecioUnitario }}</td>
+                  <td *ngIf="item.Paquete === pack && !editPack[i]['value'] && perms[0]['pro_b_editarPaquete']" style="text-align:center">
+                    <button mat-mini-fab color="accent" *ngIf="perms[0]['pro_b_editarPaquete']" class="w3-animate-zoom" style="margin:1px"
+                      (click)="editarPaq(i)">
+                      <mat-icon>edit</mat-icon>
+                    </button>
                   </td>
-                  <td *ngIf="edit[i]['value']">
-                    <input class="w3-input" type="text" (input)="modData['Zona'] = $event.target.value" [value]="row.Zona" [placeholder]="row.Zona">
+                  <!--EDIT MODE-->
+
+                  <td *ngIf="item.Paquete === pack && editPack[i]['value']">
+                    <input class="w3-input" type="text" (input)="modData_paquete['Nombre'] = $event.target.value" [value]="item.Nombre" [placeholder]="item.Nombre"
+                      style="width:90%" disabled>
                   </td>
-                  <td *ngIf="edit[i]['value']">
-                    <input class="w3-input" type="text" (input)="modData['Codigo'] = $event.target.value" [value]="row.Codigo" [placeholder]="row.Codigo">
+                  <td *ngIf="item.Paquete === pack && editPack[i]['value'] && perms[0]['pro_d_cantidad']">
+                    <input class="w3-input" type="number" (input)="modData_paquete['Cantidad'] = $event.target.value" [value]="item.Cantidad"
+                      [placeholder]="item.Cantidad" style="width:90%">
                   </td>
-                  <td *ngIf="edit[i]['value']">
-                    <input class="w3-input" type="text" (input)="modData['Nombre'] = $event.target.value" [value]="row.Nombre" [placeholder]="row.Nombre">
+                  <td *ngIf="item.Paquete === pack && editPack[i]['value'] && perms[0]['pro_d_precio']">
+                    <input class="w3-input" type="number" (input)="modData_paquete['PrecioUnitario'] = $event.target.value" [value]="item.PrecioUnitario"
+                      [placeholder]="item.PrecioUnitario" style="width:90%">
                   </td>
-                  <td *ngIf="edit[i]['value']">
-                    <input class="w3-input" type="text" (input)="modData['Unidad'] = $event.target.value" [value]="row.Unidad" [placeholder]="row.Unidad">
+                  <td *ngIf="item.Paquete === pack && editPack[i]['value'] && perms[0]['pro_b_editarPaquete']" class="w3-padding-small" style="text-align: center">
+                    <button mat-mini-fab color="primary" *ngIf="perms[0]['pro_b_guardarPaquete']" class="w3-animate-zoom" style="margin:1px"
+                      (click)="savePack(i)">
+                      <mat-icon>save</mat-icon>
+                    </button>
+                    <button mat-mini-fab color="warn" class="w3-animate-zoom" style="margin:1px" (click)="cancelPack(i)">
+                      <mat-icon>cancel</mat-icon>
+                    </button>
                   </td>
-                  <td *ngIf="edit[i]['value'] && perms[0]['pro_t_stockInicial']">
-                    <input class="w3-input" type="text" (input)="modData['Stock_inicial'] = $event.target.value" [value]="row.Stock_inicial" [placeholder]="row.Stock_inicial" disabled>
-                  </td>
-                  <td *ngIf="edit[i]['value'] && perms[0]['pro_t_stockActual']">
-                    <input class="w3-input" type="text" (input)="modData['Stock_actual'] = $event.target.value" [value]="row.Stock_actual" [placeholder]="row.Stock_actual">
-                  </td>
-                  <td *ngIf="edit[i]['value'] && perms[0]['pro_t_stockEmergencia']">
-                    <input class="w3-input" type="text" (input)="modData['Stocke'] = $event.target.value" [value]="row.Stocke" [placeholder]="row.Stocke">
-                  </td>
-                  <td *ngIf="edit[i]['value'] && perms[0]['pro_t_stockAlerta']">
-                    <input class="w3-input" type="text" (input)="modData['Stocka'] = $event.target.value" [value]="row.Stocka" [placeholder]="row.Stocka" disabled>
-                  </td>
-                  <td *ngIf="edit[i]['value'] && perms[0]['pro_t_moneda']">
-                    <input class="w3-input" type="text" (input)="modData['Moneda'] = $event.target.value" [value]="row.Moneda" [placeholder]="row.Moneda">
-                  </td>
-                  <td *ngIf="edit[i]['value'] && perms[0]['pro_t_precioCompra']">
-                    <input class="w3-input" type="text" (input)="modData['Compra'] = $event.target.value" [value]="row.Compra" [placeholder]="row.Compra">
-                  </td>
-                  <td *ngIf="edit[i]['value'] && perms[0]['pro_t_precioVenta']">
-                    <input class="w3-input" type="text" (input)="modData['Venta'] = $event.target.value" [value]="row.Venta" [placeholder]="row.Venta">
-                  </td>
-                  <td *ngIf="edit[i]['value'] && perms[0]['pro_b_editarProducto']" class="w3-padding-small" style="text-align: center"><button  mat-mini-fab
-                                                                                                            color="primary"
-                                                                                                            *ngIf="perms[0]['pro_b_guardarProducto']"
-                                                                                                            class="w3-animate-zoom"
-                                                                                                            style="margin:1px"
-                                                                                                            (click)="saveAction(i)"><mat-icon>save</mat-icon></button>
-                                                                                                    <button mat-mini-fab
-                                                                                                            color="warn"
-                                                                                                            *ngIf="perms[0]['pro_b_borrarProducto']"
-                                                                                                            class="w3-animate-zoom"
-                                                                                                            style="margin:1px"
-                                                                                                            (click)="borrarAction('productos',row.ID)"><mat-icon>delete</mat-icon></button>
-                                                                                                    <button mat-mini-fab
-                                                                                                            color="accent"
-                                                                                                            class="w3-animate-zoom"
-                                                                                                            style="margin:1px"
-                                                                                                            (click)="cancelAction(i)"><mat-icon>cancel</mat-icon></button></td> 
                 </tr>
               </tbody>
             </table>
           </div>
-          <div *ngIf="loading" class="w3-container w3-padding-large meraki-empty-bg" style="width:100%">
-            <h2 class="w3-margin w3-center meraki-font-s2"><mat-icon class="w3-margin" style="font-size: 36px">style</mat-icon>Cargando ...</h2>
-          </div>
-          <div *ngIf="data_.length == 0 && !loading" class="w3-container w3-padding-large meraki-empty-bg" style="width:100%">
-              <h2 class="w3-margin w3-center meraki-font-s2"><mat-icon class="w3-margin" style="font-size: 36px">style</mat-icon>No hay productos en la tabla</h2>
-          </div>
+          <mat-action-row>
+            <button mat-raised-button color="warn" (click)="borrarPaq(pack)" *ngIf="perms[0]['pro_b_borrarPaquete']">Borrar</button>
+          </mat-action-row>
+        </mat-expansion-panel>
 
-        
+      </mat-accordion>
+      <div *ngIf="loading" class="w3-container w3-padding-large meraki-empty-bg" style="width:100%">
+        <h2 class="w3-margin w3-center meraki-font-s2">
+          <mat-icon class="w3-margin" style="font-size: 36px">style</mat-icon>Cargando ...</h2>
+      </div>
+      <div *ngIf="paquetes.length == 0 && !loading" class="w3-container w3-padding-large meraki-empty-bg" style="width:100%">
+        <h2 class="w3-margin w3-center meraki-font-s2">
+          <mat-icon class="w3-margin" style="font-size: 36px">style</mat-icon>No hay paquetes en la tabla</h2>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Productos" *ngIf="perms[0]['pro_p_productos']">
+      <div class="w3-responsive" style="max-height:50vh">
+        <table class="w3-table-all">
+          <thead>
+            <tr>
+              <th [attr.rowspan]="rows" class="w3-center w3-border">N°</th>
+              <th [attr.rowspan]="rows" class="w3-center w3-border">Grupo</th>
+              <th [attr.rowspan]="rows" class="w3-center w3-border">Almacen</th>
+              <th [attr.rowspan]="rows" class="w3-center w3-border">Código</th>
+              <th [attr.rowspan]="rows" class="w3-center w3-border">Nombre</th>
+              <th [attr.rowspan]="rows" class="w3-center w3-border">U.Medida</th>
+              <th [attr.colspan]="cols_stock" *ngIf="cols_stock" class="w3-center w3-border">Stock</th>
+              <th [attr.rowspan]="rows" *ngIf="perms[0]['pro_t_moneda']" class="w3-center w3-border">Moneda</th>
+              <th [attr.colspan]="cols_precio" *ngIf="cols_precio" class="w3-center w3-border">Precio</th>
+              <th [attr.rowspan]="rows" *ngIf="perms[0]['pro_b_editarProducto']" class="w3-center w3-border">Editar</th>
+            </tr>
+            <tr>
+              <th *ngIf="perms[0]['pro_t_stockInicial']" class="w3-center w3-border">Inicial</th>
+              <th *ngIf="perms[0]['pro_t_stockActual']" class="w3-center w3-border">Actual</th>
+              <th *ngIf="perms[0]['pro_t_stockEmergencia']" class="w3-center w3-border">Emergencia</th>
+              <th *ngIf="perms[0]['pro_t_stockAlerta']" class="w3-center w3-border">Alerta</th>
+              <th *ngIf="perms[0]['pro_t_precioCompra']" class="w3-center w3-border">Compra</th>
+              <th *ngIf="perms[0]['pro_t_precioVenta']" class="w3-center w3-border">Venta</th>
+            </tr>
+          </thead>
+          <tbody class="meraki-font-s5">
+            <tr *ngFor="let row of filteredOptions ; let i = index">
+              <td *ngIf="!edit[i]['value']">{{i + 1}}</td>
+              <td *ngIf="!edit[i]['value']">{{row.Grupo}}</td>
+              <td *ngIf="!edit[i]['value']">{{row.Zona}}</td>
+              <td *ngIf="!edit[i]['value']">{{row.Codigo}}</td>
+              <td *ngIf="!edit[i]['value']">{{row.Nombre}}</td>
+              <td *ngIf="!edit[i]['value']">{{row.Unidad}}</td>
+              <td *ngIf="!edit[i]['value'] && perms[0]['pro_t_stockInicial']" class="w3-right-align w3-border-left">{{ row.Stock_inicial | number: '.2-2' }}</td>
+              <td *ngIf="!edit[i]['value'] && perms[0]['pro_t_stockActual']" class="w3-right-align w3-border-left">{{ row.Stock_actual | number: '.2-2' }}</td>
+              <td *ngIf="!edit[i]['value'] && perms[0]['pro_t_stockEmergencia']" class="w3-right-align w3-border-left">{{ row.Stocke | number: '.2-2' }}</td>
+              <td *ngIf="!edit[i]['value'] && perms[0]['pro_t_stockAlerta']" class="w3-right-align w3-border-left w3-border-right">{{ row.Stocka | number: '.2-2' }}</td>
+              <td *ngIf="!edit[i]['value'] && perms[0]['pro_t_moneda']" class="w3-center">{{row.Moneda}}</td>
+              <td *ngIf="!edit[i]['value'] && perms[0]['pro_t_precioCompra']" class="w3-right-align w3-border-left">{{ row.Compra | number: '.2-2' }}</td>
+              <td *ngIf="!edit[i]['value'] && perms[0]['pro_t_precioVenta']" class="w3-right-align w3-border-left w3-border-right">{{ row.Venta | number: '.2-2' }}</td>
+              <td *ngIf="!edit[i]['value'] && perms[0]['pro_b_editarProducto']" style="text-align: center">
+                <button mat-mini-fab color="accent" *ngIf="perms[0]['pro_b_editarProducto']" class="w3-animate-zoom" style="margin:1px"
+                  (click)="editAction(i)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </td>
+              <td *ngIf="edit[i]['value']">{{i + 1}}</td>
+              <td *ngIf="edit[i]['value']">
+                <input class="w3-input" type="text" (input)="modData['Grupo'] = $event.target.value" [value]="row.Grupo" [placeholder]="row.Grupo">
+              </td>
+              <td *ngIf="edit[i]['value']">
+                <input class="w3-input" type="text" (input)="modData['Zona'] = $event.target.value" [value]="row.Zona" [placeholder]="row.Zona">
+              </td>
+              <td *ngIf="edit[i]['value']">
+                <input class="w3-input" type="text" (input)="modData['Codigo'] = $event.target.value" [value]="row.Codigo" [placeholder]="row.Codigo">
+              </td>
+              <td *ngIf="edit[i]['value']">
+                <input class="w3-input" type="text" (input)="modData['Nombre'] = $event.target.value" [value]="row.Nombre" [placeholder]="row.Nombre">
+              </td>
+              <td *ngIf="edit[i]['value']">
+                <input class="w3-input" type="text" (input)="modData['Unidad'] = $event.target.value" [value]="row.Unidad" [placeholder]="row.Unidad">
+              </td>
+              <td *ngIf="edit[i]['value'] && perms[0]['pro_t_stockInicial']">
+                <input class="w3-input" type="text" (input)="modData['Stock_inicial'] = $event.target.value" [value]="row.Stock_inicial"
+                  [placeholder]="row.Stock_inicial" disabled>
+              </td>
+              <td *ngIf="edit[i]['value'] && perms[0]['pro_t_stockActual']">
+                <input class="w3-input" type="text" (input)="modData['Stock_actual'] = $event.target.value" [value]="row.Stock_actual" [placeholder]="row.Stock_actual">
+              </td>
+              <td *ngIf="edit[i]['value'] && perms[0]['pro_t_stockEmergencia']">
+                <input class="w3-input" type="text" (input)="modData['Stocke'] = $event.target.value" [value]="row.Stocke" [placeholder]="row.Stocke">
+              </td>
+              <td *ngIf="edit[i]['value'] && perms[0]['pro_t_stockAlerta']">
+                <input class="w3-input" type="text" (input)="modData['Stocka'] = $event.target.value" [value]="row.Stocka" [placeholder]="row.Stocka"
+                  disabled>
+              </td>
+              <td *ngIf="edit[i]['value'] && perms[0]['pro_t_moneda']">
+                <input class="w3-input" type="text" (input)="modData['Moneda'] = $event.target.value" [value]="row.Moneda" [placeholder]="row.Moneda">
+              </td>
+              <td *ngIf="edit[i]['value'] && perms[0]['pro_t_precioCompra']">
+                <input class="w3-input" type="text" (input)="modData['Compra'] = $event.target.value" [value]="row.Compra" [placeholder]="row.Compra">
+              </td>
+              <td *ngIf="edit[i]['value'] && perms[0]['pro_t_precioVenta']">
+                <input class="w3-input" type="text" (input)="modData['Venta'] = $event.target.value" [value]="row.Venta" [placeholder]="row.Venta">
+              </td>
+              <td *ngIf="edit[i]['value'] && perms[0]['pro_b_editarProducto']" class="w3-padding-small" style="text-align: center">
+                <button mat-mini-fab color="primary" *ngIf="perms[0]['pro_b_guardarProducto']" class="w3-animate-zoom" style="margin:1px"
+                  (click)="saveAction(i)">
+                  <mat-icon>save</mat-icon>
+                </button>
+                <button mat-mini-fab color="warn" *ngIf="perms[0]['pro_b_borrarProducto']" class="w3-animate-zoom" style="margin:1px" (click)="borrarAction('productos',row.ID)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <button mat-mini-fab color="accent" class="w3-animate-zoom" style="margin:1px" (click)="cancelAction(i)">
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div *ngIf="loading" class="w3-container w3-padding-large meraki-empty-bg" style="width:100%">
+        <h2 class="w3-margin w3-center meraki-font-s2">
+          <mat-icon class="w3-margin" style="font-size: 36px">style</mat-icon>Cargando ...</h2>
+      </div>
+      <div *ngIf="data_.length == 0 && !loading" class="w3-container w3-padding-large meraki-empty-bg" style="width:100%">
+        <h2 class="w3-margin w3-center meraki-font-s2">
+          <mat-icon class="w3-margin" style="font-size: 36px">style</mat-icon>No hay productos en la tabla</h2>
+      </div>
+
+
     </mat-tab>
   </mat-tab-group>
   <br>
-  <div style="height:25vh;"><p></p></div>
+  <div style="height:25vh;">
+    <p></p>
+  </div>
 </div>

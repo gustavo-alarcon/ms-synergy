@@ -33,6 +33,8 @@ import { Auth2Guard } from '../guards/auth2.guard';
 import { AuthLoginGuard } from '../guards/auth-login.guard';
 import { MsTextComponent } from '../ms-text/mstext/mstext.component';
 import { SalesHistoryComponent } from '../sales-history/sales-history.component';
+import { HistorialMovimientosComponent } from './../inventarios/historial-movimientos/historial-movimientos.component';
+
 
 const appRoutes: Routes = [
     { path: 'welcome', component: WelcomeComponent, data: { animation: 'welcome', depth: 1 }},
@@ -72,6 +74,7 @@ const appRoutes: Routes = [
         { path: 'kardex', component: KardexComponent, data: { animation: 'kardex' , depth: 5} },
         { path: 'stock', component: StockComponent , data: { animation: 'stock' , depth: 5}},
         { path: 'reportemov', component: ReportemovComponent, data: { animation: 'reportemov', depth: 5 } },
+        { path: 'historialMov', component: HistorialMovimientosComponent, data: {animation: 'historialMov', depth: 5}},
       ] },
     { path: 'puntoVenta', component: PuntoVentaComponent, data: { animation: 'puntoVenta' , depth: 4}}, 
     { path: 'historialVentas', component: SalesHistoryComponent, data: { animation: 'historialVentas' , depth: 5}}, 
