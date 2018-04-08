@@ -148,9 +148,9 @@ export class ProductosComponent implements OnInit {
       this.selectedIndex = e.index;
   }
 
-  filterData(ref: string) {
+  filterData() {
     this.productosFiltrados = this.data_.filter( value => 
-      value['Grupo'].startsWith(ref) || value['Nombre'].startsWith(ref) || value['Zona'].startsWith(ref) || value['Codigo'].startsWith(ref) || value['Unidad'].startsWith(ref) || value['Stock_inicial'].startsWith(ref) || value['Stock_actual'].startsWith(ref) || value['Stocke'].startsWith(ref) || value['Offset_stocka'].startsWith(ref) || value['Stocka'].startsWith(ref) || value['Moneda'].startsWith(ref) || value['Compra'].startsWith(ref) || value['Venta'].startsWith(ref)
+      value['Grupo'].toLowerCase().startsWith(this.productoFilter.value.toLowerCase()) || value['Nombre'].toLowerCase().startsWith(this.productoFilter.value.toLowerCase()) || value['Zona'].toLowerCase().startsWith(this.productoFilter.value.toLowerCase()) || value['Codigo'].toLowerCase().startsWith(this.productoFilter.value.toLowerCase()) || value['Unidad'].toLowerCase().startsWith(this.productoFilter.value.toLowerCase()) || value['Stock_inicial'].toLowerCase().startsWith(this.productoFilter.value.toLowerCase()) || value['Stock_actual'].toLowerCase().startsWith(this.productoFilter.value.toLowerCase()) || value['Stocke'].toLowerCase().startsWith(this.productoFilter.value.toLowerCase()) || value['Offset_stocka'].toLowerCase().startsWith(this.productoFilter.value.toLowerCase()) || value['Stocka'].toLowerCase().startsWith(this.productoFilter.value.toLowerCase()) || value['Moneda'].toLowerCase().startsWith(this.productoFilter.value.toLowerCase()) || value['Compra'].toLowerCase().startsWith(this.productoFilter.value.toLowerCase()) || value['Venta'].toLowerCase().startsWith(this.productoFilter.value.toLowerCase())
     );
   }
 

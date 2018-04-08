@@ -8,12 +8,7 @@
     <button mat-raised-button style="margin-bottom:15px" *ngIf="perms[0]['pro_b_crearPaquete']" color="primary" routerLink="crear-paquete">Crear nuevo - Paquete</button>
     <button mat-raised-button style="margin-bottom:15px" *ngIf="perms[0]['pro_b_crearProducto']" color="primary" routerLink="crear-producto">Crear nuevo - Producto</button>
     <mat-form-field color="accent" style="width:100%" *ngIf="selectedIndex == 1">
-      <input matInput (keyup)="pushKeyProducts()" [matAutocomplete]="auto" #prod [formControl]="productoFilter" placeholder="Producto" [value]="prodEscogido === '' ? '' : prodEscogido">
-      <mat-autocomplete #auto="matAutocomplete">
-        <mat-option (click)="pushKeyProducts()" class="w3-indigo w3-hover-gray" *ngFor="let option of filteredOptions" [value]="option.Nombre">
-          <span style="font-size: 13px;">{{ option.Nombre }}</span>
-        </mat-option>
-      </mat-autocomplete>
+      <input matInput (keyup)="filterData()" #prod [formControl]="productoFilter" placeholder="Producto" [value]="prodEscogido === '' ? '' : prodEscogido">
     </mat-form-field>
   </div>
   <router-outlet></router-outlet>
@@ -124,7 +119,7 @@
             </tr>
           </thead>
           <tbody class="meraki-font-s5">
-            <tr *ngFor="let row of filteredOptions ; let i = index">
+            <tr *ngFor="let row of productosFiltrados ; let i = index">
               <td *ngIf="!edit[i]['value']">{{i + 1}}</td>
               <td *ngIf="!edit[i]['value']">{{row.Grupo}}</td>
               <td *ngIf="!edit[i]['value']">{{row.Zona}}</td>
