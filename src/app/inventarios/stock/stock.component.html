@@ -54,7 +54,7 @@
               </mat-form-field>
             </div>
             <mat-form-field class="meraki-fill">
-              <mat-select placeholder="Numeros de serie" [disabled]="numSeries.length == 0" [formControl]="seriesSelected" multiple (change)="valueSerie()">
+              <mat-select placeholder="Numeros de serie" [disabled]="numSeries.length == 0" [formControl]="seriesSelected" multiple>
                 <mat-select-trigger>
                   <span *ngIf="seriesSelected.value?.length > 0" class="example-additional-selection">
                     {{seriesSelected.value.length}} productos seleccionados
