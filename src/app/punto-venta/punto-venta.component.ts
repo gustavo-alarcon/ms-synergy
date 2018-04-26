@@ -107,6 +107,7 @@ export class PuntoVentaComponent implements OnInit {
   tabBytes: any = null;
   tab: any = null;
   private alive: boolean = true;
+  bdParsed = JSON.parse(this.bd);
 
   constructor(
     private posService: PosService,
@@ -175,6 +176,7 @@ export class PuntoVentaComponent implements OnInit {
       .takeWhile(() => this.alive)
       .subscribe(res => {
         this.productos = res.records;
+        console.log(this.productos);
         this.productos.sort(this.sortBy('Nombre'));
         this.getPackagesBD();
       });

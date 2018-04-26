@@ -1,0 +1,26 @@
+.full {
+    width: 100%;
+}
+
+.fullDiv {
+    width: 49%;
+}
+
+.containerProducts {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.example-additional-selection {
+    opacity: 0.75;
+    font-size: 0.75em;
+}
+
+@media screen and (max-width: 700px) {
+    .fullDiv {
+        width: 100%;
+    }
+}

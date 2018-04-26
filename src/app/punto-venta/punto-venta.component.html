@@ -29,7 +29,8 @@
                                 <mat-icon mat-grid-avatar>info_outline</mat-icon>
                                 Precio : S/. {{option.Venta}}
                             </mat-grid-tile-header>
-                            <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
+                            <img *ngIf="option.Imagen != ''" defaultImage='./assets/spinner.gif' lazyLoad="http://www.meraki-s.com/rent/ms-synergy/{{bdParsed}}/img/{{option.Imagen}}" alt="">
+                            <img *ngIf="option.Imagen == ''" defaultImage='./assets/spinner.gif' lazyLoad="./assets/nopic.png" alt="">
                             <mat-grid-tile-footer>
                                 <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }} | Stock : {{option.Stock_actual}}</h3>
                                 <mat-icon>star_border</mat-icon>
@@ -48,7 +49,8 @@
                                     {{product.nombre}}
                                 </span>
                             </span>
-                            <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
+                            <img *ngIf="option.Imagen != ''" defaultImage='./assets/spinner.gif' lazyLoad="http://www.meraki-s.com/rent/ms-synergy/{{bdParsed}}/img/{{option.Imagen}}" alt="">
+                            <img *ngIf="option.Imagen == ''" defaultImage='./assets/spinner.gif' lazyLoad="./assets/nopic.png" alt="">
                             <mat-grid-tile-footer>
                                 <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }} | Stock : {{option.Stock_actual}}</h3>
                                 <mat-icon>star_border</mat-icon>
@@ -65,7 +67,8 @@
                                 <mat-icon mat-grid-avatar>info_outline</mat-icon>
                                 Precio : S/. {{option.Venta}}
                             </mat-grid-tile-header>
-                            <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
+                            <img *ngIf="option.Imagen != ''" defaultImage='./assets/spinner.gif' lazyLoad="http://www.meraki-s.com/rent/ms-synergy/{{bdParsed}}/img/{{option.Imagen}}" alt="">
+                            <img *ngIf="option.Imagen == ''" defaultImage='./assets/spinner.gif' lazyLoad="./assets/nopic.png" alt="">
                             <mat-grid-tile-footer>
                                 <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }} | Stock : {{option.Stock_actual}}</h3>
                                 <mat-icon>star_border</mat-icon>
@@ -84,9 +87,10 @@
                                     {{product.nombre}}
                                 </span>
                             </span>
-                            <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
+                            <img *ngIf="option.Imagen != ''" defaultImage='./assets/spinner.gif' lazyLoad="http://www.meraki-s.com/rent/ms-synergy/{{bdParsed}}/img/{{option.Imagen}}" alt="">
+                            <img *ngIf="option.Imagen == ''" defaultImage='./assets/spinner.gif' lazyLoad="./assets/nopic.png" alt="">
                             <mat-grid-tile-footer>
-                                    <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }} | Stock : {{option.Stock_actual}}</h3>
+                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }} | Stock : {{option.Stock_actual}}</h3>
                                 <mat-icon>star_border</mat-icon>
                             </mat-grid-tile-footer>
                         </mat-grid-tile>
@@ -101,9 +105,10 @@
                                 <mat-icon mat-grid-avatar>info_outline</mat-icon>
                                 Precio : S/. {{option.Venta}}
                             </mat-grid-tile-header>
-                            <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
+                            <img *ngIf="option.Imagen != ''" defaultImage='./assets/spinner.gif' lazyLoad="http://www.meraki-s.com/rent/ms-synergy/{{bdParsed}}/img/{{option.Imagen}}" alt="">
+                            <img *ngIf="option.Imagen == ''" defaultImage='./assets/spinner.gif' lazyLoad="./assets/nopic.png" alt="">
                             <mat-grid-tile-footer>
-                                    <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }} | Stock : {{option.Stock_actual}}</h3>
+                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }} | Stock : {{option.Stock_actual}}</h3>
                                 <mat-icon>star_border</mat-icon>
                             </mat-grid-tile-footer>
                         </mat-grid-tile>
@@ -120,9 +125,10 @@
                                     {{product.nombre}}
                                 </span>
                             </span>
-                            <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
+                            <img *ngIf="option.Imagen != ''" defaultImage='./assets/spinner.gif' lazyLoad="http://www.meraki-s.com/rent/ms-synergy/{{bdParsed}}/img/{{option.Imagen}}" alt="">
+                            <img *ngIf="option.Imagen == ''" defaultImage='./assets/spinner.gif' lazyLoad="./assets/nopic.png" alt="">
                             <mat-grid-tile-footer>
-                                    <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }} | Stock : {{option.Stock_actual}}</h3>
+                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }} | Stock : {{option.Stock_actual}}</h3>
                                 <mat-icon>star_border</mat-icon>
                             </mat-grid-tile-footer>
                         </mat-grid-tile>
@@ -137,9 +143,10 @@
                                 <mat-icon mat-grid-avatar>info_outline</mat-icon>
                                 Precio : S/. {{option.Venta}}
                             </mat-grid-tile-header>
-                            <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
+                            <img *ngIf="option.Imagen != ''" defaultImage='./assets/spinner.gif' lazyLoad="http://www.meraki-s.com/rent/ms-synergy/{{bdParsed}}/img/{{option.Imagen}}" alt="">
+                            <img *ngIf="option.Imagen == ''" defaultImage='./assets/spinner.gif' lazyLoad="./assets/nopic.png" alt="">
                             <mat-grid-tile-footer>
-                                    <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }} | Stock : {{option.Stock_actual}}</h3>
+                                <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }} | Stock : {{option.Stock_actual}}</h3>
                                 <mat-icon>star_border</mat-icon>
                             </mat-grid-tile-footer>
                         </mat-grid-tile>
@@ -156,7 +163,8 @@
                                     {{product.nombre}}
                                 </span>
                             </span>
-                            <img defaultImage='./assets/spinner.gif' lazyLoad="//fillmurray.com/200/200" alt="">
+                            <img *ngIf="option.Imagen != ''" defaultImage='./assets/spinner.gif' lazyLoad="http://www.meraki-s.com/rent/ms-synergy/{{bdParsed}}/img/{{option.Imagen}}" alt="">
+                            <img *ngIf="option.Imagen == ''" defaultImage='./assets/spinner.gif' lazyLoad="./assets/nopic.png" alt="">
                             <mat-grid-tile-footer>
                                 <h3 mat-line>{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }} | Stock : {{option.Stock_actual}}</h3>
                                 <mat-icon>star_border</mat-icon>
@@ -229,22 +237,19 @@
         <div class="filtro" [formGroup]="movimientoForm" [ngClass]="{hideFilter : hideProducts}">
             <div class="flex">
                 <mat-form-field class="full-width2">
-                    <mat-select #almOrigen placeholder="Almacenes" panelClass="colorSelect" (change)="filtrarProductos(almOrigen.value)"
-                        [(ngModel)]='selectedWarehouse' [ngModelOptions]="{standalone: true}" [disabled]="isLoadingResults">
+                    <mat-select #almOrigen placeholder="Almacenes" panelClass="colorSelect" (change)="filtrarProductos(almOrigen.value)" [(ngModel)]='selectedWarehouse' [ngModelOptions]="{standalone: true}" [disabled]="isLoadingResults">
                         <mat-option style="color : #fff" *ngFor="let almacen_d of almacenes" [value]="almacen_d.Nombre">{{ almacen_d.Nombre }}</mat-option>
                     </mat-select>
                     <mat-icon class="warehouseIcon" matPrefix>account_balance</mat-icon>
                 </mat-form-field>
-                <mat-slide-toggle [disabled]="disabledToogle" [checked]="checked" matTooltip="Solo para los productos" matTooltipPosition="above"
-                    labelPosition='before' (change)="slideToogleChange($event)">{{ optionDisplay == 1 ? 'Nombre' : 'Codigo' }}</mat-slide-toggle>
+                <mat-slide-toggle [disabled]="disabledToogle" [checked]="checked" matTooltip="Solo para los productos" matTooltipPosition="above" labelPosition='before' (change)="slideToogleChange($event)">{{ optionDisplay == 1 ? 'Nombre' : 'Codigo' }}</mat-slide-toggle>
             </div>
             <mat-tab-group (selectedTabChange)="onTabClick($event)" class="labelEdit changeBar">
                 <mat-tab label="Productos">
                     <div class="insideFiltro">
                         <div class="productOptions">
                             <mat-form-field class="full-width">
-                                <input matInput (keyup)="pushKeyProducts()" (keyup.enter)="enterProduct()" [matAutocomplete]="auto" #prod formControlName="Producto"
-                                    placeholder="Buscar productos">
+                                <input matInput (keyup)="pushKeyProducts()" (keyup.enter)="enterProduct()" [matAutocomplete]="auto" #prod formControlName="Producto" placeholder="Buscar productos">
                                 <mat-autocomplete #auto="matAutocomplete">
                                     <mat-option (click)="pushKeyProducts()" class="autoClass" *ngFor="let option of filteredOptions" [value]=" optionDisplay == 2 ? option.Codigo : option.Nombre ">
                                         <span style="font-size: 13px;">{{ optionDisplay == 2 ? option.Codigo.toUpperCase() : option.Nombre }}</span> |
@@ -342,4 +347,4 @@
             </mat-tab-group>
         </div>
     </div>
-</div>
+</div>  

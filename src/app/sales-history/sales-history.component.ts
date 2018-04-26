@@ -88,7 +88,7 @@ export class SalesHistoryComponent implements OnInit {
         });
   }
 
-  changeState(i) {
+  changeState(sale) {
     let dialogRef = this.dialog.open(ConfirmComponent, {
       width: 'auto',
       data: 'text',
@@ -100,14 +100,15 @@ export class SalesHistoryComponent implements OnInit {
           Operacion: null,
           Estado: null
         };
-        erase.Operacion = this.history[i].Operacion;
-        erase.Estado = this.history[i].Estado;
+        erase.Operacion = sale.Operacion;
+        erase.Estado = sale.Estado;
         this.posService.removeSale(this.bd, erase)
           .takeWhile(() => this.alive)
           .subscribe(data => {
             this.toastr.success("Se anulo la venta con exito", "Exito");
-            this.history[i].Estado = '1';
+            sale.Estado = '1';
             this.cd.detectChanges();
+            console.log(sale);
           },
             err => {
               this.toastr.error("Hubo un error", "Error");

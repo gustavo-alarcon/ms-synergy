@@ -74,7 +74,6 @@ export class DetailProductsComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.data);
     this.paymentType();
     this.posService.getSalesData(this.bd, this.operacion)
       .takeWhile(() => this.alive)

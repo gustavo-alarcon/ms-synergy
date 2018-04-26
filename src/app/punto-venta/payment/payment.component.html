@@ -1,107 +1,107 @@
 <div class="loadingSpinner" *ngIf="isLoadingResults">
-  <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+    <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
 </div>
 <div class="background">
-  <h1 mat-dialog-title>Pago
-    <span *ngIf="customer.client != null"> del cliente {{customer.client.Nombre}}</span>
-  </h1>
-  <hr>
-  <mat-dialog-content class="full">
-    <div class="productList">
-      <ul style='padding-left: 0;'>
-        <div *ngFor="let product of customer.listAction; let i = index">
-          <li class="productList2">
-            <span class="productName">{{product.product}}</span>
-            <span class="productClass">$ {{product.price == '' ? '0' : product.price}}</span>
-            <span class="productInfo">{{product.units}} {{product.Unidad}}</span>
-            <span *ngIf="product.dsc != ''" class="productInfo">{{product.dsc}}% de descuento</span>
-          </li>
-          <hr style="margin: 10px;" />
+    <h1 mat-dialog-title>Pago
+        <span *ngIf="customer.client != null"> del cliente {{customer.client.Nombre}}</span>
+    </h1>
+    <hr>
+    <mat-dialog-content class="full">
+        <div class="productList">
+            <ul style='padding-left: 0;'>
+                <div *ngFor="let product of customer.listAction; let i = index">
+                    <li class="productList2">
+                        <span class="productName">{{product.product}}</span>
+                        <span class="productClass">$ {{product.price == '' ? '0' : product.price}}</span>
+                        <span class="productInfo">{{product.units}} {{product.Unidad}}</span>
+                        <span *ngIf="product.dsc != ''" class="productInfo">{{product.dsc}}% de descuento</span>
+                    </li>
+                    <hr style="margin: 10px;" />
+                </div>
+            </ul>
         </div>
-      </ul>
-    </div>
-    <div class="panel">
-      <div class="panelInt">
-        <div (click)="addPayment('1')" class="teclado one">
-          1
+        <div class="panel">
+            <div class="panelInt">
+                <div (click)="addPayment('1')" class="teclado one">
+                    1
+                </div>
+                <div (click)="addPayment('2')" class="teclado two">
+                    2
+                </div>
+                <div (click)="addPayment('3')" class="teclado three">
+                    3
+                </div>
+                <div (click)="addPayment('4')" class="teclado four">
+                    4
+                </div>
+                <div (click)="addPayment('5')" class="teclado five">
+                    5
+                </div>
+                <div (click)="addPayment('6')" class="teclado six">
+                    6
+                </div>
+                <div (click)="addPayment('7')" class="teclado seven">
+                    7
+                </div>
+                <div (click)="addPayment('8')" class="teclado eight">
+                    8
+                </div>
+                <div (click)="addPayment('9')" class="teclado nine">
+                    9
+                </div>
+                <div (click)="addPayment('0')" class="teclado zero">
+                    0
+                </div>
+                <div (click)="addPayment('.')" class="teclado point">
+                    .
+                </div>
+                <div (click)="backspace()" class="teclado back">
+                    <mat-icon>backspace</mat-icon>
+                </div>
+            </div>
         </div>
-        <div (click)="addPayment('2')" class="teclado two">
-          2
-        </div>
-        <div (click)="addPayment('3')" class="teclado three">
-          3
-        </div>
-        <div (click)="addPayment('4')" class="teclado four">
-          4
-        </div>
-        <div (click)="addPayment('5')" class="teclado five">
-          5
-        </div>
-        <div (click)="addPayment('6')" class="teclado six">
-          6
-        </div>
-        <div (click)="addPayment('7')" class="teclado seven">
-          7
-        </div>
-        <div (click)="addPayment('8')" class="teclado eight">
-          8
-        </div>
-        <div (click)="addPayment('9')" class="teclado nine">
-          9
-        </div>
-        <div (click)="addPayment('0')" class="teclado zero">
-          0
-        </div>
-        <div (click)="addPayment('.')" class="teclado point">
-          .
-        </div>
-        <div (click)="backspace()" class="teclado back">
-          <mat-icon>backspace</mat-icon>
-        </div>
-      </div>
-    </div>
-    <div class="content">
-      <div class="paymentList">
-        <div class="selects">
-          <mat-form-field name="paymentType" class="full-width" ngDefaultControl>
-            <mat-select placeholder="Tipo de pago" [(ngModel)]="paymentType" (change)="changePaymentType()">
-              <mat-option class="w3-hover-gray" value="0">Efectivo</mat-option>
-            </mat-select>
-          </mat-form-field>
+        <div class="content">
+            <div class="paymentList">
+                <div class="selects">
+                    <mat-form-field name="paymentType" class="full-width" ngDefaultControl>
+                        <mat-select placeholder="Tipo de pago" [(ngModel)]="paymentType" (change)="changePaymentType()">
+                            <mat-option class="w3-hover-gray" value="0">Efectivo</mat-option>
+                        </mat-select>
+                    </mat-form-field>
 
-          <mat-form-field name="selectedDocument" class="full-width" ngDefaultControl>
-            <mat-select placeholder="Documento" (change)="changeDocument()" [(ngModel)]="selectedDocument">
-              <mat-option class="w3-hover-gray" *ngFor="let documento of documentos" [value]="documento">{{ documento.Nombre }}</mat-option>
-            </mat-select>
-          </mat-form-field>
+                    <mat-form-field name="selectedDocument" class="full-width" ngDefaultControl>
+                        <mat-select placeholder="Documento" (change)="changeDocument()" [(ngModel)]="selectedDocument">
+                            <mat-option class="w3-hover-gray" *ngFor="let documento of documentos" [value]="documento">{{ documento.Nombre }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
 
-          <mat-form-field name="serie" class="full-width" ngDefaultControl>
-            <mat-select placeholder="N°Serie" [(ngModel)]="serieSeleccionado" (change)="changeSerie()">
-              <mat-option class="w3-hover-gray" *ngFor="let serie of numerosSerie" [value]="serie">{{ serie }}</mat-option>
-            </mat-select>
-          </mat-form-field>
+                    <mat-form-field name="serie" class="full-width" ngDefaultControl>
+                        <mat-select placeholder="N°Serie" [(ngModel)]="serieSeleccionado" (change)="changeSerie()">
+                            <mat-option class="w3-hover-gray" *ngFor="let serie of numerosSerie" [value]="serie">{{ serie }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
 
-          <mat-form-field name="correlativo" class="full-width" ngDefaultControl>
-            <input matInput type="number" min="0" placeholder="N°Doc" [(ngModel)]="correlativo" disabled="true">
-          </mat-form-field>
+                    <mat-form-field name="correlativo" class="full-width" ngDefaultControl>
+                        <input matInput type="number" min="0" placeholder="N°Doc" [(ngModel)]="correlativo" disabled="true">
+                    </mat-form-field>
+                </div>
+                <hr class="separator">
+                <div class="containerTotal">
+                    <div class="contentTotal contentTotalColor1">
+                        <span class='listIGV'>Subtotal: $ {{customer.subtotal}}</span>
+                        <span class='listIGV'>IGV: $ {{customer.taxes}}</span>
+                        <span class='listTotal '>Total: $ {{customer.total}}</span>
+                    </div>
+                    <div class="contentTotal contentTotalColor2">
+                        <span class='listIGV'>Entregado: $ {{entregado == '' ? '0' : entregado}}</span>
+                        <span class='listIGV'>Vuelto: $ {{vuelto == '' ? '0' : vuelto}}</span>
+                    </div>
+                </div>
+            </div>
         </div>
-        <hr class="separator">
-        <div class="containerTotal">
-          <div class="contentTotal contentTotalColor1">
-            <span class='listIGV'>Subtotal: $ {{customer.subtotal}}</span>
-            <span class='listIGV'>IGV: $ {{customer.taxes}}</span>
-            <span class='listTotal '>Total: $ {{customer.total}}</span>
-          </div>
-          <div class="contentTotal contentTotalColor2">
-            <span class='listIGV'>Entregado: $ {{entregado == '' ? '0' : entregado}}</span>
-            <span class='listIGV'>Vuelto: $ {{vuelto == '' ? '0' : vuelto}}</span>
-          </div>
-        </div>
-      </div>
+    </mat-dialog-content>
+    <div mat-dialog-actions align="end">
+        <button style="margin-bottom: 15px;" mat-raised-button [disabled]="confirm()" color="primary" (click)="confirmSale()">Confirmar</button>
+        <button style="margin-bottom: 15px;" mat-raised-button color="warn" (click)="onNoClick()">Cancelar</button>
     </div>
-  </mat-dialog-content>
-  <div mat-dialog-actions align="end">
-    <button style="margin-bottom: 15px;" mat-raised-button [disabled]="confirm()" color="primary" (click)="confirmSale()">Confirmar</button>
-    <button style="margin-bottom: 15px;" mat-raised-button color="warn" (click)="onNoClick()">Cancelar</button>
-  </div>
 </div>

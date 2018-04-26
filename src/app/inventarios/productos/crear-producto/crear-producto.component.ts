@@ -95,6 +95,7 @@ export class CrearProductoComponent implements OnInit {
       Moneda: ['', Validators.required],
       Compra: ['', Validators.required],
       Venta: ['', Validators.required],
+      Imagen : null,
       avatar: null
     });
 
@@ -121,6 +122,8 @@ export class CrearProductoComponent implements OnInit {
 
   imageFinishedUploading(file) {
     this.images = file.file;
+    this.crearProductoForm.patchValue({ Imagen : file.file.name });
+    console.log(file);
   }
 
   checkByNombre(target:string) {

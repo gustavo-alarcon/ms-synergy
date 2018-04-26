@@ -1,32 +1,36 @@
-import { LoginService } from './../../servicios/login/login.service';
-import { element } from 'protractor';
-import { InventariosService } from './../../servicios/almacenes/inventarios.service';
-import { Component, OnInit } from '@angular/core';
-import { FormControl, Validators, FormGroup, FormBuilder } from '@angular/forms';
-import { MatChipInputEvent } from '@angular/material';
-import { ENTER } from '@angular/cdk/keycodes';
-import { MatSnackBar } from '@angular/material';
+import { ToastrService } from "ngx-toastr";
+import { LoginService } from "./../../servicios/login/login.service";
+import { element } from "protractor";
+import { InventariosService } from "./../../servicios/almacenes/inventarios.service";
+import { Component, OnInit } from "@angular/core";
+import {
+  FormControl,
+  Validators,
+  FormGroup,
+  FormBuilder,
+  AbstractControl,
+  ValidatorFn
+} from "@angular/forms";
+import { MatChipInputEvent } from "@angular/material";
+import { ENTER } from "@angular/cdk/keycodes";
+import { MatSnackBar } from "@angular/material";
 
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/startWith';
-import 'rxjs/add/operator/map';
-import { log } from 'util';
-import { filter } from 'rxjs/operators/filter';
-import { map } from 'rxjs/operators/map';
-import { startWith } from 'rxjs/operators/startWith';
-
-
-
+import { Observable } from "rxjs/Observable";
+import "rxjs/add/operator/startWith";
+import "rxjs/add/operator/map";
+import { log } from "util";
+import { filter } from "rxjs/operators/filter";
+import { map } from "rxjs/operators/map";
+import { startWith } from "rxjs/operators/startWith";
 
 const COMMA = 188;
 
 @Component({
-  selector: 'app-movimientos',
-  templateUrl: './movimientos.component.html',
-  styleUrls: ['./movimientos.component.css']
+  selector: "app-movimientos",
+  templateUrl: "./movimientos.component.html",
+  styleUrls: ["./movimientos.component.css"]
 })
 export class MovimientosComponent implements OnInit {
-
   /*CHIPS*/
   visible: boolean = true;
   selectable: boolean = true;
@@ -36,18 +40,18 @@ export class MovimientosComponent implements OnInit {
   separatorKeysCodes = [ENTER, COMMA];
 
   guias: any[] = [];
-  guias_string: string = '';
+  guias_string: string = "";
 
   movimientoForm: FormGroup;
 
   now: any;
   timeLimit: any;
-  uname: string = '';
-  tipoMovimiento: string = 'Tercero';
-  precioPlaceholder: string = 'Precio';
+  uname: string = "";
+  tipoMovimiento: string = "Tercero";
+  precioPlaceholder: string = "Precio";
   precioCalculado: number = 0;
   precioActual: number = 0;
-  idProductoActual: string = '';
+  idProductoActual: string = "";
   loading: boolean;
   packFlag: boolean = false;
 
@@ -56,9 +60,9 @@ export class MovimientosComponent implements OnInit {
   documentos: any[] = [];
   numerosSerie: any[][];
   docList: any[] = [];
-  docListName: string = '';
-  docListSerie: string = '';
-  docListCorrelativo: string = '';
+  docListName: string = "";
+  docListSerie: string = "";
+  docListCorrelativo: string = "";
   productos: any[] = [];
   productos_filtrado: any[] = [];
   terceros: any[] = [];
@@ -71,55 +75,63 @@ export class MovimientosComponent implements OnInit {
   optionDisplay: number = 1;
   montoTotal: number = 0;
   checked: boolean;
+  productName: string = null;
 
   stockData: any = {
-    ID: '',
+    ID: "",
     Cantidad: 0
   };
 
   documentoData: any = {
-    ID: '',
+    ID: "",
     Correlativo: 0
-  }
+  };
 
   perms: any = [];
 
-  filteredOptions: string[];
+  filteredOptions: any[];
   filteredPackages: string[];
+  numSeries: any[];
+  seriesSelected = new FormControl([]);
   prodEscogido;
-  constructor(private inventariosService: InventariosService,
+
+  constructor(
+    private inventariosService: InventariosService,
     private loginService: LoginService,
     private fb: FormBuilder,
-    public snackBar: MatSnackBar) {
-  }
+    public snackBar: MatSnackBar,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit() {
-
+    this.numSeries = [];
     this.loginService.currentUserInfo.subscribe(res => {
-      this.uname = res[0]['Uname'];
+      this.uname = res[0]["Uname"];
     });
 
     this.movimientoForm = this.fb.group({
-      Documento: ['', Validators.required],
-      Serie: ['', Validators.required],
-      SerieCompra: ['', Validators.required],
-      Correlativo: [{ value: '', disabled: true }, Validators.required],
-      Guia: '',
-      Fecha: ['', Validators.required],
-      Tercero: ['', Validators.required],
-      AlmacenOrigen: ['', Validators.required],
-      AlmacenDestino: [''],
-      Producto: '',
-      Paquete: '',
-      Cantidad: ['', Validators.required],
-      Precio: [{ value: '', disabled: false }, Validators.required],
-      Usuario: ''
+      Documento: ["", Validators.required],
+      Serie: ["", Validators.required],
+      SerieCompra: ["", Validators.required],
+      Correlativo: [{ value: "", disabled: true }, Validators.required],
+      Guia: "",
+      Fecha: ["", Validators.required],
+      Tercero: ["", Validators.required],
+      AlmacenOrigen: ["", Validators.required],
+      AlmacenDestino: [""],
+      Producto: "",
+      Paquete: "",
+      Cantidad: [
+        "",
+        [Validators.required, this.ValidateSerie(this.numSeries.length)]
+      ],
+      Precio: [{ value: "", disabled: false }, Validators.required],
+      Usuario: ""
     });
 
     this.loginService.currentPermissions.subscribe(res => {
       this.perms = res;
-
-    })
+    });
     this.currentDate();
     this.movimientoForm.patchValue({ Fecha: this.now });
 
@@ -130,35 +142,47 @@ export class MovimientosComponent implements OnInit {
     this.inventariosService.currentDataDocumentos.subscribe(res => {
       this.documentos = res;
 
-      if (!this.perms[0]['reg_doc_entrada']) {
-        this.documentos = this.documentos.filter(value => value['Naturaleza'] != 'ENTRADA');
+      if (!this.perms[0]["reg_doc_entrada"]) {
+        this.documentos = this.documentos.filter(
+          value => value["Naturaleza"] != "ENTRADA"
+        );
       }
 
-      if (!this.perms[0]['reg_doc_salida']) {
-        this.documentos = this.documentos.filter(value => value['Naturaleza'] != 'SALIDA');
+      if (!this.perms[0]["reg_doc_salida"]) {
+        this.documentos = this.documentos.filter(
+          value => value["Naturaleza"] != "SALIDA"
+        );
       }
 
-      if (!this.perms[0]['reg_doc_transferencia']) {
-        this.documentos = this.documentos.filter(value => value['Naturaleza'] != 'TRANSFERENCIA');
+      if (!this.perms[0]["reg_doc_transferencia"]) {
+        this.documentos = this.documentos.filter(
+          value => value["Naturaleza"] != "TRANSFERENCIA"
+        );
       }
 
-      if (!this.perms[0]['reg_doc_ajusteEntrada']) {
-        this.documentos = this.documentos.filter(value => value['Naturaleza'] != 'AJUSTE DE ENTRADA');
+      if (!this.perms[0]["reg_doc_ajusteEntrada"]) {
+        this.documentos = this.documentos.filter(
+          value => value["Naturaleza"] != "AJUSTE DE ENTRADA"
+        );
       }
 
-      if (!this.perms[0]['reg_doc_ajusteSalida']) {
-        this.documentos = this.documentos.filter(value => value['Naturaleza'] != 'AJUSTE DE SALIDA');
+      if (!this.perms[0]["reg_doc_ajusteSalida"]) {
+        this.documentos = this.documentos.filter(
+          value => value["Naturaleza"] != "AJUSTE DE SALIDA"
+        );
       }
 
-      this.documentos.sort(this.sortBy('Nombre'));
+      this.documentos.sort(this.sortBy("Nombre"));
 
-
-      let _serie = '';
+      let _serie = "";
       this.numerosSerie = [];
       this.documentos.forEach(element => {
-        if (element['Numtienda'] != _serie && this.numerosSerie.indexOf(element['Numtienda']) < 0) {
-          this.numerosSerie.push(element['Numtienda']);
-          _serie = element['Numtienda'];
+        if (
+          element["Numtienda"] != _serie &&
+          this.numerosSerie.indexOf(element["Numtienda"]) < 0
+        ) {
+          this.numerosSerie.push(element["Numtienda"]);
+          _serie = element["Numtienda"];
         }
       });
     });
@@ -167,12 +191,12 @@ export class MovimientosComponent implements OnInit {
 
     this.inventariosService.currentDataAlmacenes.subscribe(res => {
       this.almacenes = res;
-      this.almacenes.sort(this.sortBy('Nombre'));
+      this.almacenes.sort(this.sortBy("Nombre"));
     });
 
     this.inventariosService.currentDataTerceros.subscribe(res => {
       this.terceros = res;
-      this.terceros.sort(this.sortBy('Nombre'));
+      this.terceros.sort(this.sortBy("Nombre"));
     });
 
     this.getPackages();
@@ -181,23 +205,73 @@ export class MovimientosComponent implements OnInit {
   }
 
   selectProduct(): void {
-    this.prodEscogido = this.movimientoForm.get('Producto').value;
-    this.prodActual(this.movimientoForm.get('Producto').value);
+    let nombre;
+    if (this.productName != this.movimientoForm.get("Producto").value) {
+      this.numSeries = [];
+      this.seriesSelected.patchValue([]);
+      this.productName = this.movimientoForm.get("Producto").value;
+      this.pushKeyProducts();
+      this.prodActual(this.filteredOptions[0]);
+      if (this.optionDisplay == 2) {
+        for (let i = 0; i < this.filteredOptions.length; i++) {
+          if (this.productName == this.filteredOptions[i].Codigo) {
+            nombre = this.filteredOptions[i].Nombre;
+            break;
+          }
+        }
+        this.inventariosService.getNumSerie(nombre).subscribe(data => {
+          this.numSeries = data.records;
+          this.numSeries.sort(this.dynamicSort("numSerie"));
+        });
+      } else {
+        this.inventariosService
+          .getNumSerie(this.productName)
+          .subscribe(data => {
+            this.numSeries = data.records;
+            this.numSeries.sort(this.dynamicSort("numSerie"));
+          });
+      }
+    }
+  }
 
+  dynamicSort(property) {
+    var sortOrder = 1;
+    if (property[0] === "-") {
+      sortOrder = -1;
+      property = property.substr(1);
+    }
+    return function(a, b) {
+      var result =
+        parseInt(a[property]) < parseInt(b[property])
+          ? -1
+          : parseInt(a[property]) > parseInt(b[property])
+            ? 1
+            : 0;
+      return result * sortOrder;
+    };
   }
 
   onChanges2(): void {
-    this.movimientoForm.get('Paquete').valueChanges.subscribe(val2 => {
-      if (val2 !== '') {
+    this.movimientoForm.get("Paquete").valueChanges.subscribe(val2 => {
+      if (val2 !== "") {
         this.packActual(val2);
       }
     });
   }
 
+  ValidateSerie(cantidadSerie: number): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: boolean } | null => {
+      if (control.value <= cantidadSerie || control.value == null) {
+        return { numSerie: true };
+      }
+      return null;
+    };
+  }
+
   getProducts() {
     this.inventariosService.currentDataProductos.subscribe(res => {
       this.productos = res;
-      this.productos.sort(this.sortBy('Nombre'));
+      this.productos.sort(this.sortBy("Nombre"));
     });
   }
 
@@ -213,32 +287,73 @@ export class MovimientosComponent implements OnInit {
     if (31 < 31) {
       if (31 + 1 < 10) {
         if (currentDate.getMonth() + 1 < 10) {
-          var limite = currentDate.getFullYear() + '-0' + (currentDate.getMonth() + 1) + '-0' + ((31 + 1) % 31);
+          var limite =
+            currentDate.getFullYear() +
+            "-0" +
+            (currentDate.getMonth() + 1) +
+            "-0" +
+            (31 + 1) % 31;
         } else {
-          var limite = currentDate.getFullYear() + '-' + (currentDate.getMonth() + 1) + '-0' + ((31 + 1) % 31);
+          var limite =
+            currentDate.getFullYear() +
+            "-" +
+            (currentDate.getMonth() + 1) +
+            "-0" +
+            (31 + 1) % 31;
         }
       } else {
         if (currentDate.getMonth() + 1 < 10) {
-          var limite = currentDate.getFullYear() + '-0' + (currentDate.getMonth() + 1) + '-' + ((31 + 1) % 31);
+          var limite =
+            currentDate.getFullYear() +
+            "-0" +
+            (currentDate.getMonth() + 1) +
+            "-" +
+            (31 + 1) % 31;
         } else {
-          var limite = currentDate.getFullYear() + '-' + (currentDate.getMonth() + 1) + '-' + ((31 + 1) % 31);
+          var limite =
+            currentDate.getFullYear() +
+            "-" +
+            (currentDate.getMonth() + 1) +
+            "-" +
+            (31 + 1) % 31;
         }
       }
     } else {
       if (currentDate.getMonth() + 1 < 12) {
         if ((currentDate.getMonth() + 2) % 13 + 1 < 10) {
-          var limite = currentDate.getFullYear() + '-0' + (((currentDate.getMonth() + 2) % 13) + 1) + '-0' + (1);
+          var limite =
+            currentDate.getFullYear() +
+            "-0" +
+            ((currentDate.getMonth() + 2) % 13 + 1) +
+            "-0" +
+            1;
         } else {
-          var limite = currentDate.getFullYear() + '-' + (((currentDate.getMonth() + 2) % 13) + 1) + '-0' + (1);
+          var limite =
+            currentDate.getFullYear() +
+            "-" +
+            ((currentDate.getMonth() + 2) % 13 + 1) +
+            "-0" +
+            1;
         }
       } else {
         if ((currentDate.getMonth() + 2) % 13 + 1 < 10) {
-          var limite = (currentDate.getFullYear() + 1) + '-0' + (((currentDate.getMonth() + 2) % 13) + 1) + '-0' + (1);
+          var limite =
+            currentDate.getFullYear() +
+            1 +
+            "-0" +
+            ((currentDate.getMonth() + 2) % 13 + 1) +
+            "-0" +
+            1;
         } else {
-          var limite = (currentDate.getFullYear() + 1) + '-' + (((currentDate.getMonth() + 2) % 13) + 1) + '-0' + (1);
+          var limite =
+            currentDate.getFullYear() +
+            1 +
+            "-" +
+            ((currentDate.getMonth() + 2) % 13 + 1) +
+            "-0" +
+            1;
         }
       }
-
     }
 
     this.now = currentDate;
@@ -246,152 +361,165 @@ export class MovimientosComponent implements OnInit {
   }
 
   sortBy(key) {
-    return function (a, b) {
+    return function(a, b) {
       if (a[key] > b[key]) {
         return 1;
       } else if (a[key] < b[key]) {
         return -1;
-      } []
+      }
+      [];
       return 0;
-    }
+    };
   }
 
   addDoc(doc: any, corr: any) {
-
     this.currentDate();
     this.movimientoForm.patchValue({ Fecha: this.now });
 
-    if ((doc != undefined || doc != '') && (this.movimientoForm.value['Serie'] != '' || this.movimientoForm.value['SerieCompra'] != '') && this.movimientoForm.getRawValue()['Correlativo'] != '') {
+    if (
+      (doc != undefined || doc != "") &&
+      (this.movimientoForm.value["Serie"] != "" ||
+        this.movimientoForm.value["SerieCompra"] != "") &&
+      this.movimientoForm.getRawValue()["Correlativo"] != ""
+    ) {
       let _exist = false;
 
       this.docList.forEach(element => {
-        if (doc['Nombre'] === element['Nombre'] && (this.movimientoForm.value['Serie'] === element['Serie'] || this.movimientoForm.value['SerieCompra'] === element['Serie']) && doc['Correlativo_actual'] === element['Correlativo']) {
+        if (
+          doc["Nombre"] === element["Nombre"] &&
+          (this.movimientoForm.value["Serie"] === element["Serie"] ||
+            this.movimientoForm.value["SerieCompra"] === element["Serie"]) &&
+          doc["Correlativo_actual"] === element["Correlativo"]
+        ) {
           _exist = true;
         }
       });
       if (!_exist) {
-
-        this.docList.push({ Nombre: doc['Nombre'], Serie: this.tipoMovimiento === 'ENTRADA' ? this.movimientoForm.value['SerieCompra'] : this.movimientoForm.value['Serie'], Correlativo: this.movimientoForm.getRawValue()['Correlativo'] });
-        this.documentoData['ID'] = doc['ID'];
-        this.documentoData['Correlativo'] = this.movimientoForm.getRawValue()['Correlativo'];
+        this.docList.push({
+          Nombre: doc["Nombre"],
+          Serie:
+            this.tipoMovimiento === "ENTRADA"
+              ? this.movimientoForm.value["SerieCompra"]
+              : this.movimientoForm.value["Serie"],
+          Correlativo: this.movimientoForm.getRawValue()["Correlativo"]
+        });
+        this.documentoData["ID"] = doc["ID"];
+        this.documentoData["Correlativo"] = this.movimientoForm.getRawValue()[
+          "Correlativo"
+        ];
       } else {
-        this.snackBar.open('Documento repetido', 'Cerrar', {
-          duration: 6000,
+        this.snackBar.open("Documento repetido", "Cerrar", {
+          duration: 6000
         });
       }
     } else {
-      this.snackBar.open('Completar la información del documento', 'Cerrar', {
-        duration: 6000,
+      this.snackBar.open("Completar la información del documento", "Cerrar", {
+        duration: 6000
       });
     }
   }
 
   removeDoc(idx: number) {
-
     if (this.docList.length > 1) {
       this.docList.splice(idx, 1);
     } else if (idx === 0) {
       this.docList = [];
     }
-
   }
 
   filtrarTerceros(tipo: string, nat: string, corr: any) {
-
     if (this.docList.length < 1) {
-      if (nat === 'ENTRADA') {
+      if (nat === "ENTRADA") {
         this.tipoMovimiento = nat;
-        this.precioPlaceholder = 'Precio de Compra';
-        this.movimientoForm.controls['Precio'].enable();
-        this.movimientoForm.controls['Correlativo'].enable();
-        this.movimientoForm.patchValue({ Serie: 0, SerieCompra: '' });
-        this.movimientoForm.controls['SerieCompra'].setErrors(null);
-      } else if (nat === 'SALIDA') {
+        this.precioPlaceholder = "Precio de Compra";
+        this.movimientoForm.controls["Precio"].enable();
+        this.movimientoForm.controls["Correlativo"].enable();
+        this.movimientoForm.patchValue({ Serie: 0, SerieCompra: "" });
+        this.movimientoForm.controls["SerieCompra"].setErrors(null);
+      } else if (nat === "SALIDA") {
         this.tipoMovimiento = nat;
-        this.precioPlaceholder = 'Precio de Venta';
-        this.movimientoForm.controls['Precio'].enable();
-        this.movimientoForm.controls['Correlativo'].disable();
-        this.movimientoForm.patchValue({ Serie: '', SerieCompra: 0 });
-        this.movimientoForm.controls['Serie'].setErrors(null);
-      } else if (nat === 'TRANSFERENCIA') {
+        this.precioPlaceholder = "Precio de Venta";
+        this.movimientoForm.controls["Precio"].enable();
+        this.movimientoForm.controls["Correlativo"].disable();
+        this.movimientoForm.patchValue({ Serie: "", SerieCompra: 0 });
+        this.movimientoForm.controls["Serie"].setErrors(null);
+      } else if (nat === "TRANSFERENCIA") {
         this.tipoMovimiento = nat;
-        this.precioPlaceholder = 'Transferencia de material';
-        this.movimientoForm.controls['Precio'].disable();
-        this.movimientoForm.patchValue({ Serie: '', SerieCompra: 0 });
-        this.movimientoForm.controls['Serie'].setErrors(null);
-      } else if (nat === 'AJUSTE DE ENTRADA') {
+        this.precioPlaceholder = "Transferencia de material";
+        this.movimientoForm.controls["Precio"].disable();
+        this.movimientoForm.patchValue({ Serie: "", SerieCompra: 0 });
+        this.movimientoForm.controls["Serie"].setErrors(null);
+      } else if (nat === "AJUSTE DE ENTRADA") {
         this.tipoMovimiento = nat;
-        this.precioPlaceholder = 'Ajuste de entrada';
-        this.movimientoForm.controls['Precio'].disable();
-        this.movimientoForm.patchValue({ Serie: '', SerieCompra: 0 });
-        this.movimientoForm.controls['Serie'].setErrors(null);
-      } else if (nat === 'AJUSTE DE SALIDA') {
+        this.precioPlaceholder = "Ajuste de entrada";
+        this.movimientoForm.controls["Precio"].disable();
+        this.movimientoForm.patchValue({ Serie: "", SerieCompra: 0 });
+        this.movimientoForm.controls["Serie"].setErrors(null);
+      } else if (nat === "AJUSTE DE SALIDA") {
         this.tipoMovimiento = nat;
-        this.precioPlaceholder = 'Ajuste de salida';
-        this.movimientoForm.controls['Precio'].disable();
-        this.movimientoForm.patchValue({ Serie: '', SerieCompra: 0 });
-        this.movimientoForm.controls['Serie'].setErrors(null);
+        this.precioPlaceholder = "Ajuste de salida";
+        this.movimientoForm.controls["Precio"].disable();
+        this.movimientoForm.patchValue({ Serie: "", SerieCompra: 0 });
+        this.movimientoForm.controls["Serie"].setErrors(null);
       } else {
-        this.precioPlaceholder = 'Precio';
+        this.precioPlaceholder = "Precio";
       }
 
       this.terceros_filtrado = [];
 
       this.terceros.forEach(element => {
-        if (element['TerceroClass'] === tipo) {
+        if (element["TerceroClass"] === tipo) {
           this.terceros_filtrado.push(element);
         }
       });
-
     } else {
-
-      if (nat === 'ENTRADA') {
-        this.movimientoForm.controls['Correlativo'].enable();
-        this.movimientoForm.patchValue({ Serie: 0, SerieCompra: '' });
-        this.movimientoForm.controls['SerieCompra'].setErrors(null);
-      } else if (nat === 'SALIDA') {
-        this.movimientoForm.controls['Correlativo'].disable();
-        this.movimientoForm.patchValue({ Serie: '', SerieCompra: 0 });
-        this.movimientoForm.controls['Serie'].setErrors(null);
-      } else if (nat === 'TRANSFERENCIA') {
-        this.movimientoForm.patchValue({ Serie: '', SerieCompra: 0 });
-        this.movimientoForm.controls['Serie'].setErrors(null);
-      } else if (nat === 'AJUSTE DE ENTRADA') {
-        this.movimientoForm.patchValue({ Serie: '', SerieCompra: 0 });
-        this.movimientoForm.controls['Serie'].setErrors(null);
-      } else if (nat === 'AJUSTE DE SALIDA') {
-        this.movimientoForm.patchValue({ Serie: '', SerieCompra: 0 });
-        this.movimientoForm.controls['Serie'].setErrors(null);
+      if (nat === "ENTRADA") {
+        this.movimientoForm.controls["Correlativo"].enable();
+        this.movimientoForm.patchValue({ Serie: 0, SerieCompra: "" });
+        this.movimientoForm.controls["SerieCompra"].setErrors(null);
+      } else if (nat === "SALIDA") {
+        this.movimientoForm.controls["Correlativo"].disable();
+        this.movimientoForm.patchValue({ Serie: "", SerieCompra: 0 });
+        this.movimientoForm.controls["Serie"].setErrors(null);
+      } else if (nat === "TRANSFERENCIA") {
+        this.movimientoForm.patchValue({ Serie: "", SerieCompra: 0 });
+        this.movimientoForm.controls["Serie"].setErrors(null);
+      } else if (nat === "AJUSTE DE ENTRADA") {
+        this.movimientoForm.patchValue({ Serie: "", SerieCompra: 0 });
+        this.movimientoForm.controls["Serie"].setErrors(null);
+      } else if (nat === "AJUSTE DE SALIDA") {
+        this.movimientoForm.patchValue({ Serie: "", SerieCompra: 0 });
+        this.movimientoForm.controls["Serie"].setErrors(null);
       }
     }
 
-    this.movimientoForm.patchValue({ Correlativo: this.tipoMovimiento === 'ENTRADA' ? '' : corr });
-    this.movimientoForm.controls['Correlativo'].setErrors(null);
-
+    this.movimientoForm.patchValue({
+      Correlativo: this.tipoMovimiento === "ENTRADA" ? "" : corr
+    });
+    this.movimientoForm.controls["Correlativo"].setErrors(null);
   }
 
   filtrarProductos(alm: string) {
-
     this.productos_filtrado = [];
 
     this.productos.forEach(element => {
-      if (element['Zona'] === alm) {
+      if (element["Zona"] === alm) {
         this.productos_filtrado.push(element);
       }
     });
 
     this.paquetes.forEach(element => {
-      if (element['Almacen'] === alm) {
+      if (element["Almacen"] === alm) {
         this.paquetes_filtrado.push(element);
       }
     });
 
-    let _nombre = '';
+    let _nombre = "";
     this.pack_nombre = [];
     this.paquetes_filtrado.forEach(element => {
-      if (element['Paquete'] != _nombre) {
-        this.pack_nombre.push(element['Paquete']);
-        _nombre = element['Paquete'];
+      if (element["Paquete"] != _nombre) {
+        this.pack_nombre.push(element["Paquete"]);
+        _nombre = element["Paquete"];
       }
     });
     this.filteredOptions = this.productos_filtrado;
@@ -402,50 +530,67 @@ export class MovimientosComponent implements OnInit {
     if (e.checked) {
       this.optionDisplay = 2;
       this.checked = true;
-      this.movimientoForm.patchValue({ 'Producto': "" });
+      this.movimientoForm.patchValue({ Producto: "" });
+      this.productName = null;
       this.prodEscogido = undefined;
+      this.pushKeyProducts();
       this.prodActual(this.prodEscogido);
-    }
-    else {
+      this.numSeries = [];
+    } else {
       this.optionDisplay = 1;
       this.checked = false;
-      this.movimientoForm.patchValue({ 'Producto': "" });
+      this.movimientoForm.patchValue({ Producto: "" });
+      this.productName = null;
       this.prodEscogido = undefined;
+      this.pushKeyProducts();
       this.prodActual(this.prodEscogido);
+      this.numSeries = [];
     }
   }
 
   pushKeyProducts() {
-    this.filteredOptions = this.filterProducto(this.movimientoForm.value['Producto']);
+    this.numSeries = [];
+    this.filteredOptions = this.filterProducto(
+      this.movimientoForm.value["Producto"]
+    );
   }
 
   pushKeyPackage() {
-    this.filteredPackages = this.filterPackage(this.movimientoForm.value['Paquete']);
+    this.filteredPackages = this.filterPackage(
+      this.movimientoForm.value["Paquete"]
+    );
   }
 
   filterProducto(val): string[] {
     if (this.optionDisplay == 1) {
-      return this.productos_filtrado.filter(option =>
-        option.Nombre.toLowerCase().indexOf(val.toLowerCase()) === 0);
-    }
-    else {
-      return this.productos_filtrado.filter(option =>
-        option.Codigo.toLowerCase().indexOf(val.toLowerCase()) === 0);
+      return this.productos_filtrado.filter(
+        option => option.Nombre.toLowerCase().indexOf(val.toLowerCase()) === 0
+      );
+    } else {
+      return this.productos_filtrado.filter(
+        option => option.Codigo.toLowerCase().indexOf(val.toLowerCase()) === 0
+      );
     }
   }
 
   filterPackage(val): string[] {
-    return this.pack_nombre.filter(option =>
-      option.toLowerCase().indexOf(val.toLowerCase()) === 0);
+    return this.pack_nombre.filter(
+      option => option.toLowerCase().indexOf(val.toLowerCase()) === 0
+    );
   }
 
   prodActual(prod: any) {
     if (prod != undefined) {
+      this.prodEscogido = prod;
       this.precioActual = 0;
-      if (this.tipoMovimiento === 'TRANSFERENCIA' || this.tipoMovimiento === 'AJUSTE DE ENTRADA' || this.tipoMovimiento === 'AJUSTE DE SALIDA') {
-        this.movimientoForm.controls['Precio'].disable();
+      if (
+        this.tipoMovimiento === "TRANSFERENCIA" ||
+        this.tipoMovimiento === "AJUSTE DE ENTRADA" ||
+        this.tipoMovimiento === "AJUSTE DE SALIDA"
+      ) {
+        this.movimientoForm.controls["Precio"].disable();
       } else {
-        this.movimientoForm.controls['Precio'].enable();
+        this.movimientoForm.controls["Precio"].enable();
       }
 
       this.movimientoForm.patchValue({ Precio: 0 });
@@ -453,53 +598,76 @@ export class MovimientosComponent implements OnInit {
       this.movimientoForm.patchValue({ Cantidad: null });
       this.packFlag = false;
 
-      if (this.tipoMovimiento === 'ENTRADA') {
+      if (this.tipoMovimiento === "ENTRADA") {
         this.precioActual = parseFloat(prod.Compra);
-      } else if (this.tipoMovimiento === 'SALIDA') {
+      } else if (this.tipoMovimiento === "SALIDA") {
         this.precioActual = parseFloat(prod.Venta);
       }
 
       this.tempStocks.push({ Producto: prod.Nombre, Stock: prod.Stock_actual });
-      this.idProductoActual = prod.ID;
+      this.idProductoActual = prod.Codigo;
     }
   }
 
   packActual(pack: any) {
     this.precioActual = 0;
-    this.movimientoForm.controls['Precio'].disable();
+    this.movimientoForm.controls["Precio"].disable();
     this.movimientoForm.patchValue({ Precio: 0 });
     this.lista_items_paquete = [];
     this.movimientoForm.patchValue({ Cantidad: null });
     this.packFlag = true;
 
     this.paquetes.forEach(element => {
-      if (element['Paquete'] === pack) {
-        if (this.tipoMovimiento === 'ENTRADA') {
-          this.precioActual = this.precioActual + parseFloat(element['Compra']) * parseFloat(element['Cantidad']);
-        } else if (this.tipoMovimiento === 'SALIDA') {
-          this.precioActual = this.precioActual + parseFloat(element['PrecioUnitario']) * parseFloat(element['Cantidad']);
+      if (element["Paquete"] === pack) {
+        if (this.tipoMovimiento === "ENTRADA") {
+          this.precioActual =
+            this.precioActual +
+            parseFloat(element["Compra"]) * parseFloat(element["Cantidad"]);
+        } else if (this.tipoMovimiento === "SALIDA") {
+          this.precioActual =
+            this.precioActual +
+            parseFloat(element["PrecioUnitario"]) *
+              parseFloat(element["Cantidad"]);
         }
 
         this.lista_items_paquete.push({
-          Producto: element['Nombre'],
-          Cantidad: element['Cantidad'],
-          Compra: element['Compra'],
-          Venta: element['Venta'],
-          Unidad: element['Unidad'],
-          Moneda: element['Moneda'],
-          PrecioUnitario: element['PrecioUnitario']
+          Producto: element["Nombre"],
+          Cantidad: element["Cantidad"],
+          Compra: element["Compra"],
+          Venta: element["Venta"],
+          Unidad: element["Unidad"],
+          Moneda: element["Moneda"],
+          PrecioUnitario: element["PrecioUnitario"]
         });
 
-        this.tempStocks.push({ Producto: element['Nombre'], Stock: element['Stock_actual'] });
+        this.tempStocks.push({
+          Producto: element["Nombre"],
+          Stock: element["Stock_actual"]
+        });
       }
     });
-
   }
 
   precio(cantidad: number) {
-    this.movimientoForm.patchValue({ Precio: cantidad * this.precioActual });
-    if (this.tipoMovimiento === 'TRANSFERENCIA' || this.tipoMovimiento === 'AJUSTE DE ENTRADA' || this.tipoMovimiento === 'AJUSTE DE SALIDA') {
-      this.movimientoForm.patchValue({ Precio: 0 })
+    let arraySeries: any[] = [];
+
+    if (cantidad <= this.numSeries.length) {
+      this.movimientoForm.controls["Cantidad"].setErrors({ incorrect: false });
+      for (let i = 0; i < cantidad; i++) {
+        arraySeries.push(this.numSeries[i].numSerie);
+      }
+      this.seriesSelected.patchValue(arraySeries);
+      if (
+        this.tipoMovimiento === "TRANSFERENCIA" ||
+        this.tipoMovimiento === "AJUSTE DE ENTRADA" ||
+        this.tipoMovimiento === "AJUSTE DE SALIDA"
+      ) {
+        this.movimientoForm.patchValue({ Precio: 0 });
+      } else {
+        this.movimientoForm.patchValue({
+          Precio: cantidad * this.precioActual
+        });
+      }
     }
   }
 
@@ -508,127 +676,141 @@ export class MovimientosComponent implements OnInit {
   }
 
   agregar() {
-
     if (this.docList.length === 0) {
-      this.snackBar.open('Agregue por lo menos un documento', 'Cerrar', {
-        duration: 6000,
+      this.snackBar.open("Agregue por lo menos un documento", "Cerrar", {
+        duration: 6000
       });
       return;
     }
 
-    this.docListName = '';
-    this.docListSerie = '';
-    this.docListCorrelativo = '';
+    this.docListName = "";
+    this.docListSerie = "";
+    this.docListCorrelativo = "";
 
     this.docList.forEach(element => {
-
       if (this.docListName.length === 0) {
-        this.docListName += element['Nombre'];
-        this.docListSerie += element['Serie'];
-        this.docListCorrelativo += element['Correlativo'];
+        this.docListName += element["Nombre"];
+        this.docListSerie += element["Serie"];
+        this.docListCorrelativo += element["Correlativo"];
       } else {
-        this.docListName += ',';
-        this.docListName += element['Nombre'];
-        this.docListSerie += ',';
-        this.docListSerie += element['Serie'];
-        this.docListCorrelativo += ',';
-        this.docListCorrelativo += element['Correlativo'];
+        this.docListName += ",";
+        this.docListName += element["Nombre"];
+        this.docListSerie += ",";
+        this.docListSerie += element["Serie"];
+        this.docListCorrelativo += ",";
+        this.docListCorrelativo += element["Correlativo"];
       }
-
     });
 
     if (this.packFlag) {
-
       this.paquetes.forEach(element => {
-
-        if (this.movimientoForm.value['Paquete'] === element['Paquete']) {
-          this.listaResumen.push(
-            {
-              Fecha: this.movimientoForm.value['Fecha'],
-              Documento: this.docListName,
-              Serie: this.docListSerie,
-              Correlativo: this.docListCorrelativo,
-              Tercero: this.movimientoForm.value['Tercero'],
-              AlmacenOrigen: this.movimientoForm.value['AlmacenOrigen'],
-              AlmacenDestino: this.movimientoForm.value['AlmacenDestino'],
-              IDProducto: element['IDProducto'],
-              Producto: element['Nombre'],
-              Paquete: element['Paquete'],
-              Unidad: element['Unidad'],
-              Moneda: element['Moneda'],
-              Cantidad: parseFloat(element['Cantidad']) * parseFloat(this.movimientoForm.value['Cantidad']),
-              Compra: element['Compra'],
-              Venta: element['PrecioUnitario'],
-              Movimiento: this.tipoMovimiento,
-              Usuario: this.uname
-
-            }
-          );
-
+        if (this.movimientoForm.value["Paquete"] === element["Paquete"]) {
+          this.listaResumen.push({
+            Fecha: this.movimientoForm.value["Fecha"],
+            Documento: this.docListName,
+            Serie: this.docListSerie,
+            Correlativo: this.docListCorrelativo,
+            Tercero: this.movimientoForm.value["Tercero"],
+            AlmacenOrigen: this.movimientoForm.value["AlmacenOrigen"],
+            AlmacenDestino: this.movimientoForm.value["AlmacenDestino"],
+            IDProducto: element["IDProducto"],
+            Producto: element["Nombre"],
+            Paquete: element["Paquete"],
+            Unidad: element["Unidad"],
+            Moneda: element["Moneda"],
+            Cantidad:
+              parseFloat(element["Cantidad"]) *
+              parseFloat(this.movimientoForm.value["Cantidad"]),
+            Compra: element["Compra"],
+            Venta: element["PrecioUnitario"],
+            Movimiento: this.tipoMovimiento,
+            Usuario: this.uname
+          });
         }
       });
     } else if (!this.packFlag) {
-      this.listaResumen.push(
-        {
-          Fecha: this.movimientoForm.value['Fecha'],
-          Documento: this.docListName,
-          Serie: this.docListSerie,
-          Correlativo: this.docListCorrelativo,
-          Tercero: this.movimientoForm.value['Tercero'],
-          AlmacenOrigen: this.movimientoForm.value['AlmacenOrigen'],
-          AlmacenDestino: this.movimientoForm.value['AlmacenDestino'],
-          IDProducto: this.idProductoActual,
-          Producto: this.movimientoForm.value['Producto']['Nombre'],
-          Paquete: this.movimientoForm.value['Paquete'],
-          Unidad: this.movimientoForm.value['Producto']['Unidad'],
-          Moneda: this.movimientoForm.value['Producto']['Moneda'],
-          Cantidad: parseFloat(this.movimientoForm.value['Cantidad']),
-          Compra: this.tipoMovimiento === 'ENTRADA' ? this.movimientoForm.value['Precio'] / parseFloat(this.movimientoForm.value['Cantidad']) : 0,
-          Venta: this.tipoMovimiento === 'SALIDA' ? this.movimientoForm.value['Precio'] / parseFloat(this.movimientoForm.value['Cantidad']) : 0,
-          Movimiento: this.tipoMovimiento,
-          Usuario: this.uname
-        }
-      );
-
+      this.listaResumen.push({
+        Fecha: this.movimientoForm.value["Fecha"],
+        Documento: this.docListName,
+        Serie: this.docListSerie,
+        Correlativo: this.docListCorrelativo,
+        Tercero: this.movimientoForm.value["Tercero"],
+        AlmacenOrigen: this.movimientoForm.value["AlmacenOrigen"],
+        AlmacenDestino: this.movimientoForm.value["AlmacenDestino"],
+        IDProducto: this.idProductoActual,
+        Producto: this.productName,
+        Paquete: this.movimientoForm.value["Paquete"],
+        Unidad: this.movimientoForm.value["Producto"]["Unidad"],
+        Moneda: this.movimientoForm.value["Producto"]["Moneda"],
+        Cantidad: parseFloat(this.movimientoForm.value["Cantidad"]),
+        Series: this.seriesSelected.value,
+        Compra:
+          this.tipoMovimiento === "ENTRADA"
+            ? this.movimientoForm.value["Precio"] /
+              parseFloat(this.movimientoForm.value["Cantidad"])
+            : 0,
+        Venta:
+          this.tipoMovimiento === "SALIDA"
+            ? this.movimientoForm.value["Precio"] /
+              parseFloat(this.movimientoForm.value["Cantidad"])
+            : 0,
+        Movimiento: this.tipoMovimiento,
+        Usuario: this.uname
+      });
     }
 
     this.calcMontoTotal();
   }
 
+  valueSerie() {
+    this.movimientoForm.patchValue({
+      Cantidad: this.seriesSelected.value.length
+    });
+    this.precio(this.movimientoForm.value["Cantidad"]);
+  }
+
   calcMontoTotal() {
-    this.montoTotal = 0.00;
+    this.montoTotal = 0.0;
     this.listaResumen.forEach(element => {
-      this.montoTotal = this.montoTotal + (element.Movimiento === 'ENTRADA' ? element.Compra * element.Cantidad : element.Venta * element.Cantidad);
+      this.montoTotal =
+        this.montoTotal +
+        (element.Movimiento === "ENTRADA"
+          ? element.Compra * element.Cantidad
+          : element.Venta * element.Cantidad);
     });
   }
 
   regMovimiento() {
-
     let _resumen = [];
     let _item = [];
     this.listaResumen.forEach(element => {
-
-      let _idx = _item.indexOf(element['Producto']);
+      let _idx = _item.indexOf(element["Producto"]);
 
       if (_idx > -1) {
-
-        _resumen[_idx]['Cantidad'] += parseFloat(element['Cantidad']);
-
+        _resumen[_idx]["Cantidad"] += parseFloat(element["Cantidad"]);
       } else {
-        _resumen.push({ ID: element['IDProducto'], Producto: element['Producto'], Cantidad: parseFloat(element['Cantidad']), Origen: element['AlmacenOrigen'], Destino: element['AlmacenDestino'] });
-        _item.push(element['Producto']);
+        _resumen.push({
+          ID: element["IDProducto"],
+          Producto: element["Producto"],
+          Cantidad: parseFloat(element["Cantidad"]),
+          Origen: element["AlmacenOrigen"],
+          Destino: element["AlmacenDestino"]
+        });
+        _item.push(element["Producto"]);
       }
-
     });
 
     let registrar = true;
     _resumen.forEach(element => {
       this.tempStocks.forEach(_element => {
-        if (element['Producto'] === _element['Producto']) {
-          if (element['Cantidad'] > _element['Stock'] && this.listaResumen[0]['Movimiento'] === 'SALIDA') {
-            let message = 'Oops : ' + element['Producto'];
-            this.snackBar.open(message, 'Stock Superado', {
-              duration: 4000,
+        if (element["Producto"] === _element["Producto"]) {
+          if (
+            element["Cantidad"] > _element["Stock"] &&
+            this.listaResumen[0]["Movimiento"] === "SALIDA"
+          ) {
+            let message = "Oops : " + element["Producto"];
+            this.snackBar.open(message, "Stock Superado", {
+              duration: 4000
             });
             registrar = false;
             return;
@@ -637,56 +819,71 @@ export class MovimientosComponent implements OnInit {
       });
     });
 
-    if (this.docList.length < 1) {
-      this.snackBar.open('Debe agregar por lo menos un documento', 'Cerrar', {
-        duration: 6000,
+    if (this.docList.length == 0) {
+      this.snackBar.open("Debe agregar por lo menos un documento", "Cerrar", {
+        duration: 6000
       });
       registrar = false;
     }
 
-    if (this.listaResumen.length < 1) {
-      this.snackBar.open('No hay productos/paquetes en la lista de resumen', 'Cerrar', {
-        duration: 6000,
-      });
+    if (this.listaResumen.length == 0) {
+      this.snackBar.open(
+        "No hay productos/paquetes en la lista de resumen",
+        "Cerrar",
+        {
+          duration: 6000
+        }
+      );
       registrar = false;
     }
-
     if (registrar) {
-
-
       for (var i = 0; i < _resumen.length; i++) {
         for (var j = 0; j < this.productos.length; j++) {
-          if (_resumen[i]['ID'] === this.productos[j]['ID']) {
-            if (this.listaResumen[0]['Movimiento'] === 'SALIDA' || this.listaResumen[0]['Movimiento'] === 'AJUSTE DE SALIDA') {
+          if (_resumen[i]["ID"] === this.productos[j]["Codigo"]) {
+            if (
+              this.listaResumen[0]["Movimiento"] === "SALIDA" ||
+              this.listaResumen[0]["Movimiento"] === "AJUSTE DE SALIDA"
+            ) {
               //this.productos[j]['Stock_actual'] = parseInt(this.productos[j]['Stock_actual']) - parseInt(_resumen[i]['Cantidad']);
               //console.log('Cantidad enviada',this.productos[j]['Stock_actual']);
               //this.inventariosService.modificarProducto(this.productos[j]);
-              this.stockData['ID'] = this.productos[j]['ID'];
-              this.stockData['Cantidad'] = parseFloat(_resumen[i]['Cantidad']) * -1;
+              this.stockData["ID"] = this.productos[j]["ID"];
+              this.stockData["Cantidad"] =
+                parseFloat(_resumen[i]["Cantidad"]) * -1;
               this.inventariosService.actualizarStock(this.stockData);
-            } else if (this.listaResumen[0]['Movimiento'] === 'ENTRADA' || this.listaResumen[0]['Movimiento'] === 'AJUSTE DE ENTRADA') {
+            } else if (
+              this.listaResumen[0]["Movimiento"] === "ENTRADA" ||
+              this.listaResumen[0]["Movimiento"] === "AJUSTE DE ENTRADA"
+            ) {
               //this.productos[j]['Stock_actual'] = parseInt(this.productos[j]['Stock_actual']) + parseInt(_resumen[i]['Cantidad']);
               //console.log('Cantidad enviada',this.productos[j]['Stock_actual']);
               //this.inventariosService.modificarProducto(this.productos[j]);
-              this.stockData['ID'] = this.productos[j]['ID'];
-              this.stockData['Cantidad'] = parseFloat(_resumen[i]['Cantidad']);
+              this.stockData["ID"] = this.productos[j]["ID"];
+              this.stockData["Cantidad"] = parseFloat(_resumen[i]["Cantidad"]);
               this.inventariosService.actualizarStock(this.stockData);
-            } else if (this.listaResumen[0]['Movimiento'] === 'TRANSFERENCIA') {
-              if (this.productos[j]['Stock_actual'] >= parseFloat(_resumen[i]['Cantidad'])) {
+            } else if (this.listaResumen[0]["Movimiento"] === "TRANSFERENCIA") {
+              if (
+                this.productos[j]["Stock_actual"] >=
+                parseFloat(_resumen[i]["Cantidad"])
+              ) {
                 this.inventariosService.transferirProducto(_resumen[i]);
               } else {
-                this.snackBar.open('No se puede transferir esta cantidad', 'Cerrar', {
-                  duration: 4000,
-                });
+                this.snackBar.open(
+                  "No se puede transferir esta cantidad",
+                  "Cerrar",
+                  {
+                    duration: 4000
+                  }
+                );
               }
             }
           }
         }
       }
 
-      let message = 'Guardando movimiento ...';
-      this.snackBar.open(message, 'Genial!', {
-        duration: 4000,
+      let message = "Guardando movimiento ...";
+      this.snackBar.open(message, "Genial!", {
+        duration: 4000
       });
       this.getProducts();
       this.getPackages();
@@ -694,21 +891,22 @@ export class MovimientosComponent implements OnInit {
       this.inventariosService.actualizarCorrelativo(this.documentoData);
       this.limpiarLista();
       this.docList = [];
-      this.docListName = '';
-      this.docListSerie = '';
-      this.docListCorrelativo = '';
+      this.docListName = "";
+      this.docListSerie = "";
+      this.docListCorrelativo = "";
       this.movimientoForm.patchValue({
-        Documento: '',
-        Serie: '',
-        Correlativo: '',
-        AlmacenOrigen: '',
-        Producto: '',
-        Paquete: ''
+        Documento: "",
+        Serie: "",
+        Correlativo: "",
+        AlmacenOrigen: "",
+        Producto: "",
+        Paquete: ""
       });
+      this.productName = null;
       this.prodEscogido = undefined;
       this.lista_items_paquete = [];
-      this.movimientoForm.controls['Serie'].setErrors(null);
-      this.movimientoForm.controls['Documento'].setErrors(null);
+      this.movimientoForm.controls["Serie"].setErrors(null);
+      this.movimientoForm.controls["Documento"].setErrors(null);
     }
   }
 
@@ -718,13 +916,38 @@ export class MovimientosComponent implements OnInit {
   }
 
   sumarCantidad(idx: number) {
-    this.listaResumen[idx]['Cantidad'] += 1;
+    this.inventariosService
+      .getNumSerie(this.listaResumen[idx]["Producto"])
+      .subscribe(data => {
+        let series = data.records;
+        let exists;
+        series.sort(this.dynamicSort("numSerie"));
+        this.listaResumen[idx]["Series"];
+        for (let i = 0; i < series.length; i++) {
+          exists = true;
+          for (let j = 0; j < this.listaResumen[idx]["Series"].length; j++) {
+            if (series[i].numSerie == this.listaResumen[idx]["Series"][j]) {
+              exists = false;
+            }
+          }
+          if (exists) {
+            this.listaResumen[idx]["Series"].push(series[i].numSerie);
+            this.listaResumen[idx]["Cantidad"] += 1;
+            return;
+          }
+        }
+        this.toastr.error(
+          "No se puede agregar mas ya que supera el stock",
+          "Error"
+        );
+      });
     this.calcMontoTotal();
   }
 
   restarCantidad(idx: number) {
-    if (this.listaResumen[idx]['Cantidad'] > 0) {
-      this.listaResumen[idx]['Cantidad'] -= 1;
+    if (this.listaResumen[idx]["Cantidad"] > 0) {
+      this.listaResumen[idx]["Series"].pop();
+      this.listaResumen[idx]["Cantidad"] -= 1;
       this.calcMontoTotal();
     }
   }

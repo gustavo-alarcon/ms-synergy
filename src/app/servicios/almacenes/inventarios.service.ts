@@ -1,18 +1,17 @@
-import { Router } from '@angular/router';
+import { Router } from "@angular/router";
 import { Almacen } from "../../interfaces/almacenes";
-import { LoginService } from './../login/login.service';
-import { Headers, Http, Response, RequestOptions } from '@angular/http';
-import { Injectable, OnDestroy } from '@angular/core';
-import 'rxjs/Rx';
-import { Observable } from 'rxjs/Observable';
+import { LoginService } from "./../login/login.service";
+import { Headers, Http, Response, RequestOptions } from "@angular/http";
+import { Injectable, OnDestroy } from "@angular/core";
+import "rxjs/Rx";
+import { Observable } from "rxjs/Observable";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { ToastrService } from 'ngx-toastr';
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { ToastrService } from "ngx-toastr";
 import "rxjs/add/operator/takeWhile";
 
 @Injectable()
 export class InventariosService {
-
   db: string;
   private alive: boolean = true;
   private dataAlmacenes = new BehaviorSubject<any[]>([]);
@@ -46,22 +45,23 @@ export class InventariosService {
   private consultaReportemovSend = new BehaviorSubject<boolean>(false);
   currentConsultaReportemovSend = this.consultaReportemovSend.asObservable();
 
-  private moneda = new BehaviorSubject<string>('');
+  private moneda = new BehaviorSubject<string>("");
   currentMoneda = this.moneda.asObservable();
 
   simTime: number = 0;
   toastrDuration: number = 10000;
 
-  constructor(private http: Http,
+  constructor(
+    private http: Http,
     private loginService: LoginService,
     private router: Router,
     private toastr: ToastrService,
-    private http2: HttpClient) {
-
+    private http2: HttpClient
+  ) {
     this.loginService.currentUserInfo
       .takeWhile(() => this.alive)
       .subscribe(res => {
-        this.db = res[0]['Db'];
+        this.db = res[0]["Db"];
       });
 
     this.getAlmacenes();
@@ -79,97 +79,109 @@ export class InventariosService {
   borrarItem(data: JSON) {
     this.queryLoading(true);
 
-    this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-borrar-item.php?db=' + this.db, JSON.stringify(data))
+    this.http
+      .post(
+        "http://www.meraki-s.com/rent/ms-synergy/php/handler-borrar-item.php?db=" +
+          this.db,
+        JSON.stringify(data)
+      )
 
       .takeWhile(() => this.alive)
       .subscribe(
         res => {
-
-          switch (data['Tabla']) {
-            case 'zonas_sucursales':
-              this.toastr.success('Almacen: ' + res.text(), 'Exito', );
+          switch (data["Tabla"]) {
+            case "zonas_sucursales":
+              this.toastr.success("Almacen: " + res.text(), "Exito");
               this.getAlmacenes();
-              this.router.navigate(['inventarios/almacenes']);
+              this.router.navigate(["inventarios/almacenes"]);
               break;
-            case 'terceros':
-              this.toastr.success('Terceros: ' + res.text(), 'Exito');
+            case "terceros":
+              this.toastr.success("Terceros: " + res.text(), "Exito");
               this.getTerceros();
-              this.router.navigate(['inventarios/terceros']);
+              this.router.navigate(["inventarios/terceros"]);
               break;
-            case 'documentos':
-              this.toastr.success('Documentos: ' + res.text(), 'Exito');
+            case "documentos":
+              this.toastr.success("Documentos: " + res.text(), "Exito");
               this.getDocumentos();
-              this.router.navigate(['inventarios/documentos']);
+              this.router.navigate(["inventarios/documentos"]);
               break;
-            case 'grupos':
-              this.toastr.success('Grupos: ' + res.text(), 'Exito');
+            case "grupos":
+              this.toastr.success("Grupos: " + res.text(), "Exito");
               this.getGrupos();
-              this.router.navigate(['inventarios/grupos']);
+              this.router.navigate(["inventarios/grupos"]);
               break;
-            case 'productos':
-              this.toastr.success('Productos: ' + res.text(), 'Exito');
+            case "productos":
+              this.toastr.success("Productos: " + res.text(), "Exito");
               this.getProductos();
-              this.router.navigate(['inventarios/productos']);
+              this.router.navigate(["inventarios/productos"]);
               break;
             default:
               break;
           }
-
         },
         err => {
-          this.toastr.error('Error de conexión', 'Error');
+          this.toastr.error("Error de conexión", "Error");
           this.queryLoading(false);
         }
       );
   }
 
   exportData(data: any) {
-
-    this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-exportdata.php', JSON.stringify(data))
+    this.http
+      .post(
+        "http://www.meraki-s.com/rent/ms-synergy/php/handler-exportdata.php",
+        JSON.stringify(data)
+      )
 
       .takeWhile(() => this.alive)
-      .subscribe(
-        res => {
-          this.toastr.success(res.text(), 'Exito');
-        })
+      .subscribe(res => {
+        this.toastr.success(res.text(), "Exito");
+      });
   }
 
   // ALMACENES
   getAlmacenes() {
     //this.http.get('http://localhost/meraki-rent/ms-synergy/src/app/servicios/almacenes/ZS_mysql.php?db='+this.db)
-    this.http.get('http://www.meraki-s.com/rent/ms-synergy/php/ZS_mysql.php?db=' + this.db, )
-      .map(
-        res => res.json()
+    this.http
+      .get(
+        "http://www.meraki-s.com/rent/ms-synergy/php/ZS_mysql.php?db=" + this.db
       )
+      .map(res => res.json())
 
       .takeWhile(() => this.alive)
-      .subscribe(data => {
-        setTimeout(() => {
-          this.dataAlmacenes.next(data['records']);
-          this.queryLoading(false);
-        }, this.simTime);
-
-      },
+      .subscribe(
+        data => {
+          setTimeout(() => {
+            this.dataAlmacenes.next(data["records"]);
+            this.queryLoading(false);
+          }, this.simTime);
+        },
         err => {
-          this.toastr.error('Error de conexión', 'error');
+          this.toastr.error("Error de conexión", "error");
           this.queryLoading(false);
-        });
+        }
+      );
   }
 
   crearAlmacen(data: JSON) {
     this.queryLoading(true);
     //this.http.post('http://localhost/meraki-rent/ms-synergy/src/app/servicios/almacenes/handler-almacenes-cre.php?db='+this.db, JSON.stringify(data))
-    this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-almacenes-cre.php?db=' + this.db, JSON.stringify(data))
+    this.http
+      .post(
+        "http://www.meraki-s.com/rent/ms-synergy/php/handler-almacenes-cre.php?db=" +
+          this.db,
+        JSON.stringify(data)
+      )
 
       .takeWhile(() => this.alive)
       .subscribe(
         res => {
-          this.toastr.success(res.text(), 'Exito');
+          this.toastr.success(res.text(), "Exito");
           this.getAlmacenes();
-          this.router.navigate(['inventarios/almacenes']);
+          this.router.navigate(["inventarios/almacenes"]);
         },
         err => {
-          this.toastr.error('Error de conexión', 'Error');
+          this.toastr.error("Error de conexión", "Error");
           this.queryLoading(false);
         }
       );
@@ -178,60 +190,70 @@ export class InventariosService {
   modificarAlmacen(data: JSON) {
     this.queryLoading(true);
     //this.http.post('http://localhost/meraki-rent/ms-synergy/src/app/servicios/almacenes/handler-almacenes-mod.php?db='+this.db, JSON.stringify(data))
-    this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-almacenes-mod.php?db=' + this.db, JSON.stringify(data))
+    this.http
+      .post(
+        "http://www.meraki-s.com/rent/ms-synergy/php/handler-almacenes-mod.php?db=" +
+          this.db,
+        JSON.stringify(data)
+      )
 
       .takeWhile(() => this.alive)
       .subscribe(
         res => {
-          this.toastr.success(res.text(), 'Exito');
+          this.toastr.success(res.text(), "Exito");
           this.getAlmacenes();
         },
         err => {
-          this.toastr.error('Error de conexión', 'Error');
+          this.toastr.error("Error de conexión", "Error");
           this.queryLoading(false);
         }
       );
   }
 
-
-
   // TERCEROS
   getTerceros() {
     //this.http.get('http://localhost/meraki-rent/ms-synergy/src/app/servicios/almacenes/terceros_mysql.php?db='+this.db)
-    this.http.get('http://www.meraki-s.com/rent/ms-synergy/php/terceros_mysql.php?db=' + this.db)
-      .map(
-        res => res.json()
+    this.http
+      .get(
+        "http://www.meraki-s.com/rent/ms-synergy/php/terceros_mysql.php?db=" +
+          this.db
       )
+      .map(res => res.json())
 
       .takeWhile(() => this.alive)
-      .subscribe(data => {
-        setTimeout(() => {
-          this.dataTerceros.next(data['records']);
-          this.queryLoading(false);
-        }, this.simTime);
-
-      },
+      .subscribe(
+        data => {
+          setTimeout(() => {
+            this.dataTerceros.next(data["records"]);
+            this.queryLoading(false);
+          }, this.simTime);
+        },
         err => {
-          this.toastr.error('Error de conexión', 'Error');
+          this.toastr.error("Error de conexión", "Error");
           this.queryLoading(false);
-        });
+        }
+      );
   }
 
   crearTercero(data: JSON, page) {
     this.queryLoading(true);
     //this.http.post('http://localhost/meraki-rent/ms-synergy/src/app/servicios/almacenes/handler-terceros-cre.php?db='+this.db, JSON.stringify(data))
-    this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-terceros-cre.php?db=' + this.db, JSON.stringify(data))
+    this.http
+      .post(
+        "http://www.meraki-s.com/rent/ms-synergy/php/handler-terceros-cre.php?db=" +
+          this.db,
+        JSON.stringify(data)
+      )
 
       .takeWhile(() => this.alive)
       .subscribe(
         res => {
-          this.toastr.success(res.text(), 'Exito');
+          this.toastr.success(res.text(), "Exito");
           this.getTerceros();
-          if (page == "0")
-            this.router.navigate(['inventarios/terceros']);
+          if (page == "0") this.router.navigate(["inventarios/terceros"]);
         },
         err => {
-          this.toastr.error('Error de conexión', 'Error');
+          this.toastr.error("Error de conexión", "Error");
           this.queryLoading(false);
         }
       );
@@ -240,16 +262,21 @@ export class InventariosService {
   modificarTercero(data: JSON) {
     this.queryLoading(true);
     //this.http.post('http://localhost/meraki-rent/ms-synergy/src/app/servicios/almacenes/handler-terceros-mod.php?db='+this.db, JSON.stringify(data))
-    this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-terceros-mod.php?db=' + this.db, JSON.stringify(data))
+    this.http
+      .post(
+        "http://www.meraki-s.com/rent/ms-synergy/php/handler-terceros-mod.php?db=" +
+          this.db,
+        JSON.stringify(data)
+      )
 
       .takeWhile(() => this.alive)
       .subscribe(
         res => {
-          this.toastr.success(res.text(), 'Exito');
+          this.toastr.success(res.text(), "Exito");
           this.getTerceros();
         },
         err => {
-          this.toastr.error('Error de conexión', 'Error');
+          this.toastr.error("Error de conexión", "Error");
           this.queryLoading(false);
         }
       );
@@ -258,39 +285,47 @@ export class InventariosService {
   // DOCUMENTOS
   getDocumentos() {
     //this.http.get('http://localhost/meraki-rent/ms-synergy/src/app/servicios/almacenes/documentos_mysql.php?db='+this.db)
-    this.http.get('http://www.meraki-s.com/rent/ms-synergy/php/documentos_mysql.php?db=' + this.db)
-      .map(
-        res => res.json()
+    this.http
+      .get(
+        "http://www.meraki-s.com/rent/ms-synergy/php/documentos_mysql.php?db=" +
+          this.db
       )
+      .map(res => res.json())
 
       .takeWhile(() => this.alive)
-      .subscribe(data => {
-        setTimeout(() => {
-          this.dataDocumentos.next(data['records']);
-          this.queryLoading(false);
-        }, this.simTime);
-
-      },
+      .subscribe(
+        data => {
+          setTimeout(() => {
+            this.dataDocumentos.next(data["records"]);
+            this.queryLoading(false);
+          }, this.simTime);
+        },
         err => {
-          this.toastr.error('Error de conexión', 'Error');
+          this.toastr.error("Error de conexión", "Error");
           this.queryLoading(false);
-        });
+        }
+      );
   }
 
   crearDocumento(data: JSON) {
     this.queryLoading(true);
     //this.http.post('http://localhost/meraki-rent/ms-synergy/src/app/servicios/almacenes/handler-documentos-cre.php?db='+this.db, JSON.stringify(data))
-    this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-documentos-cre.php?db=' + this.db, JSON.stringify(data))
+    this.http
+      .post(
+        "http://www.meraki-s.com/rent/ms-synergy/php/handler-documentos-cre.php?db=" +
+          this.db,
+        JSON.stringify(data)
+      )
 
       .takeWhile(() => this.alive)
       .subscribe(
         res => {
-          this.toastr.success(res.text(), 'Exito');
+          this.toastr.success(res.text(), "Exito");
           this.getDocumentos();
-          this.router.navigate(['inventarios/documentos']);
+          this.router.navigate(["inventarios/documentos"]);
         },
         err => {
-          this.toastr.error('Error de conexión', 'Error');
+          this.toastr.error("Error de conexión", "Error");
           this.queryLoading(false);
         }
       );
@@ -299,16 +334,21 @@ export class InventariosService {
   modificarDocumento(data: JSON) {
     this.queryLoading(true);
     //this.http.post('http://localhost/meraki-rent/ms-synergy/src/app/servicios/almacenes/handler-documentos-mod.php?db='+this.db, JSON.stringify(data))
-    this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-documentos-mod.php?db=' + this.db, JSON.stringify(data))
+    this.http
+      .post(
+        "http://www.meraki-s.com/rent/ms-synergy/php/handler-documentos-mod.php?db=" +
+          this.db,
+        JSON.stringify(data)
+      )
 
       .takeWhile(() => this.alive)
       .subscribe(
         res => {
-          this.toastr.success(res.text(), 'Exito');
+          this.toastr.success(res.text(), "Exito");
           this.getDocumentos();
         },
         err => {
-          this.toastr.error('Error de conexión', 'Error');
+          this.toastr.error("Error de conexión", "Error");
           this.queryLoading(false);
         }
       );
@@ -316,16 +356,24 @@ export class InventariosService {
 
   guardarImagen(fileToUpload: File) {
     let formData = new FormData();
-    formData.append('file', fileToUpload, fileToUpload.name);
-    return this.http2.post('http://www.meraki-s.com/rent/ms-synergy/php/test/upload_image.php  ', formData, { responseType: 'text' });
+    formData.append("file", fileToUpload, fileToUpload.name);
+    return this.http2.post(
+      "http://www.meraki-s.com/rent/ms-synergy/php/test/upload_image.php  ",
+      formData,
+      { responseType: "text" }
+    );
   }
-
 
   actualizarCorrelativo(data: JSON) {
     this.queryLoading(true);
 
     //this.http.post('http://localhost/meraki-rent/ms-synergy/src/app/servicios/almacenes/handler-paquetes-bor.php?db='+this.db, data)
-    this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-documentos-corr.php?db=' + this.db, JSON.stringify(data))
+    this.http
+      .post(
+        "http://www.meraki-s.com/rent/ms-synergy/php/handler-documentos-corr.php?db=" +
+          this.db,
+        JSON.stringify(data)
+      )
 
       .takeWhile(() => this.alive)
       .subscribe(
@@ -337,7 +385,7 @@ export class InventariosService {
           this.getDocumentos();
         },
         err => {
-          this.toastr.error('Error de conexión', 'Error');
+          this.toastr.error("Error de conexión", "Error");
           this.queryLoading(false);
         }
       );
@@ -346,38 +394,47 @@ export class InventariosService {
   // GRUPOS
   getGrupos() {
     //this.http.get('http://localhost/meraki-rent/ms-synergy/src/app/servicios/almacenes/grupos_mysql.php?db='+this.db)
-    this.http.get('http://www.meraki-s.com/rent/ms-synergy/php/grupos_mysql.php?db=' + this.db)
-      .map(
-        res => res.json()
+    this.http
+      .get(
+        "http://www.meraki-s.com/rent/ms-synergy/php/grupos_mysql.php?db=" +
+          this.db
       )
+      .map(res => res.json())
 
       .takeWhile(() => this.alive)
-      .subscribe(data => {
-        setTimeout(() => {
-          this.dataGrupos.next(data['records']);
-          this.queryLoading(false);
-        }, this.simTime);
-      },
+      .subscribe(
+        data => {
+          setTimeout(() => {
+            this.dataGrupos.next(data["records"]);
+            this.queryLoading(false);
+          }, this.simTime);
+        },
         err => {
-          this.toastr.error('Error de conexión', 'Error');
+          this.toastr.error("Error de conexión", "Error");
           this.queryLoading(false);
-        });
+        }
+      );
   }
 
   crearGrupo(data: JSON) {
     this.queryLoading(true);
     //this.http.post('http://localhost/meraki-rent/ms-synergy/src/app/servicios/almacenes/handler-grupos-cre.php?db='+this.db, JSON.stringify(data))
-    this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-grupos-cre.php?db=' + this.db, JSON.stringify(data))
+    this.http
+      .post(
+        "http://www.meraki-s.com/rent/ms-synergy/php/handler-grupos-cre.php?db=" +
+          this.db,
+        JSON.stringify(data)
+      )
 
       .takeWhile(() => this.alive)
       .subscribe(
         res => {
-          this.toastr.success(res.text(), 'Exito');
+          this.toastr.success(res.text(), "Exito");
           this.getGrupos();
-          this.router.navigate(['inventarios/grupos']);
+          this.router.navigate(["inventarios/grupos"]);
         },
         err => {
-          this.toastr.error('Error de conexión', 'Error');
+          this.toastr.error("Error de conexión", "Error");
           this.queryLoading(false);
         }
       );
@@ -386,16 +443,21 @@ export class InventariosService {
   modificarGrupo(data: JSON) {
     this.queryLoading(true);
     //this.http.post('http://localhost/meraki-rent/ms-synergy/src/app/servicios/almacenes/handler-grupos-mod.php?db='+this.db, JSON.stringify(data))
-    this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-grupos-mod.php?db=' + this.db, JSON.stringify(data))
+    this.http
+      .post(
+        "http://www.meraki-s.com/rent/ms-synergy/php/handler-grupos-mod.php?db=" +
+          this.db,
+        JSON.stringify(data)
+      )
 
       .takeWhile(() => this.alive)
       .subscribe(
         res => {
-          this.toastr.success(res.text(), 'Exito');
+          this.toastr.success(res.text(), "Exito");
           this.getGrupos();
         },
         err => {
-          this.toastr.error('Error de conexión', 'Error');
+          this.toastr.error("Error de conexión", "Error");
           this.queryLoading(false);
         }
       );
@@ -404,77 +466,100 @@ export class InventariosService {
   // PRODUCTOS
   getProductos() {
     //this.http.get('http://localhost/meraki-rent/ms-synergy/src/app/servicios/almacenes/productos_mysql.php?db='+this.db)
-    this.http.get('http://www.meraki-s.com/rent/ms-synergy/php/productos_mysql.php?db=' + this.db)
-      .map(
-        res => res.json()
+    this.http
+      .get(
+        "http://www.meraki-s.com/rent/ms-synergy/php/productos_mysql.php?db=" +
+          this.db
       )
-
-      .takeWhile(() => this.alive)
-      .subscribe(data => {
-        setTimeout(() => {
-          this.dataProductos.next(data['records']);
-          this.queryLoading(false);
-        }, this.simTime);
-
-      },
-        err => {
-          this.toastr.error('Error de conexión', 'Error');
-          this.queryLoading(false);
-        });
-  }
-
-  crearProducto(data: JSON) {
-    this.queryLoading(true);
-    //this.http.post('http://localhost/meraki-rent/ms-synergy/src/app/servicios/almacenes/handler-productos-cre.php?db='+this.db, JSON.stringify(data))
-    this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-productos-cre.php?db=' + this.db, JSON.stringify(data))
+      .map(res => res.json())
 
       .takeWhile(() => this.alive)
       .subscribe(
-        res => {
-          this.toastr.success(res.text(), 'Exito');
-          this.getProductos();
-          this.router.navigate(['inventarios/productos']);
+        data => {
+          setTimeout(() => {
+            this.dataProductos.next(data["records"]);
+            this.queryLoading(false);
+          }, this.simTime);
         },
         err => {
-          this.toastr.error('Error de conexión', 'Error');
+          this.toastr.error("Error de conexión", "Error");
           this.queryLoading(false);
         }
       );
   }
 
+  crearProducto(data: JSON) {
+    this.queryLoading(true);
+    //this.http.post('http://localhost/meraki-rent/ms-synergy/src/app/servicios/almacenes/handler-productos-cre.php?db='+this.db, JSON.stringify(data))
+    this.http
+      .post(
+        "http://www.meraki-s.com/rent/ms-synergy/php/test/handler-productos-cre.php?db=" +
+          this.db,
+        JSON.stringify(data)
+      )
+      .takeWhile(() => this.alive)
+      .subscribe(
+        res => {
+          this.toastr.success(res.text(), "Exito");
+          this.getProductos();
+          this.router.navigate(["inventarios/productos"]);
+        },
+        err => {
+          this.toastr.error("Error de conexión", "Error");
+          this.queryLoading(false);
+        }
+      );
+  }
+
+  getNumSerie(tn): Observable<any> {
+    return this.http2.get(
+      "http://www.meraki-s.com/rent/ms-synergy/php/test/handler-getNumSeriexProduct.php?db=" +
+        this.db +
+        "&tn=" +
+        tn
+    );
+  }
+
   modificarProducto(data: JSON) {
     this.queryLoading(true);
 
-    this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-productos-mod.php?db=' + this.db, JSON.stringify(data))
+    this.http
+      .post(
+        "http://www.meraki-s.com/rent/ms-synergy/php/handler-productos-mod.php?db=" +
+          this.db,
+        JSON.stringify(data)
+      )
 
       .takeWhile(() => this.alive)
       .subscribe(
         res => {
-          this.toastr.success(res.text(), 'Exito');
+          this.toastr.success(res.text(), "Exito");
           this.getProductos();
         },
         err => {
-          this.toastr.error('Error de conexión', 'Error');
+          this.toastr.error("Error de conexión", "Error");
           this.queryLoading(false);
         }
       );
   }
 
   actualizarStock(data: JSON) {
-    console.log(data);
     this.queryLoading(true);
-    this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-productos-stock.php?db=' + this.db, JSON.stringify(data))
+    this.http
+      .post(
+        "http://www.meraki-s.com/rent/ms-synergy/php/handler-productos-stock.php?db=" +
+          this.db,
+        JSON.stringify(data)
+      )
 
       .takeWhile(() => this.alive)
       .subscribe(
         res => {
-
-          this.toastr.success(res.text(), 'Exito');
+          //this.toastr.success(res.text(), "Exito");
           this.getProductos();
         },
         err => {
-
-          this.toastr.error('Error de conexión', 'Error');
+          this.toastr.error("Error de conexión", "Error");
           this.queryLoading(false);
         }
       );
@@ -483,61 +568,71 @@ export class InventariosService {
   transferirProducto(data: any) {
     this.queryLoading(true);
     //this.http.post('http://localhost/meraki-rent/ms-synergy/src/app/servicios/almacenes/handler-productos-tra.php?db='+this.db, JSON.stringify(data))
-    this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-productos-tra.php?db=' + this.db, JSON.stringify(data))
-
+    this.http
+      .post(
+        "http://www.meraki-s.com/rent/ms-synergy/php/handler-productos-tra.php?db=" +
+          this.db,
+        JSON.stringify(data)
+      )
 
       .takeWhile(() => this.alive)
       .subscribe(
         res => {
           let message = res.text();
-          this.toastr.success(message, 'Exito');
+          this.toastr.success(message, "Exito");
           this.getProductos();
         },
         err => {
-          this.toastr.error('Error de conexión', 'Cerrar');
+          this.toastr.error("Error de conexión", "Cerrar");
           this.queryLoading(false);
         }
       );
   }
 
-
   //PAQUETE
   getPaquetes() {
     //this.http.get('http://localhost/meraki-rent/ms-synergy/src/app/servicios/almacenes/paquetes_mysql.php?db='+this.db)
-    this.http.get('http://www.meraki-s.com/rent/ms-synergy/php/paquetes_mysql.php?db=' + this.db)
-      .map(
-        res => res.json()
+    this.http
+      .get(
+        "http://www.meraki-s.com/rent/ms-synergy/php/paquetes_mysql.php?db=" +
+          this.db
       )
+      .map(res => res.json())
 
       .takeWhile(() => this.alive)
-      .subscribe(data => {
-        setTimeout(() => {
-          this.dataPaquetes.next(data['records']);
-          this.queryLoading(false);
-        }, this.simTime);
-
-      },
+      .subscribe(
+        data => {
+          setTimeout(() => {
+            this.dataPaquetes.next(data["records"]);
+            this.queryLoading(false);
+          }, this.simTime);
+        },
         err => {
-          this.toastr.error('Error de conexión', 'Error');
+          this.toastr.error("Error de conexión", "Error");
           this.queryLoading(false);
-        });
+        }
+      );
   }
-
 
   crearPaquete(data: any) {
     this.queryLoading(true);
     //this.http.post('http://localhost/meraki-rent/ms-synergy/src/app/servicios/almacenes/handler-paquetes-cre.php?db='+this.db, JSON.stringify(data))
-    this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-paquetes-cre.php?db=' + this.db, JSON.stringify(data))
+    this.http
+      .post(
+        "http://www.meraki-s.com/rent/ms-synergy/php/handler-paquetes-cre.php?db=" +
+          this.db,
+        JSON.stringify(data)
+      )
 
       .takeWhile(() => this.alive)
       .subscribe(
         res => {
-          this.toastr.success(res.text(), 'Exito');
+          this.toastr.success(res.text(), "Exito");
           this.getPaquetes();
-          this.router.navigate(['inventarios/productos']);
+          this.router.navigate(["inventarios/productos"]);
         },
         err => {
-          this.toastr.error('Error de conexión', 'Error');
+          this.toastr.error("Error de conexión", "Error");
           this.queryLoading(false);
         }
       );
@@ -546,16 +641,21 @@ export class InventariosService {
   modificarPaquete(data: JSON) {
     this.queryLoading(true);
     //this.http.post('http://localhost/meraki-rent/ms-synergy/src/app/servicios/almacenes/handler-paquetes-mod.php?db='+this.db, JSON.stringify(data))
-    this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-paquetes-mod.php?db=' + this.db, JSON.stringify(data))
+    this.http
+      .post(
+        "http://www.meraki-s.com/rent/ms-synergy/php/handler-paquetes-mod.php?db=" +
+          this.db,
+        JSON.stringify(data)
+      )
 
       .takeWhile(() => this.alive)
       .subscribe(
         res => {
-          this.toastr.success(res.text(), 'Exito');
+          this.toastr.success(res.text(), "Exito");
           this.getPaquetes();
         },
         err => {
-          this.toastr.error('Error de conexión', 'Error');
+          this.toastr.error("Error de conexión", "Error");
           this.queryLoading(false);
         }
       );
@@ -564,16 +664,21 @@ export class InventariosService {
   borrarPaquete(data: string) {
     this.queryLoading(true);
     //this.http.post('http://localhost/meraki-rent/ms-synergy/src/app/servicios/almacenes/handler-paquetes-bor.php?db='+this.db, data)
-    this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-paquetes-bor.php?db=' + this.db, data)
+    this.http
+      .post(
+        "http://www.meraki-s.com/rent/ms-synergy/php/handler-paquetes-bor.php?db=" +
+          this.db,
+        data
+      )
 
       .takeWhile(() => this.alive)
       .subscribe(
         res => {
-          this.toastr.success(res.text(), 'Exito');
+          this.toastr.success(res.text(), "Exito");
           this.getPaquetes();
         },
         err => {
-          this.toastr.error('Error de conexión', 'Error');
+          this.toastr.error("Error de conexión", "Error");
           this.queryLoading(false);
         }
       );
@@ -583,17 +688,23 @@ export class InventariosService {
   registrarMovimiento(data: any) {
     this.queryLoading(true);
     //this.http.post('http://localhost/meraki-rent/ms-synergy/src/app/servicios/almacenes/handler-movimientos-reg.php?db='+this.db, JSON.stringify(data))
-    this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-movimientos-reg.php?db=' + this.db, JSON.stringify(data))
-
+    // this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-movimientos-reg.php?db=' + this.db, JSON.stringify(data))
+    this.http
+      .post(
+        "http://www.meraki-s.com/rent/ms-synergy/php/test/handler-movimientos-reg.php?db=" +
+          this.db,
+        JSON.stringify(data)
+      )
       .takeWhile(() => this.alive)
       .subscribe(
         res => {
-          this.toastr.success(res.text(), 'Exito');
+          this.toastr.success(res.text(), "Exito");
           this.queryLoading(false);
-          this.router.navigate(['inventarios/movimientos']);
+          this.router.navigate(["inventarios/movimientos"]);
         },
         err => {
-          this.toastr.error('Error de conexión', 'Error');
+          this.toastr.error("Error de conexión", "Error");
+          console.log(err);
           this.queryLoading(false);
         }
       );
@@ -603,20 +714,23 @@ export class InventariosService {
   consultaKardex(data: any) {
     this.queryLoading(true);
     //this.http.post('http://localhost/meraki-rent/ms-synergy/src/app/servicios/almacenes/kardex_mysql.php?db='+this.db, JSON.stringify(data))
-    this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/kardex_mysql.php?db=' + this.db, JSON.stringify(data))
-      .map(
-        res => res.json()
+    this.http
+      .post(
+        "http://www.meraki-s.com/rent/ms-synergy/php/kardex_mysql.php?db=" +
+          this.db,
+        JSON.stringify(data)
       )
+      .map(res => res.json())
 
       .takeWhile(() => this.alive)
       .subscribe(
         res => {
-          this.dataKardex.next(res['records']);
+          this.dataKardex.next(res["records"]);
           this.queryLoading(false);
           this.consultaKardexSend.next(true);
         },
         err => {
-          this.toastr.error('Error de conexión', 'Error');
+          this.toastr.error("Error de conexión", "Error");
           this.queryLoading(false);
         }
       );
@@ -626,20 +740,23 @@ export class InventariosService {
   consultaStock(data: any) {
     this.queryLoading(true);
     //this.http.post('http://localhost/meraki-rent/ms-synergy/src/app/servicios/almacenes/stock_mysql.php?db='+this.db, JSON.stringify(data))
-    this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/stock_mysql.php?db=' + this.db, JSON.stringify(data))
-      .map(
-        res => res.json()
+    this.http
+      .post(
+        "http://www.meraki-s.com/rent/ms-synergy/php/stock_mysql.php?db=" +
+          this.db,
+        JSON.stringify(data)
       )
+      .map(res => res.json())
 
       .takeWhile(() => this.alive)
       .subscribe(
         res => {
-          this.dataStock.next(res['records']);
+          this.dataStock.next(res["records"]);
           this.queryLoading(false);
           this.consultaStockSend.next(true);
         },
         err => {
-          this.toastr.error('Error de conexión:' + err, 'Error');
+          this.toastr.error("Error de conexión:" + err, "Error");
           this.queryLoading(false);
         }
       );
@@ -649,22 +766,25 @@ export class InventariosService {
   consultaReportemov(data: any) {
     this.queryLoading(true);
     //this.http.post('http://localhost/meraki-rent/ms-synergy/src/app/servicios/almacenes/stock_mysql.php?db='+this.db, JSON.stringify(data))
-    this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/reportemov_mysql.php?db=' + this.db, JSON.stringify(data))
-      .map(
-        res => res.json()
+    this.http
+      .post(
+        "http://www.meraki-s.com/rent/ms-synergy/php/reportemov_mysql.php?db=" +
+          this.db,
+        JSON.stringify(data)
       )
+      .map(res => res.json())
 
       .takeWhile(() => this.alive)
       .subscribe(
         res => {
-          this.dataReportemov.next(res['records']);
+          this.dataReportemov.next(res["records"]);
           this.queryLoading(false);
           this.consultaReportemovSend.next(true);
-          this.moneda.next(res['records'][0]['Moneda']);
-          this.toastr.success('Listo!', 'Exito');
+          this.moneda.next(res["records"][0]["Moneda"]);
+          this.toastr.success("Listo!", "Exito");
         },
         err => {
-          this.toastr.error(err, 'Error');
+          this.toastr.error(err, "Error");
           this.queryLoading(false);
         }
       );
@@ -675,5 +795,4 @@ export class InventariosService {
     //Add 'implements OnDestroy' to the class.
     this.alive = false;
   }
-
 }

@@ -71,7 +71,7 @@
                         <ng-container matColumnDef="eliminar">
                             <mat-header-cell *matHeaderCellDef>Anular</mat-header-cell>
                             <mat-cell [ngClass]="{changeColorFont : sale.Estado == '1'}" style="margin : 0px" *matCellDef="let sale; let i=index">
-                                <button *ngIf="sale.Estado == '0'" matTooltip="Anular" matTooltipPosition="above" mat-icon-button (click)="changeState(i)">
+                                <button *ngIf="sale.Estado == '0'" matTooltip="Anular" matTooltipPosition="above" mat-icon-button (click)="changeState(sale)">
                                     <mat-icon style="margin : 0px">remove_circle</mat-icon>
                                 </button>
                             </mat-cell>

@@ -13,67 +13,81 @@
           <div class="w3-col s12 m4 l4">
 
             <mat-form-field class="meraki-fill">
-              <mat-select formControlName="Almacen" aria-placeholder="Almacen" placeholder="Almacen">
-                <mat-option class="w3-indigo w3-hover-gray" *ngFor="let almacen of almacenes"
-                            [value]="almacen.Nombre">{{ almacen.Nombre }}</mat-option>
+              <mat-select #almOrigen formControlName="Almacen" aria-placeholder="Almacen" placeholder="Almacen" (change)="filtrarProductos(almOrigen.value)">
+                <mat-option class="w3-indigo w3-hover-gray" *ngFor="let almacen of almacenes" [value]="almacen.Nombre">{{ almacen.Nombre }}</mat-option>
               </mat-select>
               <mat-error *ngIf="!stockForm.valid">
-                Almacen <strong>requerido</strong> *
+                Almacen
+                <strong>requerido</strong> *
               </mat-error>
             </mat-form-field>
             <br>
             <mat-form-field class="meraki-fill">
               <mat-select #filtro (change)="filtrarStock(filtro.value)" aria-placeholder="Filtro" placeholder="Filtrar resultado">
-                <mat-option class="w3-indigo w3-hover-gray"
-                            value="TODOS">TODOS</mat-option>
-                <mat-option class="w3-indigo w3-hover-gray"
-                            value="OK">OK</mat-option>
-                <mat-option class="w3-indigo w3-hover-gray"
-                            value="ALERTA">ALERTA</mat-option>
-                <mat-option class="w3-indigo w3-hover-gray"
-                            value="EMERGENCIA">EMERGENCIA</mat-option>
+                <mat-option class="w3-indigo w3-hover-gray" value="TODOS">TODOS</mat-option>
+                <mat-option class="w3-indigo w3-hover-gray" value="OK">OK</mat-option>
+                <mat-option class="w3-indigo w3-hover-gray" value="ALERTA">ALERTA</mat-option>
+                <mat-option class="w3-indigo w3-hover-gray" value="EMERGENCIA">EMERGENCIA</mat-option>
               </mat-select>
               <mat-error *ngIf="!stockForm.valid">
-                Almacen <strong>requerido</strong> *
+                Almacen
+                <strong>requerido</strong> *
               </mat-error>
             </mat-form-field>
             <br>
-            <button mat-raised-button
-            type="submit"
-            color="primary"
-            [disabled]="!stockForm.valid">Generar consulta</button><br>
+            <button style="width: 100%;" mat-raised-button type="submit" color="primary" [disabled]="!stockForm.valid">Generar consulta</button>
+            <br>
           </div>
-
-          <div class="w3-col s12 m8 l8">
-
-            <mat-form-field>
+          <div class="w3-col s12 m4 l4">
+            <div style="display: flex; align-items: center">
+              <mat-slide-toggle style="margin-right: 5px;" [disabled]="stockForm.value.Almacen == ''" [checked]="checked" matTooltip="Cambia entre nombre y codigo" matTooltipPosition="above"
+                labelPosition='before' (change)="slideToogleChange($event)"></mat-slide-toggle>
+              <mat-form-field style="width: 80%">
+                <input matInput (keyup.enter)="selectProduct()" (keyup)="pushKeyProducts()" [matAutocomplete]="auto" #prod formControlName="ProductoFiltro"
+                  [placeholder]="optionDisplay == 1 ? 'Producto' : 'Codigo'" [value]="productName == null ? '' : productName">
+                <mat-autocomplete #auto="matAutocomplete">
+                  <mat-option (click)="selectProduct()" class="w3-indigo w3-hover-gray" *ngFor="let option of filteredOptions" [value]="optionDisplay == 1 ? option.Nombre : option.Codigo">
+                    <span style="font-size: 13px;">{{ option.Codigo }}</span> |
+                    <span style="font-size: 13px;">{{ option.Nombre }}</span> |
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </div>
+            <mat-form-field class="meraki-fill">
+              <mat-select placeholder="Numeros de serie" [disabled]="numSeries.length == 0" [formControl]="seriesSelected" multiple (change)="valueSerie()">
+                <mat-select-trigger>
+                  <span *ngIf="seriesSelected.value?.length > 0" class="example-additional-selection">
+                    {{seriesSelected.value.length}} productos seleccionados
+                  </span>
+                </mat-select-trigger>
+                <mat-option *ngFor="let serie of numSeries" [value]="serie.numSerie">
+                  <span *ngIf="serie.estado != 2">Numero de serie : {{serie.numSerie}}</span>
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <br>
+            <button style="width: 100%;" mat-raised-button type="button" color="primary">Buscar específico</button>
+            <br>
+          </div>
+          <div class="w3-col s12 m4 l4">
+            <mat-form-field class="meraki-fill">
               <mat-select #sepcel (change)="configExportSep(sepcel.value)" [(value)]="separador" aria-placeholder="Filtro" placeholder="Separador celdas">
-                <mat-option class="w3-indigo w3-hover-gray"
-                            value=",">( , ) Coma</mat-option>
-                <mat-option class="w3-indigo w3-hover-gray"
-                            value=";">( ; ) Punto y coma</mat-option>
-                <mat-option class="w3-indigo w3-hover-gray"
-                            value="\t">( t ) Tabulador</mat-option>
+                <mat-option class="w3-indigo w3-hover-gray" value=",">( , ) Coma</mat-option>
+                <mat-option class="w3-indigo w3-hover-gray" value=";">( ; ) Punto y coma</mat-option>
+                <mat-option class="w3-indigo w3-hover-gray" value="\t">( t ) Tabulador</mat-option>
               </mat-select>
             </mat-form-field>
             <br>
-            <mat-form-field>
+            <mat-form-field class="meraki-fill">
               <mat-select #sepdec (change)="configExportDec(sepdec.value)" [(value)]="separadorDecimal" aria-placeholder="Filtro" placeholder="Separador decimal">
-                <mat-option class="w3-indigo w3-hover-gray"
-                            value=",">( , ) Coma</mat-option>
-                <mat-option class="w3-indigo w3-hover-gray"
-                            value=".">( . ) Punto</mat-option>
+                <mat-option class="w3-indigo w3-hover-gray" value=",">( , ) Coma</mat-option>
+                <mat-option class="w3-indigo w3-hover-gray" value=".">( . ) Punto</mat-option>
               </mat-select>
             </mat-form-field>
             <br>
-            <button mat-raised-button
-            type="button"
-            color="primary"
-            (click)="exportData()"
-            [disabled]="!queryDone"
-            >Exportar</button><br>
+            <button style="width: 100%;" mat-raised-button type="button" color="primary" (click)="exportData()" [disabled]="!queryDone">Exportar</button>
+            <br>
           </div>
-          
         </div>
         <br>
       </div>
@@ -104,9 +118,9 @@
               <mat-icon *ngIf="item.Stock_actual <= item.Stocke" class="w3-text-red">new_releases</mat-icon>
           </td-->
           <td style="text-align:center">
-              <mat-icon *ngIf="item.Estado === 'OK'" class="w3-text-green">check_circle</mat-icon>
-              <mat-icon *ngIf="item.Estado === 'ALERTA'" class="w3-text-amber">warning</mat-icon>
-              <mat-icon *ngIf="item.Estado === 'EMERGENCIA'" class="w3-text-red">error</mat-icon>
+            <mat-icon *ngIf="item.Estado === 'OK'" class="w3-text-green">check_circle</mat-icon>
+            <mat-icon *ngIf="item.Estado === 'ALERTA'" class="w3-text-amber">warning</mat-icon>
+            <mat-icon *ngIf="item.Estado === 'EMERGENCIA'" class="w3-text-red">error</mat-icon>
           </td>
         </tr>
       </tbody>
