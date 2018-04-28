@@ -162,15 +162,17 @@
                             </div>
                             <div style="display: flex; align-items: center; justify-content: center;" class="fullDiv">
                                 <mat-form-field color="accent" class="full">
-                                    <mat-select placeholder="Numeros de serie" [formControl]="seriesSelected" multiple (change)="valueSerie()">
+                                    <mat-select placeholder="Numeros de serie" [formControl]="seriesSelected" multiple (selectionChange)="valueSerie()">
                                         <mat-select-trigger>
-                                            <span *ngIf="seriesSelected.value?.length > 0" class="example-additional-selection">
+                                            <span *ngIf="seriesSelected.value?.length > 0">
                                                 {{seriesSelected.value.length}} productos seleccionados
                                             </span>
                                         </mat-select-trigger>
-                                        <mat-option *ngFor="let serie of numSeries" [value]="serie.numSerie">
-                                            <span *ngIf="serie.estado != 2">Numero de serie : {{serie.numSerie}}</span>
-                                        </mat-option>
+                                        <div *ngFor="let serie of numSeries; let i = index" >
+                                            <mat-option *ngIf="serie.estado != 2" [value]="serie.numSerie">
+                                                <span>Numero de serie : {{serie.numSerie}}</span>
+                                            </mat-option>
+                                        </div>
                                     </mat-select>
                                 </mat-form-field>
                             </div>
@@ -263,7 +265,8 @@
 
                 <div class="w3-half">
                     <mat-form-field color="accent" class="meraki-fill">
-                        <input matInput #qty formControlName="Cantidad" (input)="precio(qty.value)" type="number" placeholder="Cantidad" min="0" [max]="numSeries.length">
+                        <input matInput #qty formControlName="Cantidad" (input)="precio(qty.value)" type="number" placeholder="Cantidad" min="0"
+                            [max]="numSeries.length">
                     </mat-form-field>
                 </div>
                 <div class="w3-half">

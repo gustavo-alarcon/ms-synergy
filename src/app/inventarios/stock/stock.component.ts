@@ -1,26 +1,32 @@
-import { Almacen } from './../../interfaces/almacenes';
-import { FormControl, Validators, FormGroup, FormBuilder } from '@angular/forms';
-import { InventariosService } from './../../servicios/almacenes/inventarios.service';
-import { Component, OnInit } from '@angular/core';
-import { Angular2Csv } from 'angular2-csv/Angular2-csv';
+import { Almacen } from "./../../interfaces/almacenes";
+import {
+  FormControl,
+  Validators,
+  FormGroup,
+  FormBuilder
+} from "@angular/forms";
+import { InventariosService } from "./../../servicios/almacenes/inventarios.service";
+import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
+import { Angular2Csv } from "angular2-csv/Angular2-csv";
 
 @Component({
-  selector: 'app-stock',
-  templateUrl: './stock.component.html',
-  styleUrls: ['./stock.component.css']
+  selector: "app-stock",
+  templateUrl: "./stock.component.html",
+  styleUrls: ["./stock.component.css"]
 })
 export class StockComponent implements OnInit {
-
   almacenes: any[] = [];
 
   consulta: boolean = false;
+  consultaProducto : boolean = false;
   loading: boolean = false;
   queryDone: boolean = false;
+  canSearchProduct : boolean = true;
 
   stock: any[] = [];
   _stock: any[] = [];
 
-  mensajeKardex: string = 'Genere una consulta';
+  mensajeKardex: string = "Genere una consulta";
 
   stockForm: FormGroup;
 
@@ -34,37 +40,41 @@ export class StockComponent implements OnInit {
   productName: string = null;
   numSeries: any[] = [];
   seriesSelected = new FormControl([]);
-  productoDisabled : boolean = true;
+  productoDisabled: boolean = true;
+  productosSeries = [];
 
-  constructor(private inventariosService: InventariosService,
-              private fb: FormBuilder) { }
+  constructor(
+    private inventariosService: InventariosService,
+    private fb: FormBuilder,
+    private cd: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
-
     this.stockForm = this.fb.group({
-      Almacen: ['', Validators.required],
-      Producto : ['', Validators.required,],
-      Serie : ['', Validators.required],
-      ProductoFiltro : [ '' ]
+      Almacen: ["", Validators.required],
+      Serie: [[]],
+      ProductoFiltro: [""]
     });
 
     this.stockForm.get("ProductoFiltro").disable();
+    this.seriesSelected.disable();
 
     this.inventariosService.currentDataAlmacenes.subscribe(res => {
       this.almacenes = res;
-      this.almacenes.sort(this.sortBy('Nombre'));
+      this.almacenes.sort(this.sortBy("Nombre"));
     });
 
     this.inventariosService.currentLoading.subscribe(res => {
       this.loading = res;
+      this.cd.detectChanges();
     });
 
     this.inventariosService.currentConsultaStockSend.subscribe(res => {
       this.consulta = res;
+      this.cd.detectChanges();
     });
 
     this.getProducts();
-
   }
 
   getProducts() {
@@ -75,7 +85,7 @@ export class StockComponent implements OnInit {
   }
 
   filtrarProductos(alm: string) {
-    this.stockForm.get("ProductoFiltro").enable();
+    this.stockForm.controls["ProductoFiltro"].enable();
     this.productos_filtrado = [];
     this.productos.forEach(element => {
       if (element["Zona"] === alm) {
@@ -87,14 +97,14 @@ export class StockComponent implements OnInit {
   }
 
   sortBy(key) {
-    return function(a , b) {
-      if (a[key] > b[key]){
+    return function(a, b) {
+      if (a[key] > b[key]) {
         return 1;
-      }else if ( a[key] < b[key]){
+      } else if (a[key] < b[key]) {
         return -1;
       }
       return 0;
-    }
+    };
   }
 
   slideToogleChange(e) {
@@ -114,64 +124,69 @@ export class StockComponent implements OnInit {
   }
 
   onSubmit() {
-
     this.consulta = false;
-
+    this.consultaProducto = false;
     this.inventariosService.consultaStock(this.stockForm.value);
 
     this.inventariosService.currentDataStock.subscribe(res => {
       this.stock = res;
       this._stock = res.slice();
-      
+
       this.queryDone = true;
 
       if (this.stock.length < 1 && this.consulta) {
-        this.mensajeKardex = 'No se encontraron resultados';
+        this.mensajeKardex = "No se encontraron resultados";
       } else {
-        this.mensajeKardex = 'Genere una consulta';
+        this.mensajeKardex = "Genere una consulta";
       }
     });
+    this.cd.detectChanges();
   }
 
-  filtrarStock(ref: any){
-    if(ref != 'TODOS'){
-      this._stock = this.stock.filter( value => value['Estado'] === ref);
+  filtrarStock(ref: any) {
+    if (ref != "TODOS") {
+      this._stock = this.stock.filter(value => value["Estado"] === ref);
     }
-    
   }
 
   selectProduct(): void {
     let nombre;
-    if (this.productName != this.stockForm.get("ProductoFiltro").value) {
-      this.numSeries = [];
-      this.seriesSelected.patchValue([]);
-      this.productName = this.stockForm.get("ProductoFiltro").value;
-      this.pushKeyProducts();
-      if(this.optionDisplay == 2){
-        for (let i = 0; i < this.filteredOptions.length; i++) {
-          if(this.productName == this.filteredOptions[i].Codigo){
-            nombre = this.filteredOptions[i].Nombre;
-            break;
-          }
+    this.numSeries = [];
+    this.seriesSelected.patchValue([]);
+    this.productName = this.stockForm.get("ProductoFiltro").value;
+    this.pushKeyProducts();
+    if (this.optionDisplay == 2) {
+      for (let i = 0; i < this.filteredOptions.length; i++) {
+        if (this.productName == this.filteredOptions[i].Codigo) {
+          nombre = this.filteredOptions[i].Nombre;
+          break;
         }
+      }
+      if (this.filteredOptions.length != 0) {
         this.inventariosService.getNumSerie(nombre).subscribe(data => {
           this.numSeries = data.records;
           this.numSeries.sort(this.dynamicSort("numSerie"));
+          this.canSearchProduct = false;
+          this.seriesSelected.enable();
         });
       }
-      else{
-      this.inventariosService.getNumSerie(this.productName).subscribe(data => {
-        this.numSeries = data.records;
-        this.numSeries.sort(this.dynamicSort("numSerie"));
-      });
-    }
+    } else {
+      if (this.filteredOptions.length != 0) {
+        this.inventariosService
+          .getNumSerie(this.productName)
+          .subscribe(data => {
+            this.numSeries = data.records;
+            this.numSeries.sort(this.dynamicSort("numSerie"));
+            this.canSearchProduct = false;
+            this.seriesSelected.enable();
+          });
+      }
     }
   }
-
-  //[disabled]="stockForm.value.Almacen == ''"
-  //[disabled]="stockForm.value.Producto == ''"
   pushKeyProducts() {
     this.numSeries = [];
+    this.seriesSelected.disable();
+    this.canSearchProduct = true;
     this.filteredOptions = this.filterProducto(
       this.stockForm.value["ProductoFiltro"]
     );
@@ -206,28 +221,59 @@ export class StockComponent implements OnInit {
     };
   }
 
-  exportData(){
-
-    let options = { 
+  exportData() {
+    let options = {
       fieldSeparator: this.separador,
       quoteStrings: '"',
       decimalseparator: this.separadorDecimal,
-      showLabels: false, 
+      showLabels: false,
       showTitle: false,
       useBom: false
     };
 
     let exportStock = this._stock.slice();
-    exportStock.unshift({Nombre:"PRODUCTO",Unidad:"UNIDAD",Stock_actual:"STOCK",Estado:"ESTADO"});
-    new Angular2Csv(exportStock, 'Stock', options);
+    exportStock.unshift({
+      Nombre: "PRODUCTO",
+      Unidad: "UNIDAD",
+      Stock_actual: "STOCK",
+      Estado: "ESTADO"
+    });
+    new Angular2Csv(exportStock, "Stock", options);
   }
 
-  configExportDec(dec: string){
+  configExportDec(dec: string) {
     this.separadorDecimal = dec;
   }
 
-  configExportSep(sep: string){
+  configExportSep(sep: string) {
     this.separador = sep;
   }
 
+  getProductoSerie() {
+    let filtro;
+    this.consulta = false;
+    if (this.optionDisplay != 2) {
+      filtro = {
+        Producto: this.productName,
+        Series: []
+      };
+    } else {
+      for (let i = 0; i < this.filteredOptions.length; i++) {
+        if (this.filteredOptions[i].Codigo == this.productName) {
+          filtro = {
+            Producto: this.filteredOptions[i].Nombre,
+            Series: []
+          };
+        }
+      }
+    }
+    if (this.seriesSelected.value.length > 0) {
+      filtro.Series = this.seriesSelected.value;
+    }
+    this.inventariosService.getProductoSerie(filtro).subscribe(data => {
+      this.productosSeries = data.records;
+      this.consultaProducto = true;
+      this.cd.detectChanges();
+    });
+  }
 }

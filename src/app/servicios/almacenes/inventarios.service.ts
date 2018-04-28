@@ -1,7 +1,13 @@
 import { Router } from "@angular/router";
 import { Almacen } from "../../interfaces/almacenes";
 import { LoginService } from "./../login/login.service";
-import { Headers, Http, Response, RequestOptions } from "@angular/http";
+import {
+  Headers,
+  Http,
+  Response,
+  RequestOptions,
+  ResponseType
+} from "@angular/http";
 import { Injectable, OnDestroy } from "@angular/core";
 import "rxjs/Rx";
 import { Observable } from "rxjs/Observable";
@@ -517,6 +523,14 @@ export class InventariosService {
         this.db +
         "&tn=" +
         tn
+    );
+  }
+
+  getProductoSerie(data): Observable<any> {
+    return this.http2.post(
+      "http://www.meraki-s.com/rent/ms-synergy/php/test/handler-producto&serie.php?db=" +
+        this.db,
+      JSON.stringify(data)
     );
   }
 

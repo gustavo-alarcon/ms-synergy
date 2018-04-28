@@ -206,31 +206,27 @@ export class MovimientosComponent implements OnInit {
 
   selectProduct(): void {
     let nombre;
-    if (this.productName != this.movimientoForm.get("Producto").value) {
-      this.numSeries = [];
-      this.seriesSelected.patchValue([]);
-      this.productName = this.movimientoForm.get("Producto").value;
-      this.pushKeyProducts();
-      this.prodActual(this.filteredOptions[0]);
-      if (this.optionDisplay == 2) {
-        for (let i = 0; i < this.filteredOptions.length; i++) {
-          if (this.productName == this.filteredOptions[i].Codigo) {
-            nombre = this.filteredOptions[i].Nombre;
-            break;
-          }
+    this.numSeries = [];
+    this.seriesSelected.patchValue([]);
+    this.productName = this.movimientoForm.get("Producto").value;
+    this.pushKeyProducts();
+    this.prodActual(this.filteredOptions[0]);
+    if (this.optionDisplay == 2) {
+      for (let i = 0; i < this.filteredOptions.length; i++) {
+        if (this.productName == this.filteredOptions[i].Codigo) {
+          nombre = this.filteredOptions[i].Nombre;
+          break;
         }
-        this.inventariosService.getNumSerie(nombre).subscribe(data => {
-          this.numSeries = data.records;
-          this.numSeries.sort(this.dynamicSort("numSerie"));
-        });
-      } else {
-        this.inventariosService
-          .getNumSerie(this.productName)
-          .subscribe(data => {
-            this.numSeries = data.records;
-            this.numSeries.sort(this.dynamicSort("numSerie"));
-          });
       }
+      this.inventariosService.getNumSerie(nombre).subscribe(data => {
+        this.numSeries = data.records;
+        this.numSeries.sort(this.dynamicSort("numSerie"));
+      });
+    } else {
+      this.inventariosService.getNumSerie(this.productName).subscribe(data => {
+        this.numSeries = data.records;
+        this.numSeries.sort(this.dynamicSort("numSerie"));
+      });
     }
   }
 
@@ -647,12 +643,11 @@ export class MovimientosComponent implements OnInit {
       }
     });
   }
-
+  //
   precio(cantidad: number) {
     let arraySeries: any[] = [];
 
     if (cantidad <= this.numSeries.length) {
-      this.movimientoForm.controls["Cantidad"].setErrors({ incorrect: false });
       for (let i = 0; i < cantidad; i++) {
         arraySeries.push(this.numSeries[i].numSerie);
       }
@@ -669,6 +664,27 @@ export class MovimientosComponent implements OnInit {
         });
       }
     }
+  }
+
+  precioIndex(cantidad: number) {
+    if (
+      this.tipoMovimiento === "TRANSFERENCIA" ||
+      this.tipoMovimiento === "AJUSTE DE ENTRADA" ||
+      this.tipoMovimiento === "AJUSTE DE SALIDA"
+    ) {
+      this.movimientoForm.patchValue({ Precio: 0 });
+    } else {
+      this.movimientoForm.patchValue({
+        Precio: cantidad * this.precioActual
+      });
+    }
+  }
+
+  valueSerie(i) {
+    this.movimientoForm.patchValue({
+      Cantidad: this.seriesSelected.value.length
+    });
+    this.precioIndex(this.movimientoForm.value["Cantidad"]);
   }
 
   onSubmit() {
@@ -760,13 +776,6 @@ export class MovimientosComponent implements OnInit {
     }
 
     this.calcMontoTotal();
-  }
-
-  valueSerie() {
-    this.movimientoForm.patchValue({
-      Cantidad: this.seriesSelected.value.length
-    });
-    this.precio(this.movimientoForm.value["Cantidad"]);
   }
 
   calcMontoTotal() {
