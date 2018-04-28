@@ -680,7 +680,7 @@ export class MovimientosComponent implements OnInit {
     }
   }
 
-  valueSerie(i) {
+  valueSerie() {
     this.movimientoForm.patchValue({
       Cantidad: this.seriesSelected.value.length
     });
