@@ -4,23 +4,19 @@
   </div>
   <br>
   <div class="w3-row">
-    <button mat-raised-button
-            color="primary"
-            *ngIf="perms[0]['doc_b_crear']"
-            routerLink="crear-documento"
-            style="display:inline-block">Crear nuevo</button>
+    <button mat-raised-button color="primary" *ngIf="perms[0]['doc_b_crear']" routerLink="crear-documento" style="display:inline-block">Crear nuevo</button>
     <mat-form-field floatPlaceholder="never">
       <input matInput type="text" (input)="filterData($event.target.value)" placeholder="filtrar contenido">
       <mat-hint>
         Escribe una palabra
       </mat-hint>
-    </mat-form-field>          
+    </mat-form-field>
   </div>
   <router-outlet></router-outlet>
   <br>
   <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
   <div class="w3-responsive" style="max-height:50vh">
-    
+
     <table class="w3-table-all">
       <thead>
         <tr>
@@ -50,10 +46,11 @@
           <td *ngIf="!edit[i]['value'] && perms[0]['doc_t_correlativoInicial']" class="w3-right-align w3-border-left">{{row.Correlativo_inicial}}</td>
           <td *ngIf="!edit[i]['value'] && perms[0]['doc_t_correlativoActual']" class="w3-right-align w3-border-left w3-border-right">{{row.Correlativo_actual}}</td>
           <td *ngIf="!edit[i]['value'] && perms[0]['doc_t_modo']">{{row.Uso}}</td>
-          <td *ngIf="!edit[i]['value'] && perms[0]['doc_b_editar']" style="text-align: center"><button mat-mini-fab
-                                                                                                        color="accent"
-                                                                                                        class="w3-animate-zoom"
-                                                                                                        (click)="editAction(i)"><mat-icon>edit</mat-icon></button></td>
+          <td *ngIf="!edit[i]['value'] && perms[0]['doc_b_editar']" style="text-align: center">
+            <button mat-mini-fab color="accent" class="w3-animate-zoom" (click)="editAction(i)">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </td>
 
           <td *ngIf="edit[i]['value']">{{i + 1}}</td>
           <td *ngIf="edit[i]['value']">
@@ -72,41 +69,42 @@
             <input class="w3-input" type="text" (input)="modData['Numtienda'] = $event.target.value" [value]="row.Numtienda" [placeholder]="row.Numtienda">
           </td>
           <td *ngIf="edit[i]['value'] && perms[0]['doc_t_correlativoInicial']">
-            <input class="w3-input" type="text" (input)="modData['Correlativo_inicial'] = $event.target.value" [value]="row.Correlativo_inicial" [placeholder]="row.Correlativo_inicial">
+            <input class="w3-input" type="text" (input)="modData['Correlativo_inicial'] = $event.target.value" [value]="row.Correlativo_inicial"
+              [placeholder]="row.Correlativo_inicial">
           </td>
           <td *ngIf="edit[i]['value'] && perms[0]['doc_t_correlativoActual']">
-            <input class="w3-input" type="text" (input)="modData['Correlativo_actual'] = $event.target.value" [value]="row.Correlativo_actual" [placeholder]="row.Correlativo_actual">
+            <input class="w3-input" type="text" (input)="modData['Correlativo_actual'] = $event.target.value" [value]="row.Correlativo_actual"
+              [placeholder]="row.Correlativo_actual">
           </td>
           <td *ngIf="edit[i]['value'] && perms[0]['doc_t_modo']">
             <input class="w3-input" type="text" (input)="modData['Uso'] = $event.target.value" [value]="row.Uso" [placeholder]="row.Uso">
           </td>
-          <td *ngIf="edit[i]['value']" class="w3-padding-small" style="text-align: center"><button mat-mini-fab
-                                                                                  color="primary"
-                                                                                  *ngIf="perms[0]['doc_b_guardar']"
-                                                                                  class="w3-animate-zoom"
-                                                                                  style="margin:1px"
-                                                                                  (click)="saveAction(i)"><mat-icon>save</mat-icon></button>
-                                                                                  <button mat-mini-fab
-                                                                                          color="warn"
-                                                                                          *ngIf="perms[0]['doc_b_borrar']"
-                                                                                          class="w3-animate-zoom"
-                                                                                          style="margin:1px"
-                                                                                          (click)="borrarAction('documentos',row.ID)"><mat-icon>delete</mat-icon></button>
-                                                                                  <button mat-mini-fab
-                                                                                          color="accent"
-                                                                                          class="w3-animate-zoom"
-                                                                                          style="margin:1px"
-                                                                                          (click)="cancelAction(i)"><mat-icon>cancel</mat-icon></button></td> 
+          <td *ngIf="edit[i]['value']" class="w3-padding-small" style="text-align: center">
+            <button mat-mini-fab color="primary" *ngIf="perms[0]['doc_b_guardar']" class="w3-animate-zoom" style="margin:1px"
+              (click)="saveAction(i)">
+              <mat-icon>save</mat-icon>
+            </button>
+            <button mat-mini-fab color="warn" *ngIf="perms[0]['doc_b_borrar']" class="w3-animate-zoom" style="margin:1px" (click)="borrarAction('documentos',row.ID)">
+              <mat-icon>delete</mat-icon>
+            </button>
+            <button mat-mini-fab color="accent" class="w3-animate-zoom" style="margin:1px" (click)="cancelAction(i)">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>
   </div>
   <div *ngIf="loading" class="w3-container w3-padding-large meraki-empty-bg" style="width:100%">
-    <h2 class="w3-margin w3-center meraki-font-s2"><mat-icon class="w3-margin" style="font-size: 36px">insert_drive_file</mat-icon>Cargando ...</h2>
+    <h2 class="w3-margin w3-center meraki-font-s2">
+      <mat-icon class="w3-margin" style="font-size: 36px">insert_drive_file</mat-icon>Cargando ...</h2>
   </div>
   <div *ngIf="data_.length == 0 && !loading" class="w3-container w3-padding-large meraki-empty-bg" style="width:100%">
-      <h2 class="w3-margin w3-center meraki-font-s2"><mat-icon class="w3-margin" style="font-size: 36px">insert_drive_file</mat-icon>No hay documentos en la tabla</h2>
+    <h2 class="w3-margin w3-center meraki-font-s2">
+      <mat-icon class="w3-margin" style="font-size: 36px">insert_drive_file</mat-icon>No hay documentos en la tabla</h2>
   </div>
   <br>
-  <div style="height:25vh;"><p></p></div>
+  <div style="height:25vh;">
+    <p></p>
+  </div>
 </div>

@@ -9,18 +9,13 @@ import { Direction, Directionality } from '@angular/cdk/bidi';
 import { ElementRef, EventEmitter, InjectionToken, OnChanges, OnDestroy, SimpleChanges, TemplateRef, ViewContainerRef } from '@angular/core';
 import { Overlay } from './overlay';
 import { OverlayRef } from './overlay-ref';
-import { ConnectedOverlayPositionChange, ConnectionPositionPair } from './position/connected-position';
+import { ConnectedOverlayPositionChange } from './position/connected-position';
+import { ConnectedPosition } from './position/flexible-connected-position-strategy';
 import { RepositionScrollStrategy, ScrollStrategy } from './scroll/index';
 /** Injection token that determines the scroll handling while the connected overlay is open. */
 export declare const CDK_CONNECTED_OVERLAY_SCROLL_STRATEGY: InjectionToken<() => ScrollStrategy>;
 /** @docs-private */
-export declare function CDK_CONNECTED_OVERLAY_SCROLL_STRATEGY_PROVIDER_FACTORY(overlay: Overlay): () => RepositionScrollStrategy;
-/** @docs-private */
-export declare const CDK_CONNECTED_OVERLAY_SCROLL_STRATEGY_PROVIDER: {
-    provide: InjectionToken<() => ScrollStrategy>;
-    deps: (typeof Overlay)[];
-    useFactory: (overlay: Overlay) => () => RepositionScrollStrategy;
-};
+export declare function CDK_CONNECTED_OVERLAY_SCROLL_STRATEGY_FACTORY(): () => ScrollStrategy;
 /**
  * Directive applied to an element to make it usable as an origin for an Overlay using a
  * ConnectedPositionStrategy.
@@ -50,7 +45,7 @@ export declare class CdkConnectedOverlay implements OnDestroy, OnChanges {
     /** Origin for the connected overlay. */
     origin: CdkOverlayOrigin;
     /** Registered connected position pairs. */
-    positions: ConnectionPositionPair[];
+    positions: ConnectedPosition[];
     /** The offset in pixels for the overlay connection point on the x-axis */
     offsetX: number;
     /** The offset in pixels for the overlay connection point on the y-axis */
@@ -73,66 +68,6 @@ export declare class CdkConnectedOverlay implements OnDestroy, OnChanges {
     hasBackdrop: any;
     /** Whether or not the overlay should be locked when scrolling. */
     lockPosition: any;
-    /**
-     * @deprecated
-     * @deletion-target 6.0.0
-     */
-    _deprecatedOrigin: CdkOverlayOrigin;
-    /**
-     * @deprecated
-     * @deletion-target 6.0.0
-     */
-    _deprecatedPositions: ConnectionPositionPair[];
-    /**
-     * @deprecated
-     * @deletion-target 6.0.0
-     */
-    _deprecatedOffsetX: number;
-    /**
-     * @deprecated
-     * @deletion-target 6.0.0
-     */
-    _deprecatedOffsetY: number;
-    /**
-     * @deprecated
-     * @deletion-target 6.0.0
-     */
-    _deprecatedWidth: number | string;
-    /**
-     * @deprecated
-     * @deletion-target 6.0.0
-     */
-    _deprecatedHeight: number | string;
-    /**
-     * @deprecated
-     * @deletion-target 6.0.0
-     */
-    _deprecatedMinWidth: number | string;
-    /**
-     * @deprecated
-     * @deletion-target 6.0.0
-     */
-    _deprecatedMinHeight: number | string;
-    /**
-     * @deprecated
-     * @deletion-target 6.0.0
-     */
-    _deprecatedBackdropClass: string;
-    /**
-     * @deprecated
-     * @deletion-target 6.0.0
-     */
-    _deprecatedScrollStrategy: ScrollStrategy;
-    /**
-     * @deprecated
-     * @deletion-target 6.0.0
-     */
-    _deprecatedOpen: boolean;
-    /**
-     * @deprecated
-     * @deletion-target 6.0.0
-     */
-    _deprecatedHasBackdrop: any;
     /** Event emitted when the backdrop is clicked. */
     backdropClick: EventEmitter<MouseEvent>;
     /** Event emitted when the position has changed. */
@@ -154,6 +89,11 @@ export declare class CdkConnectedOverlay implements OnDestroy, OnChanges {
     private _buildConfig();
     /** Returns the position strategy of the overlay to be set on the overlay config */
     private _createPositionStrategy();
+    /**
+     * Sets the primary and fallback positions of a positions strategy,
+     * based on the current directive inputs.
+     */
+    private _setPositions(positionStrategy);
     /** Attaches the overlay and subscribes to backdrop clicks if backdrop exists */
     private _attachOverlay();
     /** Detaches the overlay and unsubscribes to backdrop clicks if backdrop exists */
@@ -161,3 +101,11 @@ export declare class CdkConnectedOverlay implements OnDestroy, OnChanges {
     /** Destroys the overlay created by this directive. */
     private _destroyOverlay();
 }
+/** @docs-private @deprecated @deletion-target 7.0.0 */
+export declare function CDK_CONNECTED_OVERLAY_SCROLL_STRATEGY_PROVIDER_FACTORY(overlay: Overlay): () => RepositionScrollStrategy;
+/** @docs-private @deprecated @deletion-target 7.0.0 */
+export declare const CDK_CONNECTED_OVERLAY_SCROLL_STRATEGY_PROVIDER: {
+    provide: InjectionToken<() => ScrollStrategy>;
+    deps: (typeof Overlay)[];
+    useFactory: typeof CDK_CONNECTED_OVERLAY_SCROLL_STRATEGY_PROVIDER_FACTORY;
+};

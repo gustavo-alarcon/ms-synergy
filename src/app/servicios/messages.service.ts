@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { URLSearchParams, Headers } from '@angular/http';
 import {  BaseRequestOptions, RequestOptions, RequestOptionsArgs } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import * as crypto from 'crypto-js';
 
 @Injectable()

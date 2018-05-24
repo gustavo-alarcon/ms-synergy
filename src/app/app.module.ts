@@ -36,7 +36,6 @@ import {  MatToolbarModule,
         } from '@angular/material';
 
 import { AppComponent } from './app.component';
-import { MainNavComponent } from './main-nav/main-nav.component';
 import { LandingComponent } from './landing/landing.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { LoginComponent } from './login/login.component';
@@ -94,18 +93,14 @@ import { InlineEditComponent } from './ms-text/inline-edit/inline-edit.component
 import { HistoryComponent } from './ms-text/history/history.component';
 import { InlineEditHistoryComponent } from './ms-text/history/inline-edit-history/inline-edit-history.component';
 import { PosService } from './servicios/pos.service';
-
-import {MAT_AUTOCOMPLETE_SCROLL_STRATEGY} from '@angular/material'; 
-import { Platform } from '@angular/cdk/platform'; 
-import { Overlay } from '@angular/cdk/overlay';
 import { DetailProductsComponent } from './sales-history/detail-products/detail-products.component';
 import { ConfirmComponent } from './sales-history/confirm/confirm.component';
 import { Confirm2Component } from './ms-text/confirm/confirm2.component';
 import { HistorialMovimientosComponent } from './inventarios/historial-movimientos/historial-movimientos.component';
 import { CajaComponent } from './sales-history/caja/caja.component';
-
-
-export function MAT_AUTOCOMPLETE_SCROLL_STRATEGY_FACTORY(overlay: Overlay, platform: Platform) { return () => platform.IOS ? overlay.scrollStrategies.block() : overlay.scrollStrategies.reposition(); }
+import { ImagenComponent } from "./inventarios/productos/imagen/imagen.component";
+import { DetailSeriesComponent } from './sales-history/detail-products/detail-series/detail-series.component';
+import { MainNavComponent } from './main-nav/main-nav.component';
 
 @NgModule({
   declarations: [
@@ -152,7 +147,9 @@ export function MAT_AUTOCOMPLETE_SCROLL_STRATEGY_FACTORY(overlay: Overlay, platf
     ConfirmComponent,
     Confirm2Component,
     HistorialMovimientosComponent,
-    CajaComponent
+    CajaComponent,
+    ImagenComponent,
+    DetailSeriesComponent
   ],
   imports: [
     BrowserModule,
@@ -204,7 +201,8 @@ export function MAT_AUTOCOMPLETE_SCROLL_STRATEGY_FACTORY(overlay: Overlay, platf
     AddClient2Component,
     ConfirmComponent,
     Confirm2Component,
-    CajaComponent
+    CajaComponent,
+    ImagenComponent
   ],
   providers: [
     LoginService,
@@ -219,9 +217,6 @@ export function MAT_AUTOCOMPLETE_SCROLL_STRATEGY_FACTORY(overlay: Overlay, platf
     {
       provide: LocationStrategy, useClass: HashLocationStrategy
     },
-    { provide: MAT_AUTOCOMPLETE_SCROLL_STRATEGY, 
-      deps: [Overlay, Platform],
-      useFactory: MAT_AUTOCOMPLETE_SCROLL_STRATEGY_FACTORY, }
   ],
   bootstrap: [AppComponent]
 })

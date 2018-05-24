@@ -6,7 +6,7 @@ import {MatPaginator,  MatTableDataSource} from '@angular/material';
 import * as crypto from 'crypto-js';
 import { AddClient2Component } from './add-client/add-client.component';
 import { Client } from '../../classes/client';
-import "rxjs/add/operator/takeWhile";
+import { takeWhile } from "rxjs/operators";
 
 @Component({
   selector: 'app-clients',
@@ -54,7 +54,7 @@ export class ClientsComponent implements OnInit {
   getClients(){
     this.isLoadingResults = true;
     this.clientService.getTerceros(this.bd)
-    .takeWhile(() => this.alive)
+    .pipe(takeWhile(() => this.alive))
     .subscribe(data=>{
       this.clientsSales = data.records;
       for(let i=0;i<data.length;i++){

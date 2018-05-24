@@ -6,7 +6,7 @@ import { MessagesService } from '../servicios/messages.service'
 import * as crypto from 'crypto-js';
 import { PosService } from '../servicios/pos.service';
 import { HistorySales } from '../classes/history-sales';
-import "rxjs/add/operator/takeWhile";
+import { takeWhile } from "rxjs/operators";
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { ConfirmComponent } from '../sales-history/confirm/confirm.component';
 import { CajaComponent } from '../sales-history/caja/caja.component';
@@ -29,7 +29,6 @@ export class SalesHistoryComponent implements OnInit {
   edit: boolean = false;
   historyTable: HistorySales[] = [];
   private alive: boolean = true;
-
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -55,27 +54,27 @@ export class SalesHistoryComponent implements OnInit {
     this.history = [];
     this.isLoadingResults = true;
     this.posService.getSalesHistory(this.bd)
-      .takeWhile(() => this.alive)
+      .pipe(takeWhile(() => this.alive))
       .subscribe(data => {
         for (let i = 0; i < data.records.length; i++) {
           this.history.push({
-            'Correlativo': parseInt(data.records[i].Correlativo),
-            'Serie': data.records[i].Serie,
-            'Documento': data.records[i].Documento,
-            'Operacion': data.records[i].Operacion,
-            'Fecha': data.records[i].Fecha,
-            'Usuario': data.records[i].Usuario,
-            'Estado': data.records[i].Estado,
-            'Total': data.records[i].Total,
-            'IGV': data.records[i].IGV,
-            'Entregado': data.records[i].Entregado,
-            'Vuelto': data.records[i].Vuelto,
-            'TipoIGV': data.records[i].Tipo_igv,
-            'TipoPago': data.records[i].Tipo_pago,
-            'SubTotal': data.records[i].Sub_total,
-            'Cliente': data.records[i].Cliente
+            Correlativo: parseInt(data.records[i].Correlativo),
+            Serie: data.records[i].Serie,
+            Documento: data.records[i].Documento,
+            Operacion: data.records[i].Operacion,
+            Fecha: data.records[i].Fecha,
+            Usuario: data.records[i].Usuario,
+            Estado: data.records[i].Estado,
+            Total: data.records[i].Total,
+            IGV: data.records[i].IGV,
+            Entregado: data.records[i].Entregado,
+            Vuelto: data.records[i].Vuelto,
+            TipoIGV: data.records[i].Tipo_igv,
+            TipoPago: data.records[i].Tipo_pago,
+            SubTotal: data.records[i].Sub_total,
+            Cliente: data.records[i].Cliente
           });
-        }
+        }        
         this.history.sort(this.dynamicSort('Correlativo'));
         this.isLoadingResults = false;
         this.dataSource = new MatTableDataSource(this.history);
@@ -84,7 +83,7 @@ export class SalesHistoryComponent implements OnInit {
         err => {
           this.isLoadingResults = false;
           this.toastr.error("Ocurrio un error", "Error");
-          this.cd.detectChanges();
+          this.cd.markForCheck();
         });
   }
 
@@ -97,18 +96,17 @@ export class SalesHistoryComponent implements OnInit {
     dialogRef.beforeClose().subscribe(result => {
       if (result != 'close' && result != undefined) {
         let erase = {
-          Operacion: null,
-          Estado: null
+          Operacion: sale.Operacion,
+          Estado: sale.Estado
         };
-        erase.Operacion = sale.Operacion;
-        erase.Estado = sale.Estado;
+        console.log(erase);
         this.posService.removeSale(this.bd, erase)
-          .takeWhile(() => this.alive)
+          .pipe(takeWhile(() => this.alive))
           .subscribe(data => {
+            console.log(data);
             this.toastr.success("Se anulo la venta con exito", "Exito");
             sale.Estado = '1';
-            this.cd.detectChanges();
-            console.log(sale);
+            this.cd.markForCheck();
           },
             err => {
               this.toastr.error("Hubo un error", "Error");
@@ -175,7 +173,6 @@ export class SalesHistoryComponent implements OnInit {
     });
 
     dialogRef.beforeClose().subscribe(result => {
-      console.log(result);
     });
   }
 

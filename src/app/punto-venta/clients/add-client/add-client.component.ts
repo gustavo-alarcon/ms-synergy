@@ -6,7 +6,7 @@ import { InventariosService } from './../../../servicios/almacenes/inventarios.s
 import { Router } from '@angular/router';
 import {FormControl, Validators, FormGroup, FormBuilder} from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
-import "rxjs/add/operator/takeWhile";
+import { takeWhile } from "rxjs/operators";
 
 @Component({
   selector: 'app-add-client',
@@ -57,7 +57,7 @@ export class AddClient2Component implements OnInit {
     });
 
     this.inventariosService.currentDataTerceros
-    .takeWhile(() => this.alive)
+    .pipe(takeWhile(() => this.alive))
     .subscribe(res => {
       this.terceros = res;
     });

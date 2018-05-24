@@ -1,7 +1,32 @@
+# domino 2.0.2 (28 Mar 2018)
+* Add TypeScript definitions (#103)
+* Add `flex` CSS styles (#119, #120)
+* Fix Element#matches with ~= selectors (#121)
+
+# domino 2.0.1 (14 Feb 2018)
+* Allow attributes named 'xmlns' (#112)
+* Make DOMTokenList add/remove variadic (#109)
+* Make `Array.from` and for-of loops work on `Node#attributes`.
+
+# domino 2.0.0 ( 8 Nov 2017)
+* Fix potential O(N^2) slowdown in FilteredElementList#item.
+* `mocha` dependency has been updated to 4.0.x.  As a result, we are
+  no longer testing on node pre-v4.0.0; see:
+    https://boneskull.com/mocha-v4-nears-release/
+* Domino now uses a linked list representation for children of Node,
+  unless/until the Node#childNodes accessor is used (which requires
+  an indexed array to be built).  Inserting a removing nodes can be
+  much quicker using the linked list representation if care is
+  taken not to deoptimize the tree by using the #childNodes accessor.
+  This implementation strategy matches the one used by webkit and
+  other browser-based implementations, and thus ought to match
+  performance expectations of folks used to writing browser-based
+  DOM manipulation code.
+
 # domino 1.0.30 (24 Oct 2017)
 * Fix regexp capitalization in URLUtils (#101)
 * Fix O(N^2) slowdown in initial tree traversal using nextSibling/prevSibling
-* Update `mocha` dependency to 4.0.x and `should` to 13.1.x.
+* Update `mocha` dependency to 3.5.x and `should` to 13.1.x.
 
 # domino 1.0.29 ( 7 Aug 2017)
 * Fix "#id" optimization in querySelectorAll() when 0 or 2 matches for

@@ -1,15 +1,16 @@
 <div class="w3-animate-top">
-  <div class="w3-container w3-border-bottom w3-border-black">
-      <h3 mat-button class="meraki-font-s5">Crear nuevo producto</h3>
-  </div>
-  <br>
-  <form [formGroup]="crearProductoForm" (ngSubmit)="onSubmit()" autocomplete="off">
+    <div class="w3-container w3-border-bottom w3-border-black">
+        <h3 mat-button class="meraki-font-s5">Crear nuevo producto</h3>
+    </div>
+    <br>
+    <form [formGroup]="crearProductoForm" (ngSubmit)="onSubmit()" autocomplete="off">
         <div class="w3-white w3-card-4 w3-padding">
             <h4>Producto</h4>
             <mat-form-field color="accent" style="width:49%">
                 <input #nombre matInput type="text" formControlName="Nombre" (input)="checkByNombre(nombre.value)" placeholder="Nombre*">
                 <mat-error *ngIf="!crearProductoForm.valid">
-                    Nombre <strong>requerido</strong> *
+                    Nombre
+                    <strong>requerido</strong> *
                 </mat-error>
                 <mat-hint *ngIf="nombreExist">
                     El nombre ya existe.
@@ -17,9 +18,10 @@
             </mat-form-field>
 
             <mat-form-field color="accent" style="width:49%">
-                <input #codigo matInput type="text" formControlName="Codigo" (input)="checkByCodigo(codigo.value)"placeholder="Código*">
+                <input #codigo matInput type="text" formControlName="Codigo" (input)="checkByCodigo(codigo.value)" placeholder="Código*">
                 <mat-error *ngIf="!crearProductoForm.valid">
-                    Código <strong>requerido</strong> *
+                    Código
+                    <strong>requerido</strong> *
                 </mat-error>
                 <mat-hint *ngIf="codigoExist">
                     El código ya existe ({{ nombreCodigo }})
@@ -28,8 +30,7 @@
 
             <mat-form-field color="accent" style="width:100%">
                 <mat-select formControlName="Grupo" placeholder="Grupo/Categoría*">
-                    <mat-option class="w3-indigo w3-hover-gray" *ngFor="let grupo of grupos"
-                                [value]="grupo.Nombre">{{ grupo.Nombre }}</mat-option>
+                    <mat-option class="w3-indigo w3-hover-gray" *ngFor="let grupo of grupos" [value]="grupo.Nombre">{{ grupo.Nombre }}</mat-option>
                 </mat-select>
                 <mat-error *ngIf="!crearProductoForm.valid">
                     <strong>Seleccionar</strong> un grupo *
@@ -41,8 +42,7 @@
 
             <mat-form-field color="accent" style="width:100%">
                 <mat-select #almacen formControlName="Zona" (mouseup)="checkDuplicates(nombre.value,codigo.value,almacen.value)" placeholder="Almacen*">
-                    <mat-option class="w3-indigo w3-hover-gray" *ngFor="let almacen of almacenes"
-                                [value]="almacen.Nombre">{{ almacen.Nombre }}</mat-option>
+                    <mat-option class="w3-indigo w3-hover-gray" *ngFor="let almacen of almacenes" [value]="almacen.Nombre">{{ almacen.Nombre }}</mat-option>
                 </mat-select>
                 <mat-error *ngIf="!crearProductoForm.valid">
                     <strong>Seleccionar</strong> un almacen *
@@ -53,24 +53,19 @@
             </mat-form-field>
             <br />
             <div class="image">
-                <image-upload
-                [buttonCaption]="'Suba la imagen de su producto'"
-                [dropBoxMessage]="'Arraste la imagen de su producto'"
-                [clearButtonCaption]="'Borrar'"
-                [style]="inputFile" 
-                [max]="1"  
-                (uploadFinished)="imageFinishedUploading($event)"
-                ></image-upload>
+                <image-upload [buttonCaption]="'Suba la imagen de su producto'" [dropBoxMessage]="'Arraste la imagen de su producto'" [clearButtonCaption]="'Borrar'"
+                    [style]="inputFile" [max]="1" (uploadFinished)="imageFinishedUploading($event)" (removed)="onRemoved()"></image-upload>
             </div>
         </div>
-        <br>  
+        <br>
         <div class="w3-white w3-card-4 w3-padding">
             <h4>Propiedades</h4>
 
             <mat-form-field color="accent" style="width:100%">
                 <input matInput type="text" formControlName="Unidad" placeholder="Unidad de medida*">
                 <mat-error *ngIf="!crearProductoForm.valid">
-                    Unidad <strong>requerida</strong> *
+                    Unidad
+                    <strong>requerida</strong> *
                 </mat-error>
             </mat-form-field>
 
@@ -91,7 +86,8 @@
                 <input matInput type="number" formControlName="Offset_stocka" (input)="calcAlarma()" placeholder="Porcentaje" min="0" max="100">
                 <span matPrefix>(%)</span>
                 <mat-error *ngIf="!crearProductoForm.valid">
-                    Porcentaje <strong>requerido</strong> *
+                    Porcentaje
+                    <strong>requerido</strong> *
                 </mat-error>
                 <mat-hint>
                     0 - 100
@@ -130,8 +126,7 @@
 
             <mat-form-field color="accent" style="width:100%">
                 <mat-select #Currency color="primary" formControlName="Moneda" placeholder="Tipo de moneda*">
-                    <mat-option class="w3-indigo w3-hover-gray" *ngFor="let moneda of monedas"
-                                [value]="moneda.value">{{ moneda.value }}</mat-option>
+                    <mat-option class="w3-indigo w3-hover-gray" *ngFor="let moneda of monedas" [value]="moneda.value">{{ moneda.value }}</mat-option>
                 </mat-select>
                 <mat-hint>
                     Moneda de comercio
@@ -141,7 +136,8 @@
             <mat-form-field color="accent" style="width:100%">
                 <input matInput type="number" formControlName="Compra" placeholder="Precio de compra*" min="0" step="0.01">
                 <mat-error *ngIf="!crearProductoForm.valid">
-                    Precio <strong>requerido</strong> *
+                    Precio
+                    <strong>requerido</strong> *
                 </mat-error>
                 <span matPrefix style="margin-right: 10px">{{ Currency.value }} </span>
             </mat-form-field>
@@ -149,7 +145,8 @@
             <mat-form-field color="accent" style="width:100%">
                 <input matInput type="number" formControlName="Venta" placeholder="Precio de venta*" min="0" step="0.01">
                 <mat-error *ngIf="!crearProductoForm.valid">
-                    Precio <strong>requerido</strong> *
+                    Precio
+                    <strong>requerido</strong> *
                 </mat-error>
                 <span matPrefix style="margin-right: 10px">{{ Currency.value }} </span>
             </mat-form-field>
@@ -157,15 +154,8 @@
 
         </div>
         <br>
-        <button mat-raised-button
-                color="warn"
-                routerLink="../../productos">CANCELAR</button>
-        <button mat-raised-button
-                type="submit"
-                color="primary"
-                (change)="checkDuplicates(nombre.value,codigo.value,almacen.value)"
-                [disabled]="!crearProductoForm.valid && !crearProd"
-                    >CREAR</button>
+        <button mat-raised-button color="warn" routerLink="../../productos">CANCELAR</button>
+        <button mat-raised-button type="submit" color="primary" (change)="checkDuplicates(nombre.value,codigo.value,almacen.value)"
+            [disabled]="!crearProductoForm.valid && !crearProd">CREAR</button>
     </form>
 </div>
-

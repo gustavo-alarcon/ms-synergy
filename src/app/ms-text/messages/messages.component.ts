@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Inject, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
 import { ClientsService } from '../../servicios/clients.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
@@ -9,7 +9,7 @@ import { MessagesService } from '../../servicios/messages.service'
 import * as crypto from 'crypto-js';
 import { trigger, state, style, transition, animate, keyframes, query, stagger } from '@angular/animations';
 import { Client } from '../../classes/client';
-import "rxjs/add/operator/takeWhile";
+import { takeWhile } from "rxjs/operators";
 import { Confirm2Component } from '../confirm/confirm2.component';
 
 
@@ -46,6 +46,7 @@ export class MessagesComponent implements OnInit {
     public dialog: MatDialog,
     private toastr: ToastrService,
     private messageService: MessagesService,
+    private cd : ChangeDetectorRef
   ) {
     this.getClients();
     this.getBubbleValues();
@@ -63,7 +64,7 @@ export class MessagesComponent implements OnInit {
     this.clientsSales = [];
     this.isLoadingResults = true;
     this.clientService.getBdClient(this.bd)
-      .takeWhile(() => this.alive)
+      .pipe(takeWhile(() => this.alive))
       .subscribe(data => {
         for (let i = 0; i < data.records.length; i++) {
           this.clientsSales.push({
@@ -76,6 +77,7 @@ export class MessagesComponent implements OnInit {
             Birthday: data.records[i].Birthday,
             Type: parseInt(data.records[i].Type),
           });
+          this.cd.markForCheck();
         }
         this.isLoadingResults = false;
         this.dataSource = new MatTableDataSource(this.clientsSales);
@@ -98,12 +100,13 @@ export class MessagesComponent implements OnInit {
   getBubbleValues() {
     this.isLoadingBubbles = true;
     this.messageService.getBubbleValues()
-      .takeWhile(() => this.alive)
+      .pipe(takeWhile(() => this.alive))
       .subscribe(data => {
         this.balance = data.records[0].Saldo;
         this.programmed = data.records[0].Programados;
         this.send = data.records[0].Enviados;
         this.isLoadingBubbles = false;
+        this.cd.markForCheck();
       });
   }
 
@@ -271,7 +274,7 @@ export class MessagesComponent implements OnInit {
     dialogRef.beforeClose().subscribe(result => {
       if (result != 'close' && result != undefined) {
         this.clientService.deleteClient(this.bd, cliente)
-          .takeWhile(() => this.alive)
+          .pipe(takeWhile(() => this.alive))
           .subscribe(data => {
             if (data == "true") {
               this.toastr.success("Se elimino al cliente con exito", "Exito");

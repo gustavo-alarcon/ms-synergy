@@ -1,14 +1,14 @@
 import { Component, Input, Optional, Host, OnDestroy } from '@angular/core';
 import { SatPopover } from '@ncstate/sat-popover';
 import { ClientsService } from '../../servicios/clients.service';
-import { filter } from 'rxjs/operators/filter';
+import { filter } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { ToastrService } from 'ngx-toastr';
 import * as _moment from 'moment';
 import * as _rollupMoment from 'moment';
-import "rxjs/add/operator/takeWhile";
+import { takeWhile } from "rxjs/operators";
 const moment = _rollupMoment || _moment;
 
 export const MY_FORMATS = {
@@ -94,7 +94,7 @@ export class InlineEditComponent {
     // subscribe to cancellations and reset form value
     if (this.popover) {
       this.popover.closed.pipe(filter(val => val == null))
-        .takeWhile(() => this.alive)
+        .pipe(takeWhile(() => this.alive))
         .subscribe(() => this.comment = this.value || '');
     }
   }
@@ -123,7 +123,7 @@ export class InlineEditComponent {
       if (this.pass) {
         this.isLoadingResults = true;
         this.clientServicie.updateClient(this.db, this.client)
-        .takeWhile(() => this.alive)
+        .pipe(takeWhile(() => this.alive))
         .subscribe(data => {
           if (data == "true") {
             this.toastr.success("Se actualizo con exito", "Exito");

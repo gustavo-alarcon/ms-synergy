@@ -23,7 +23,7 @@
 
                 <div class="w3-col s12 m3 l3">
                     <mat-form-field color="accent" class="meraki-fill">
-                        <mat-select #doc formControlName="Documento" placeholder="Documento" (change)="filtrarTerceros(doc.value['Tipo'], doc.value['Naturaleza'], doc.value['Correlativo_actual'])">
+                        <mat-select #doc formControlName="Documento" placeholder="Documento" (selectionChange)="filtrarTerceros(doc.value['Tipo'], doc.value['Naturaleza'], doc.value['Correlativo_actual'])">
                             <mat-option class="w3-indigo w3-hover-gray" *ngFor="let documento of documentos" [value]="documento">{{ documento.Nombre }}</mat-option>
                         </mat-select>
                         <mat-error *ngIf="!movimientoForm.valid">
@@ -111,7 +111,7 @@
 
             <div class="w3-row w3-margin">
                 <mat-form-field color="accent" class="meraki-fill">
-                    <mat-select #almOrigen formControlName="AlmacenOrigen" (change)="filtrarProductos(almOrigen.value)" [placeholder]="tipoMovimiento === 'TRANSFERENCIA'? 'Almacen de origen':'Almacen'">
+                    <mat-select #almOrigen formControlName="AlmacenOrigen" (selectionChange)="filtrarProductos(almOrigen.value)" [placeholder]="tipoMovimiento === 'TRANSFERENCIA'? 'Almacen de origen':'Almacen'">
                         <mat-option class="w3-indigo w3-hover-gray" *ngFor="let almacen of almacenes" [value]="almacen.Nombre">{{ almacen.Nombre }}</mat-option>
                     </mat-select>
                     <mat-error *ngIf="!movimientoForm.valid && tipoMovimiento === 'TRANSFERENCIA'">
@@ -127,7 +127,7 @@
 
             <div class="w3-row w3-margin" [ngStyle]="{'display': tipoMovimiento === 'TRANSFERENCIA' ? 'block':'none'}">
                 <mat-form-field color="accent" class="meraki-fill">
-                    <mat-select #almDestino formControlName="AlmacenDestino" placeholder="Almacen de destino">
+                    <mat-select #almDestino formControlName="AlmacenDestino" placeholder="Almacen de destino" (selectionChange)="checkEqualsOrigin()">
                         <mat-option class="w3-indigo w3-hover-gray" *ngFor="let almacen_d of almacenes" [value]="almacen_d.Nombre">{{ almacen_d.Nombre }}</mat-option>
                     </mat-select>
                     <mat-error *ngIf="!movimientoForm.valid">
@@ -138,7 +138,7 @@
             </div>
 
             <div class="w3-row w3-margin">
-                <mat-tab-group>
+                <mat-tab-group class="labelEdit">
                     <mat-tab label="Productos">
                         <div class="containerProducts">
                             <div style="display: flex; align-items: center; justify-content: center;" class="fullDiv">
@@ -168,8 +168,8 @@
                                                 {{seriesSelected.value.length}} productos seleccionados
                                             </span>
                                         </mat-select-trigger>
-                                        <div *ngFor="let serie of numSeries; let i = index" >
-                                            <mat-option *ngIf="serie.estado != 2" [value]="serie.numSerie">
+                                        <div *ngFor="let serie of numSeries; let i = index">
+                                            <mat-option *ngIf="serie.estado != 2 && movimientoForm.get('AlmacenOrigen').value == serie.almacen" [value]="serie.numSerie">
                                                 <span>Numero de serie : {{serie.numSerie}}</span>
                                             </mat-option>
                                         </div>
@@ -177,7 +177,7 @@
                                 </mat-form-field>
                             </div>
                         </div>
-                        <div class="w3-row w3-padding">
+                        <div class="w3-row w3-margin">
                             <div class="w3-third">
                                 <mat-form-field color="accent" style="width:100%">
                                     <input matInput type="text" value="{{ prodEscogido === undefined ? '':prodEscogido.Stock_actual }}" placeholder="Stock" disabled>
@@ -266,7 +266,7 @@
                 <div class="w3-half">
                     <mat-form-field color="accent" class="meraki-fill">
                         <input matInput #qty formControlName="Cantidad" (input)="precio(qty.value)" type="number" placeholder="Cantidad" min="0"
-                            [max]="numSeries.length">
+                            [max]="cantidadMaximaProductos">
                     </mat-form-field>
                 </div>
                 <div class="w3-half">
@@ -278,7 +278,7 @@
             </div>
         </div>
         <br>
-        <button type="submit" mat-raised-button color="primary" [disabled]="!movimientoForm.valid">Añadir a resumen</button>
+        <button type="submit" mat-raised-button color="primary" [disabled]="!movimientoForm.valid || (movimientoForm.get('Cantidad').value > cantidadMaximaProductos) || ( tipoMovimiento == 'TRANSFERENCIA' && movimientoForm.get('AlmacenDestino').value == '')">Añadir a resumen</button>
     </form>
     <div class="w3-row">
         <span class="example-spacer">

@@ -13,7 +13,7 @@
           <div class="w3-col s12 m4 l4">
 
             <mat-form-field class="meraki-fill">
-              <mat-select #almOrigen formControlName="Almacen" aria-placeholder="Almacen" placeholder="Almacen" (change)="filtrarProductos(almOrigen.value)">
+              <mat-select #almOrigen formControlName="Almacen" aria-placeholder="Almacen" placeholder="Almacen" (selectionChange)="filtrarProductos(almOrigen.value)">
                 <mat-option class="w3-indigo w3-hover-gray" *ngFor="let almacen of almacenes" [value]="almacen.Nombre">{{ almacen.Nombre }}</mat-option>
               </mat-select>
               <mat-error *ngIf="!stockForm.valid">
@@ -23,7 +23,8 @@
             </mat-form-field>
             <br>
             <mat-form-field class="meraki-fill">
-              <mat-select #filtro (change)="filtrarStock(filtro.value)" aria-placeholder="Filtro" placeholder="Filtrar resultado">
+              <mat-select #filtro (selectionChange)="filtrarStock(filtro.value)" [disabled]="consultaProducto" aria-placeholder="Filtro"
+                placeholder="Filtrar resultado">
                 <mat-option class="w3-indigo w3-hover-gray" value="TODOS">TODOS</mat-option>
                 <mat-option class="w3-indigo w3-hover-gray" value="OK">OK</mat-option>
                 <mat-option class="w3-indigo w3-hover-gray" value="ALERTA">ALERTA</mat-option>
@@ -40,7 +41,7 @@
           </div>
           <div class="w3-col s12 m4 l4">
             <div style="display: flex; align-items: center">
-              <mat-slide-toggle style="margin-right: 5px;" [disabled]="stockForm.value.Almacen == ''" [checked]="checked" matTooltip="Cambia entre nombre y codigo"
+              <mat-slide-toggle style="margin-right: 5px;" [checked]="checked" matTooltip="Cambia entre nombre y codigo"
                 matTooltipPosition="above" labelPosition='before' (change)="slideToogleChange($event)"></mat-slide-toggle>
               <mat-form-field style="width: 80%">
                 <input matInput (keyup.enter)="selectProduct()" (keyup)="pushKeyProducts()" [matAutocomplete]="auto" #prod formControlName="ProductoFiltro"
@@ -54,24 +55,21 @@
               </mat-form-field>
             </div>
             <mat-form-field class="meraki-fill">
-              <mat-select placeholder="Numeros de serie" [formControl]="seriesSelected" multiple>
-                <mat-select-trigger>
-                  <span *ngIf="seriesSelected.value?.length > 0" class="example-additional-selection">
-                    {{seriesSelected.value.length}} productos seleccionados
-                  </span>
-                </mat-select-trigger>
-                <mat-option *ngFor="let serie of numSeries" [value]="serie.numSerie">
-                  <span>Numero de serie : {{serie.numSerie}}</span>
+              <input matInput (keyup)="selectedSerie()" (keyup)="pushKeySeries()" [matAutocomplete]="auto2" #prod2 [formControl]="seriesSelected"
+                placeholder="Numeros de serie">
+              <mat-autocomplete #auto2="matAutocomplete">
+                <mat-option (click)="selectedSerie()" class="w3-indigo w3-hover-gray" *ngFor="let serie of seriesAutocomplete" [value]="serie.numSerie">
+                  <span style="font-size: 13px;">Numero de serie : {{serie.numSerie}}</span>
                 </mat-option>
-              </mat-select>
+              </mat-autocomplete>
             </mat-form-field>
             <br>
-            <button [disabled]="canSearchProduct" style="width: 100%;" mat-raised-button type="button" color="primary" (click)="getProductoSerie()">Buscar Producto</button>
+            <button style="width: 100%;" mat-raised-button type="button" color="primary" (click)="getProductoSerie()">Buscar Producto</button>
             <br>
           </div>
           <div class="w3-col s12 m4 l4">
             <mat-form-field class="meraki-fill">
-              <mat-select #sepcel (change)="configExportSep(sepcel.value)" [(value)]="separador" aria-placeholder="Filtro" placeholder="Separador celdas">
+              <mat-select #sepcel (selectionChange)="configExportSep(sepcel.value)" [(value)]="separador" aria-placeholder="Filtro" placeholder="Separador celdas">
                 <mat-option class="w3-indigo w3-hover-gray" value=",">( , ) Coma</mat-option>
                 <mat-option class="w3-indigo w3-hover-gray" value=";">( ; ) Punto y coma</mat-option>
                 <mat-option class="w3-indigo w3-hover-gray" value="\t">( t ) Tabulador</mat-option>
@@ -79,7 +77,8 @@
             </mat-form-field>
             <br>
             <mat-form-field class="meraki-fill">
-              <mat-select #sepdec (change)="configExportDec(sepdec.value)" [(value)]="separadorDecimal" aria-placeholder="Filtro" placeholder="Separador decimal">
+              <mat-select #sepdec (selectionChange)="configExportDec(sepdec.value)" [(value)]="separadorDecimal" aria-placeholder="Filtro"
+                placeholder="Separador decimal">
                 <mat-option class="w3-indigo w3-hover-gray" value=",">( , ) Coma</mat-option>
                 <mat-option class="w3-indigo w3-hover-gray" value=".">( . ) Punto</mat-option>
               </mat-select>
@@ -93,25 +92,39 @@
       </div>
     </form>
   </div>
-
   <br>
+  <div *ngIf="consulta || consultaProducto">
+    <h2>Busqueda por
+      <span *ngIf="consulta">almacen</span>
+      <span *ngIf="consultaProducto">producto</span>
+    </h2>
+    <mat-form-field color="accent" style="width:100%; font-size: 17px">
+      <input matInput (keyup)="filterData()" #prod [formControl]="productoFilter" placeholder="Filtro" [value]="prodEscogido === '' ? '' : prodEscogido"
+        autocomplete="off">
+    </mat-form-field>
+  </div>
+  <br>
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+  <div *ngIf="!consulta && !consultaProducto" class="w3-container w3-padding-large meraki-empty-bg w3-card-2">
+    <h2 class="w3-margin w3-center meraki-font-s2">{{ mensajeKardex }}</h2>
+  </div>
   <div *ngIf="consulta" class="w3-responsive w3-card-4" style="max-height:100vh">
     <table class="w3-table-all">
       <thead>
         <tr>
-          <th>N°</th>
-          <th>Producto</th>
-          <th>Unidad </th>
+          <th class="w3-center">N°</th>
+          <th class="w3-center">Producto</th>
+          <th class="w3-center">Unidad </th>
           <th class="w3-center">Stock</th>
           <th class="w3-center">Estado</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of _stock; let i = index">
-          <td>{{ i + 1 }}</td>
-          <td>{{ item.Nombre }}</td>
-          <td>{{ item.Unidad }}</td>
-          <td style="text-align:right">{{ item.Stock_actual | number:'.2-2' }}</td>
+        <tr *ngFor="let item of filteredProducts; let i = index">
+          <td class="w3-center">{{ i + 1 }}</td>
+          <td class="w3-center">{{ item.Nombre }}</td>
+          <td class="w3-center">{{ item.Unidad }}</td>
+          <td class="w3-center">{{ item.Stock_actual | number:'.2-2' }}</td>
           <!--td style="text-align:center">
               <mat-icon *ngIf="item.Stock_actual > item.Stocka" class="w3-text-green">check_circle</mat-icon>
               <mat-icon *ngIf="item.Stock_actual > item.Stocke && item.Stock_actual <= item.Stocka" class="w3-text-amber">warning_octagram</mat-icon>
@@ -130,7 +143,7 @@
     <table class="w3-table-all">
       <thead>
         <tr>
-          <th>N°</th>
+          <th class="w3-center">N°</th>
           <th class="w3-center">Almacen</th>
           <th class="w3-center">Documento </th>
           <th class="w3-center">Estado</th>
@@ -143,11 +156,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let pruduct of productosSeries; let i = index">
+        <tr *ngFor="let pruduct of filteredSeries; let i = index">
           <td style="text-align:center">{{ i + 1 }}</td>
           <td style="text-align:center">{{ pruduct.almacen }}</td>
           <td style="text-align:center">{{ pruduct.documento }}</td>
-          <td style="text-align:center">{{ pruduct.estado == 0 ? 'En almacen' : 'Vendido'}}</td>
+          <td style="text-align:center">{{ pruduct.estado}}</td>
           <td style="text-align:center">{{ pruduct.fecha }}</td>
           <td style="text-align:center">{{ pruduct.movimiento }}</td>
           <td style="text-align:center">{{ pruduct.numSerie }}</td>
@@ -165,8 +178,4 @@
     </table>
   </div>
   <br>
-  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
-  <div *ngIf="!consulta && !consultaProducto" class="w3-container w3-padding-large meraki-empty-bg w3-card-2">
-    <h2 class="w3-margin w3-center meraki-font-s2">{{ mensajeKardex }}</h2>
-  </div>
 </div>

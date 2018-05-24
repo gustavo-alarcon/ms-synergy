@@ -64,19 +64,19 @@
             <div class="paymentList">
                 <div class="selects">
                     <mat-form-field name="paymentType" class="full-width" ngDefaultControl>
-                        <mat-select placeholder="Tipo de pago" [(ngModel)]="paymentType" (change)="changePaymentType()">
+                        <mat-select placeholder="Tipo de pago" [(ngModel)]="paymentType" (selectionChange)="changePaymentType()">
                             <mat-option class="w3-hover-gray" value="0">Efectivo</mat-option>
                         </mat-select>
                     </mat-form-field>
 
                     <mat-form-field name="selectedDocument" class="full-width" ngDefaultControl>
-                        <mat-select placeholder="Documento" (change)="changeDocument()" [(ngModel)]="selectedDocument">
+                        <mat-select placeholder="Documento" (selectionChange)="changeDocument()" [(ngModel)]="selectedDocument">
                             <mat-option class="w3-hover-gray" *ngFor="let documento of documentos" [value]="documento">{{ documento.Nombre }}</mat-option>
                         </mat-select>
                     </mat-form-field>
 
                     <mat-form-field name="serie" class="full-width" ngDefaultControl>
-                        <mat-select placeholder="N°Serie" [(ngModel)]="serieSeleccionado" (change)="changeSerie()">
+                        <mat-select placeholder="N°Serie" [(ngModel)]="serieSeleccionado" (selectionChange)="changeSerie()">
                             <mat-option class="w3-hover-gray" *ngFor="let serie of numerosSerie" [value]="serie">{{ serie }}</mat-option>
                         </mat-select>
                     </mat-form-field>

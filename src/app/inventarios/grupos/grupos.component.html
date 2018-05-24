@@ -5,11 +5,7 @@
   </div>
   <br>
   <div class="w3-row">
-    <button mat-raised-button
-            color="primary"
-            *ngIf="perms[0]['gru_b_crear']"
-            routerLink="crear-grupo"
-            style="display:inline-block">Crear nuevo</button>
+    <button mat-raised-button color="primary" *ngIf="perms[0]['gru_b_crear']" routerLink="crear-grupo" style="display:inline-block">Crear nuevo</button>
     <mat-form-field floatPlaceholder="never">
       <input matInput type="text" (input)="filterData($event.target.value)" placeholder="filtrar contenido">
       <mat-hint>
@@ -35,11 +31,11 @@
           <td *ngIf="!edit[i]['value']">{{i + 1}}</td>
           <td *ngIf="!edit[i]['value']">{{row.Nombre}}</td>
           <td *ngIf="!edit[i]['value']">{{row.Detalles}}</td>
-          <td *ngIf="!edit[i]['value'] && perms[0]['gru_b_editar']" style="text-align: center"><button mat-mini-fab
-                                                color="accent"
-                                                class="w3-animate-zoom"
-                                                style="margin:1px"
-                                                (click)="editAction(i)"><mat-icon>edit</mat-icon></button></td>
+          <td *ngIf="!edit[i]['value'] && perms[0]['gru_b_editar']" style="text-align: center">
+            <button mat-mini-fab color="accent" class="w3-animate-zoom" style="margin:1px" (click)="editAction(i)">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </td>
           <td *ngIf="edit[i]['value']">{{i + 1}}</td>
           <td *ngIf="edit[i]['value']">
             <input class="w3-input" type="text" (input)="modData['Nombre'] = $event.target.value" [value]="row.Nombre" [placeholder]="row.Nombre">
@@ -47,32 +43,31 @@
           <td *ngIf="edit[i]['value']">
             <input class="w3-input" type="text" (input)="modData['Detalles'] = $event.target.value" [value]="row.Detalles" [placeholder]="row.Detalles">
           </td>
-          <td *ngIf="edit[i]['value']" class="w3-align-middle w3-padding-small" style="text-align: center"><button mat-mini-fab
-                                                                                  color="primary"
-                                                                                  *ngIf="perms[0]['gru_b_guardar']"
-                                                                                  class="w3-animate-zoom"
-                                                                                  style="margin:1px"
-                                                                                  (click)="saveAction(i)"><mat-icon>save</mat-icon></button>
-                                                                                  <button mat-mini-fab
-                                                                                          color="warn"
-                                                                                          *ngIf="perms[0]['gru_b_borrar']"
-                                                                                          class="w3-animate-zoom"
-                                                                                          style="margin:1px"
-                                                                                          (click)="borrarAction('grupos',row.ID)"><mat-icon>delete</mat-icon></button>
-                                                                                  <button mat-mini-fab
-                                                                                          color="accent"
-                                                                                          class="w3-animate-zoom"
-                                                                                          style="margin:1px"
-                                                                                          (click)="cancelAction(i)"><mat-icon>cancel</mat-icon></button></td>
+          <td *ngIf="edit[i]['value']" class="w3-align-middle w3-padding-small" style="text-align: center">
+            <button mat-mini-fab color="primary" *ngIf="perms[0]['gru_b_guardar']" class="w3-animate-zoom" style="margin:1px"
+              (click)="saveAction(i)">
+              <mat-icon>save</mat-icon>
+            </button>
+            <button mat-mini-fab color="warn" *ngIf="perms[0]['gru_b_borrar']" class="w3-animate-zoom" style="margin:1px" (click)="borrarAction('grupos',row.ID)">
+              <mat-icon>delete</mat-icon>
+            </button>
+            <button mat-mini-fab color="accent" class="w3-animate-zoom" style="margin:1px" (click)="cancelAction(i)">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>
   </div>
   <div *ngIf="loading" class="w3-container w3-padding-large meraki-empty-bg" style="width:100%">
-    <h2 class="w3-margin w3-center meraki-font-s2"><mat-icon class="w3-margin" style="font-size: 36px">group_work</mat-icon>Cargando ...</h2>
+    <h2 class="w3-margin w3-center meraki-font-s2">
+      <mat-icon class="w3-margin" style="font-size: 36px">group_work</mat-icon>Cargando ...</h2>
   </div>
   <div *ngIf="data_.length == 0 && !loading" class="w3-container w3-padding-large meraki-empty-bg" style="width:100%">
-      <h2 class="w3-margin w3-center meraki-font-s2"><mat-icon class="w3-margin" style="font-size: 36px">group_work</mat-icon>No hay grupos en la tabla</h2>
+    <h2 class="w3-margin w3-center meraki-font-s2">
+      <mat-icon class="w3-margin" style="font-size: 36px">group_work</mat-icon>No hay grupos en la tabla</h2>
   </div>
-  <div style="height:25vh;"><p></p></div>
+  <div style="height:25vh;">
+    <p></p>
+  </div>
 </div>

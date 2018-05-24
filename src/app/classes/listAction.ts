@@ -17,7 +17,9 @@ export class ListAction {
         IDProducto : any;
         Unidad : any;
         Venta : any;
-
+        listNumSeries? : any[];
+        seriesSelected? : any[];
+        cantidadMaxima? : number
     constructor() { 
         this.product;
         this.price;
@@ -34,5 +36,8 @@ export class ListAction {
         this.IDProducto;
         this.Unidad;
         this.Venta;
+        this.listNumSeries;
+        this.seriesSelected;
+        this.cantidadMaxima;
     }
 }

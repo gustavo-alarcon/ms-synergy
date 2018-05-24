@@ -16,7 +16,7 @@ import { ToastrService } from "ngx-toastr";
 import * as _moment from "moment";
 import * as _rollupMoment from "moment";
 import * as crypto from "crypto-js";
-import "rxjs/add/operator/takeWhile";
+import { takeWhile } from "rxjs/operators";
 const moment = _rollupMoment || _moment;
 
 export const MY_FORMATS = {
@@ -139,7 +139,7 @@ export class InputModalComponent implements OnInit {
           this.completeData.time = String(this.completeData.time) + ":00:00";
           this.messageService
             .sendMessages(this.completeData)
-            .takeWhile(() => this.alive)
+            .pipe(takeWhile(() => this.alive))
             .subscribe(data => {
               this.completeData = {
                 message: "",

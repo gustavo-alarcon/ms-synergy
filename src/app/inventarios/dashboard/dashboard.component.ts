@@ -1,22 +1,20 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 //import { ChartService } from "../servicios/plot/chart.service";
 import * as _ from "lodash";
 
 @Component({
-  selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+  selector: "app-dashboard",
+  templateUrl: "./dashboard.component.html",
+  styleUrls: ["./dashboard.component.css"]
 })
 export class DashboardComponent implements OnInit {
-
   //@ViewChild('chart') el:ElementRef;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {
     //this.basicChart();
   }
-
 
   /*basicChart() {
     const element = this.el.nativeElement

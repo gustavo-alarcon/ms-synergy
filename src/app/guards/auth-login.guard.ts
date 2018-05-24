@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { AuthService } from '../servicios/auth.service';
 
@@ -14,7 +15,7 @@ export class AuthLoginGuard implements CanActivate {
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot){
-    return this.authService.verifyAuth().map(data => {
+    return this.authService.verifyAuth().pipe(map(data => {
       if(localStorage.getItem('db')!=null && localStorage.getItem('user')!=null){
         if(data.records[0].Auth=='false'){
           localStorage.removeItem('web');
@@ -30,6 +31,6 @@ export class AuthLoginGuard implements CanActivate {
       else{
         return true;
       } 
-    });        
+    }));        
   }
 }

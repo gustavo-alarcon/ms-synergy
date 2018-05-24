@@ -948,3 +948,82 @@ exports.gh99 = function() {
   match[0].textContent.should.equal('x');
   match[1].textContent.should.equal('y');
 };
+
+exports.gh112 = function() {
+  // attributes named 'xmlns' are fine. (gh #112)
+  var window = domino.createWindow(
+    '<!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml"><b></b></html>'
+  );
+  var document = window.document;
+  document.documentElement.setAttribute('xmlns', 'test');
+  var b = document.querySelector('b');
+  b.innerHTML = '<test></test>';
+  var test = document.querySelector('test');
+  // Note that this seems contrary to what is implied by
+  // https://lists.w3.org/Archives/Public/www-dom/2011JulSep/0153.html
+  // but matches what modern browsers do.
+  b.namespaceURI.should.equal('http://www.w3.org/1999/xhtml');
+  test.namespaceURI.should.equal('http://www.w3.org/1999/xhtml');
+};
+
+exports.gh109 = function() {
+  var document = domino.createDocument();
+  var div = document.createElement('div');
+  div.classList.add('one', 'two');
+  div.classList.length.should.equal(2);
+  div.classList.contains('one').should.be.true();
+  div.classList.contains('two').should.be.true();
+  div.classList.remove('one', 'two');
+  div.classList.length.should.equal(0);
+  div.classList.contains('one').should.be.false();
+  div.classList.contains('two').should.be.false();
+};
+
+exports.arrayfrom = function() {
+    // If your version of node supports Array.from, it should support
+    // Array.from(node.attributes) ... even though we don't use proxies.
+    if (typeof(Array.from) !== 'function') { return; }
+    var d = domino.createDocument('');
+    var e = d.createElement('span');
+    e.setAttribute('a','1');
+    e.setAttribute('b','2');
+    var a = Array.from(e.attributes);
+    a.should.have.length(2);
+    a[0].should.have.property('name','a');
+    a[0].should.have.property('value','1');
+    a[1].should.have.property('name','b');
+    a[1].should.have.property('value','2');
+};
+
+exports.gh119 = function() {
+  var document = domino.createDocument('<div></div>');
+  var div = document.querySelector('div');
+  div.style.flex = '1 1 0px';
+  div.outerHTML.should.equal('<div style="flex: 1 1 0px;"></div>');
+
+  document = domino.createDocument('<div></div>');
+  div = document.querySelector('div');
+  div.style.flexFlow = 'row wrap';
+  div.outerHTML.should.equal('<div style="flex-flow: row wrap;"></div>');
+
+  document = domino.createDocument('<div></div>');
+  div = document.querySelector('div');
+  div.style.flexBasis = '0px';
+  div.style.flexGrow = 1;
+  div.style.flexShrink = 1;
+  div.style.flexDirection = 'column';
+  div.style.flexWrap = 'wrap';
+
+  div.outerHTML.should.equal('<div style="flex-basis: 0px; flex-grow: 1; flex-shrink: 1; flex-direction: column; flex-wrap: wrap;"></div>');
+};
+
+exports.gh121 = function() {
+  var document = domino.createDocument('<div></div>');
+  var div = document.querySelector('div');
+  div.className = 'ab a';
+  div.matches('.a').should.be.true();
+  div.matches('[class~=a]').should.be.true();
+  div.className = 'a ab';
+  div.matches('.a').should.be.true();
+  div.matches('[class~=a]').should.be.true();
+};

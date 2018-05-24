@@ -1,15 +1,21 @@
-import { Component, OnInit, Input, Optional, Host, OnDestroy } from '@angular/core';
-import { SatPopover } from '@ncstate/sat-popover';
-import { filter } from 'rxjs/operators/filter';
-import { PosService } from '../../servicios/pos.service';
-import * as crypto from 'crypto-js';
-import "rxjs/add/operator/takeWhile";
+import {
+  Component,
+  OnInit,
+  Input,
+  Optional,
+  Host,
+  OnDestroy
+} from "@angular/core";
+import { SatPopover } from "@ncstate/sat-popover";
+import { filter } from "rxjs/operators";
+import { PosService } from "../../servicios/pos.service";
+import * as crypto from "crypto-js";
+import { takeWhile } from "rxjs/operators";
 
 @Component({
-  selector: 'detail-products',
-  styleUrls: ['./detail-products.component.scss'],
-  template:
-    `
+  selector: "detail-products",
+  styleUrls: ["./detail-products.component.scss"],
+  template: `
    <div class="loadingSpinner" *ngIf="isLoadingResults">
       <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
     </div>
@@ -21,15 +27,24 @@ import "rxjs/add/operator/takeWhile";
               <th>Cantidad</th>
               <th>Precio U.</th>
               <th>Precio</th>
+              <th>Num. Series</th>
           </tr>
       </thead>
       <tbody>
-          <tr *ngFor="let product of products">
+          <tr *ngFor="let product of products; let i = index"  [satPopoverAnchorFor]="p">
               <td>{{product.Paquete == '' ? '-' : product.Paquete}}</td>
               <td>{{product.Producto}}</td>
               <td>{{product.Cantidad}}</td>
               <td>{{product.Venta}}</td>
               <td>{{product.Venta * product.Cantidad}}</td>
+              <td>
+                <button matTooltip="Detalles" matTooltipPosition="above" mat-icon-button style="margin : 0px" (click)="p.open()">
+                  <mat-icon style="margin-right: 0px;">keyboard_arrow_down</mat-icon>
+                </button>
+                <sat-popover #p hasBackdrop>
+                  <detail-series [value]="operacion" [data]="product.Producto"></detail-series>
+                </sat-popover>
+              </td>
           </tr>
       </tbody>
   </table>
@@ -45,51 +60,54 @@ import "rxjs/add/operator/takeWhile";
 })
 export class DetailProductsComponent implements OnInit {
   isLoadingResults = false;
-  bytes = crypto.AES.decrypt(localStorage.getItem('db'), 'meraki');
+  bytes = crypto.AES.decrypt(localStorage.getItem("db"), "meraki");
   bd = this.bytes.toString(crypto.enc.Utf8);
   private alive: boolean = true;
 
   /** Overrides the comment and provides a reset value when changes are cancelled. */
   @Input()
-  get value(): any { return this._value; }
+  get value(): any {
+    return this._value;
+  }
   set value(x: any) {
     this.operacion = this._value = x;
     parseInt(this.operacion);
   }
 
-  @Input('data') data;
+  @Input("data") data;
 
   private _value = null;
 
   /** Form model for the input. */
-  operacion = null
+  operacion = null;
   products = [];
-  type = '';
+  type = "";
 
   constructor(
-    @Optional() @Host() public popover: SatPopover,
+    @Optional()
+    @Host()
+    public popover: SatPopover,
     private posService: PosService
-  ) {
-
-  }
+  ) {}
 
   ngOnInit() {
     this.paymentType();
-    this.posService.getSalesData(this.bd, this.operacion)
-      .takeWhile(() => this.alive)
+    this.posService
+      .getSalesData(this.bd, this.operacion)
+      .pipe(takeWhile(() => this.alive))
       .subscribe(data => {
         this.products = data.records;
       });
     // subscribe to cancellations and reset form value
     if (this.popover) {
-      this.popover.closed.pipe(filter(val => val == null))
-        .subscribe(() => this.operacion = this.value || null);
+      this.popover.closed
+        .pipe(filter(val => val == null))
+        .subscribe(() => (this.operacion = this.value || null));
     }
   }
 
-  paymentType(){
-    if(this.data.TipoPago == '0')
-      this.type = 'Efectivo';
+  paymentType() {
+    if (this.data.TipoPago == "0") this.type = "Efectivo";
   }
 
   onSubmit() {

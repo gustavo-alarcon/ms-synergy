@@ -5,28 +5,32 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { ChangeDetectorRef, Directive, EventEmitter, Input, NgModule, Optional, Output } from '@angular/core';
-import { UNIQUE_SELECTION_DISPATCHER_PROVIDER, UniqueSelectionDispatcher } from '@angular/cdk/collections';
+import { Directive, Input, Output, EventEmitter, Optional, ChangeDetectorRef, NgModule } from '@angular/core';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
+import { Subject, Subscription } from 'rxjs';
+import { UniqueSelectionDispatcher } from '@angular/cdk/collections';
 
 /**
  * @fileoverview added by tsickle
  * @suppress {checkTypes} checked by tsc
  */
-
 /**
  * Used to generate unique ID for each accordion.
  */
-var nextId$1 = 0;
+var /** @type {?} */ nextId = 0;
 /**
  * Directive whose purpose is to manage the expanded state of CdkAccordionItem children.
  */
 var CdkAccordion = /** @class */ (function () {
     function CdkAccordion() {
         /**
+         * Stream that emits true/false when openAll/closeAll is triggered.
+         */
+        this._openCloseAllActions = new Subject();
+        /**
          * A readonly id value to use for unique selection coordination.
          */
-        this.id = "cdk-accordion-" + nextId$1++;
+        this.id = "cdk-accordion-" + nextId++;
         this._multi = false;
     }
     Object.defineProperty(CdkAccordion.prototype, "multi", {
@@ -43,6 +47,43 @@ var CdkAccordion = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
+    /** Opens all enabled accordion items in an accordion where multi is enabled. */
+    /**
+     * Opens all enabled accordion items in an accordion where multi is enabled.
+     * @return {?}
+     */
+    CdkAccordion.prototype.openAll = /**
+     * Opens all enabled accordion items in an accordion where multi is enabled.
+     * @return {?}
+     */
+    function () {
+        this._openCloseAll(true);
+    };
+    /** Closes all enabled accordion items in an accordion where multi is enabled. */
+    /**
+     * Closes all enabled accordion items in an accordion where multi is enabled.
+     * @return {?}
+     */
+    CdkAccordion.prototype.closeAll = /**
+     * Closes all enabled accordion items in an accordion where multi is enabled.
+     * @return {?}
+     */
+    function () {
+        this._openCloseAll(false);
+    };
+    /**
+     * @param {?} expanded
+     * @return {?}
+     */
+    CdkAccordion.prototype._openCloseAll = /**
+     * @param {?} expanded
+     * @return {?}
+     */
+    function (expanded) {
+        if (this.multi) {
+            this._openCloseAllActions.next(expanded);
+        }
+    };
     CdkAccordion.decorators = [
         { type: Directive, args: [{
                     selector: 'cdk-accordion, [cdkAccordion]',
@@ -50,7 +91,6 @@ var CdkAccordion = /** @class */ (function () {
                 },] },
     ];
     /** @nocollapse */
-    CdkAccordion.ctorParameters = function () { return []; };
     CdkAccordion.propDecorators = {
         "multi": [{ type: Input },],
     };
@@ -61,11 +101,10 @@ var CdkAccordion = /** @class */ (function () {
  * @fileoverview added by tsickle
  * @suppress {checkTypes} checked by tsc
  */
-
 /**
  * Used to generate unique ID for each accordion item.
  */
-var nextId = 0;
+var /** @type {?} */ nextId$1 = 0;
 /**
  * An basic directive expected to be extended and decorated as a component.  Sets up all
  * events and attributes needed to be managed by a CdkAccordion parent.
@@ -76,6 +115,10 @@ var CdkAccordionItem = /** @class */ (function () {
         this.accordion = accordion;
         this._changeDetectorRef = _changeDetectorRef;
         this._expansionDispatcher = _expansionDispatcher;
+        /**
+         * Subscription to openAll/closeAll events.
+         */
+        this._openCloseAllSubscription = Subscription.EMPTY;
         /**
          * Event emitted every time the AccordionItem is closed.
          */
@@ -97,7 +140,7 @@ var CdkAccordionItem = /** @class */ (function () {
         /**
          * The unique AccordionItem id.
          */
-        this.id = "cdk-accordion-child-" + nextId++;
+        this.id = "cdk-accordion-child-" + nextId$1++;
         this._expanded = false;
         this._disabled = false;
         /**
@@ -111,6 +154,10 @@ var CdkAccordionItem = /** @class */ (function () {
                     _this.expanded = false;
                 }
             });
+        // When an accordion item is hosted in an accordion, subscribe to open/close events.
+        if (this.accordion) {
+            this._openCloseAllSubscription = this._subscribeToOpenCloseAllActions();
+        }
     }
     Object.defineProperty(CdkAccordionItem.prototype, "expanded", {
         get: /**
@@ -172,8 +219,12 @@ var CdkAccordionItem = /** @class */ (function () {
      * @return {?}
      */
     function () {
+        this.opened.complete();
+        this.closed.complete();
         this.destroyed.emit();
+        this.destroyed.complete();
         this._removeUniqueSelectionListener();
+        this._openCloseAllSubscription.unsubscribe();
     };
     /** Toggles the expanded state of the accordion item. */
     /**
@@ -217,9 +268,24 @@ var CdkAccordionItem = /** @class */ (function () {
             this.expanded = true;
         }
     };
+    /**
+     * @return {?}
+     */
+    CdkAccordionItem.prototype._subscribeToOpenCloseAllActions = /**
+     * @return {?}
+     */
+    function () {
+        var _this = this;
+        return this.accordion._openCloseAllActions.subscribe(function (expanded) {
+            // Only change expanded state if item is enabled
+            if (!_this.disabled) {
+                _this.expanded = expanded;
+            }
+        });
+    };
     CdkAccordionItem.decorators = [
         { type: Directive, args: [{
-                    selector: 'cdk-accordion-item',
+                    selector: 'cdk-accordion-item, [cdkAccordionItem]',
                     exportAs: 'cdkAccordionItem',
                 },] },
     ];
@@ -244,7 +310,6 @@ var CdkAccordionItem = /** @class */ (function () {
  * @fileoverview added by tsickle
  * @suppress {checkTypes} checked by tsc
  */
-
 var CdkAccordionModule = /** @class */ (function () {
     function CdkAccordionModule() {
     }
@@ -252,11 +317,8 @@ var CdkAccordionModule = /** @class */ (function () {
         { type: NgModule, args: [{
                     exports: [CdkAccordion, CdkAccordionItem],
                     declarations: [CdkAccordion, CdkAccordionItem],
-                    providers: [UNIQUE_SELECTION_DISPATCHER_PROVIDER],
                 },] },
     ];
-    /** @nocollapse */
-    CdkAccordionModule.ctorParameters = function () { return []; };
     return CdkAccordionModule;
 }());
 
@@ -268,9 +330,6 @@ var CdkAccordionModule = /** @class */ (function () {
 /**
  * @fileoverview added by tsickle
  * @suppress {checkTypes} checked by tsc
- */
-/**
- * Generated bundle index. Do not edit.
  */
 
 export { CdkAccordionItem, CdkAccordion, CdkAccordionModule };

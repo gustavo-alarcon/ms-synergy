@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { ResponseType } from '@angular/http';
 
 @Injectable()
@@ -45,7 +45,23 @@ export class PosService {
   }
 
   removeSale(db, data) : Observable<any>{
-    return this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/handler-pos-anular.php?db='+JSON.parse(db), JSON.stringify(data), { responseType : 'text' });
+    return this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/test/handler-pos-anular.php?db='+JSON.parse(db), JSON.stringify(data), { responseType : 'text' });
   }
 
+  getNumSerie(db, tn): Observable<any> {
+    return this.http.get(
+      "http://www.meraki-s.com/rent/ms-synergy/php/test/handler-getNumSeriexProduct.php?db=" +
+        JSON.parse(db) +
+        "&tn=" +
+        tn
+    );
+  }
+
+  getSalesNumSeries(db, Operacion, Producto): Observable<any>{
+    let data = {
+      Operacion,
+      Producto
+    }
+    return this.http.post('http://www.meraki-s.com/rent/ms-synergy/php/test/handler-numSeries-sale.php?db='+JSON.parse(db), JSON.stringify(data)  );
+  }
 }

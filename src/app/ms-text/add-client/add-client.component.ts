@@ -9,7 +9,7 @@ import * as _moment from 'moment';
 import * as _rollupMoment from 'moment';
 import * as crypto from 'crypto-js';
 import { Validators, FormGroup, FormBuilder, FormControl, EmailValidator } from '@angular/forms';
-import "rxjs/add/operator/takeWhile";
+import { takeWhile } from "rxjs/operators";
 const moment = _rollupMoment || _moment;
 
 export const MY_FORMATS = {
@@ -88,7 +88,7 @@ export class AddClientComponent implements OnInit {
     else{
       this.client.date = moment(this.date.value).format('YYYY-MM-DD');
       this.messageService.addClient(this.client,JSON.parse(this.db))
-      .takeWhile(() => this.alive)
+      .pipe(takeWhile(() => this.alive))
       .subscribe(data => {
         this.toastr.success('Se agrego al cliente','Exito');
         this.client= {

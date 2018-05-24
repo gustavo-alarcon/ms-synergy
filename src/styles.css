@@ -4,44 +4,43 @@
 @import "./app/css/meraki.css";
 @import "./app/css/flexboxgrid.css";
 
-
 html {
-  background: #fdf5e6!important;
+  background: #fdf5e6 !important;
 }
 
 .example-toolbar {
-    position: fixed;
-    /* Make sure the toolbar will stay on top of the content as it scrolls past. */
-    z-index: 2;
+  position: fixed;
+  /* Make sure the toolbar will stay on top of the content as it scrolls past. */
+  z-index: 2;
 }
 
 h1.example-app-name {
-    margin-left: 8px;
+  margin-left: 8px;
 }
 .example-sidenav-container {
-    /* When the sidenav is not fixed, stretch the sidenav container to fill the available space. This
+  /* When the sidenav is not fixed, stretch the sidenav container to fill the available space. This
        causes `<mat-sidenav-content>` to act as our scrolling element for desktop layouts. */
-    flex: 1;
+  flex: 1;
 }
-  body{
-    background-repeat:repeat;
-    background-attachment: fixed; 
-    margin:0px !important;
-    font-family: 'Roboto', sans-serif;        
+body {
+  background-repeat: repeat;
+  background-attachment: fixed;
+  margin: 0px !important;
+  font-family: "Roboto", sans-serif;
 }
 
 .loadingSpinner {
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    background: rgba(0, 0, 0, 0.15);
-    z-index: 999999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
 }
 
 .custom-dialog .mat-dialog-container {
@@ -49,80 +48,87 @@ h1.example-app-name {
 }
 
 .container-loadingSpinner {
-    display: flex;
-    flex-direction: column;
-    max-height: 500px;
-    min-width: 300px;
-    position: relative;
-  }
-
-  .tooltip{
-    font-size: 15px;
-    background: rgba(0,0,0,0.8);
-  }
-  
-  .colorSelect .mat-select-content {
-    background: #f44336;
-  }
-
-.changeBar mat-ink-bar.mat-ink-bar{
-    background-color: #3F51B5 !important;
+  display: flex;
+  flex-direction: column;
+  max-height: 500px;
+  min-width: 300px;
+  position: relative;
 }
 
-.labelEdit .mat-tab-label{
-    width: 50% !important;
+.tooltip {
+  font-size: 15px;
+  background: rgba(0, 0, 0, 0.8);
 }
 
-mat-tab-header{
-    height: 100% !important;
+.colorSelect .mat-select-content {
+  background: #f44336;
 }
 
-.mat-tab-labels{
-    display: flex;
-    align-items: center !important;
-    height: 100% !important;
-    padding: 0 0;
+.changeBar mat-ink-bar.mat-ink-bar {
+  background-color: #3f51b5 !important;
 }
 
-.mat-tab-label{
-    padding: 0px 0px !important;
+.labelEdit .mat-tab-label {
+  width: 50% !important;
 }
 
-.mat-sort-header-container{
-  justify-content: center; 
+mat-tab-header {
+  height: 100% !important;
+}
+
+.mat-tab-labels {
+  display: flex;
+  align-items: center !important;
+  height: 100% !important;
+  padding: 0 0;
+}
+
+.mat-tab-label-content {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mat-tab-label {
+  padding: 0px 0px !important;
+}
+
+.mat-sort-header-container {
+  justify-content: center;
 }
 
 ::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
-  }
-  ::-webkit-scrollbar-button {
-    width: 0px;
-    height: 0px;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #cfcfcf;
-    border: 0px none #ffffff;
-    border-radius: 40px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8;
-  }
-  ::-webkit-scrollbar-thumb:active {
-    background: #3b3b3b;
-  }
-  ::-webkit-scrollbar-track {
-    background: #666666;
-    border: 0px none #ffffff;
-    border-radius: 50px;
-  }
-  ::-webkit-scrollbar-track:hover {
-    background: #666666;
-  }
-  ::-webkit-scrollbar-track:active {
-    background: #666666;
-  }
-  ::-webkit-scrollbar-corner {
-    background: transparent;
-  }
-  
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-button {
+  width: 0px;
+  height: 0px;
+}
+::-webkit-scrollbar-thumb {
+  background: #cfcfcf;
+  border: 0px none #ffffff;
+  border-radius: 40px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+::-webkit-scrollbar-thumb:active {
+  background: #3b3b3b;
+}
+::-webkit-scrollbar-track {
+  background: #666666;
+  border: 0px none #ffffff;
+  border-radius: 50px;
+}
+::-webkit-scrollbar-track:hover {
+  background: #666666;
+}
+::-webkit-scrollbar-track:active {
+  background: #666666;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}

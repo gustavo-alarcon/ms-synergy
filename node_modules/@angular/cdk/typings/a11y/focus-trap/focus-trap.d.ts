@@ -1,11 +1,4 @@
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
-import { ElementRef, NgZone, OnDestroy, AfterContentInit } from '@angular/core';
+import { AfterContentInit, ElementRef, NgZone, OnDestroy } from '@angular/core';
 import { InteractivityChecker } from '../interactivity-checker/interactivity-checker';
 /**
  * Class that allows for trapping focus within a DOM element.
@@ -97,22 +90,6 @@ export declare class FocusTrapFactory {
      * @returns The created focus trap instance.
      */
     create(element: HTMLElement, deferCaptureElements?: boolean): FocusTrap;
-}
-/**
- * Directive for trapping focus within a region.
- * @docs-private
- * @deprecated
- * @deletion-target 6.0.0
- */
-export declare class FocusTrapDeprecatedDirective implements OnDestroy, AfterContentInit {
-    private _elementRef;
-    private _focusTrapFactory;
-    focusTrap: FocusTrap;
-    /** Whether the focus trap is active. */
-    disabled: boolean;
-    constructor(_elementRef: ElementRef, _focusTrapFactory: FocusTrapFactory);
-    ngOnDestroy(): void;
-    ngAfterContentInit(): void;
 }
 /** Directive for trapping focus within a region. */
 export declare class CdkTrapFocus implements OnDestroy, AfterContentInit {

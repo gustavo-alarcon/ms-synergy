@@ -2,7 +2,7 @@ import { ToastrService } from "ngx-toastr";
 import { LoginService } from "./../../servicios/login/login.service";
 import { element } from "protractor";
 import { InventariosService } from "./../../servicios/almacenes/inventarios.service";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import {
   FormControl,
   Validators,
@@ -15,13 +15,11 @@ import { MatChipInputEvent } from "@angular/material";
 import { ENTER } from "@angular/cdk/keycodes";
 import { MatSnackBar } from "@angular/material";
 
-import { Observable } from "rxjs/Observable";
+import { Observable } from "rxjs";
 import "rxjs/add/operator/startWith";
 import "rxjs/add/operator/map";
 import { log } from "util";
-import { filter } from "rxjs/operators/filter";
-import { map } from "rxjs/operators/map";
-import { startWith } from "rxjs/operators/startWith";
+import { filter, map, startWith, takeWhile } from "rxjs/operators";
 
 const COMMA = 188;
 
@@ -42,6 +40,7 @@ export class MovimientosComponent implements OnInit {
   guias: any[] = [];
   guias_string: string = "";
 
+  private alive: boolean = true;
   movimientoForm: FormGroup;
 
   now: any;
@@ -79,7 +78,7 @@ export class MovimientosComponent implements OnInit {
 
   stockData: any = {
     ID: "",
-    Cantidad: 0
+    Cantidad: ""
   };
 
   documentoData: any = {
@@ -91,23 +90,27 @@ export class MovimientosComponent implements OnInit {
 
   filteredOptions: any[];
   filteredPackages: string[];
-  numSeries: any[];
+  numSeries: any[] = [];
   seriesSelected = new FormControl([]);
   prodEscogido;
+  cantidadMaximaProductos: number = 0;
 
   constructor(
     private inventariosService: InventariosService,
     private loginService: LoginService,
     private fb: FormBuilder,
     public snackBar: MatSnackBar,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     this.numSeries = [];
-    this.loginService.currentUserInfo.subscribe(res => {
-      this.uname = res[0]["Uname"];
-    });
+    this.loginService.currentUserInfo
+      .pipe(takeWhile(() => this.alive))
+      .subscribe(res => {
+        this.uname = res[0]["Uname"];
+      });
 
     this.movimientoForm = this.fb.group({
       Documento: ["", Validators.required],
@@ -129,75 +132,86 @@ export class MovimientosComponent implements OnInit {
       Usuario: ""
     });
 
-    this.loginService.currentPermissions.subscribe(res => {
-      this.perms = res;
-    });
+    this.loginService.currentPermissions
+      .pipe(takeWhile(() => this.alive))
+      .subscribe(res => {
+        this.perms = res;
+      });
     this.currentDate();
     this.movimientoForm.patchValue({ Fecha: this.now });
 
-    this.inventariosService.currentLoading.subscribe(res => {
-      this.loading = res;
-    });
-
-    this.inventariosService.currentDataDocumentos.subscribe(res => {
-      this.documentos = res;
-
-      if (!this.perms[0]["reg_doc_entrada"]) {
-        this.documentos = this.documentos.filter(
-          value => value["Naturaleza"] != "ENTRADA"
-        );
-      }
-
-      if (!this.perms[0]["reg_doc_salida"]) {
-        this.documentos = this.documentos.filter(
-          value => value["Naturaleza"] != "SALIDA"
-        );
-      }
-
-      if (!this.perms[0]["reg_doc_transferencia"]) {
-        this.documentos = this.documentos.filter(
-          value => value["Naturaleza"] != "TRANSFERENCIA"
-        );
-      }
-
-      if (!this.perms[0]["reg_doc_ajusteEntrada"]) {
-        this.documentos = this.documentos.filter(
-          value => value["Naturaleza"] != "AJUSTE DE ENTRADA"
-        );
-      }
-
-      if (!this.perms[0]["reg_doc_ajusteSalida"]) {
-        this.documentos = this.documentos.filter(
-          value => value["Naturaleza"] != "AJUSTE DE SALIDA"
-        );
-      }
-
-      this.documentos.sort(this.sortBy("Nombre"));
-
-      let _serie = "";
-      this.numerosSerie = [];
-      this.documentos.forEach(element => {
-        if (
-          element["Numtienda"] != _serie &&
-          this.numerosSerie.indexOf(element["Numtienda"]) < 0
-        ) {
-          this.numerosSerie.push(element["Numtienda"]);
-          _serie = element["Numtienda"];
-        }
+    this.inventariosService.currentLoading
+      .pipe(takeWhile(() => this.alive))
+      .subscribe(res => {
+        this.loading = res;
+        this.cd.markForCheck();
       });
-    });
+
+    this.inventariosService.currentDataDocumentos
+      .pipe(takeWhile(() => this.alive))
+      .subscribe(res => {
+        this.documentos = res;
+
+        if (!this.perms[0]["reg_doc_entrada"]) {
+          this.documentos = this.documentos.filter(
+            value => value["Naturaleza"] != "ENTRADA"
+          );
+        }
+
+        if (!this.perms[0]["reg_doc_salida"]) {
+          this.documentos = this.documentos.filter(
+            value => value["Naturaleza"] != "SALIDA"
+          );
+        }
+
+        if (!this.perms[0]["reg_doc_transferencia"]) {
+          this.documentos = this.documentos.filter(
+            value => value["Naturaleza"] != "TRANSFERENCIA"
+          );
+        }
+
+        if (!this.perms[0]["reg_doc_ajusteEntrada"]) {
+          this.documentos = this.documentos.filter(
+            value => value["Naturaleza"] != "AJUSTE DE ENTRADA"
+          );
+        }
+
+        if (!this.perms[0]["reg_doc_ajusteSalida"]) {
+          this.documentos = this.documentos.filter(
+            value => value["Naturaleza"] != "AJUSTE DE SALIDA"
+          );
+        }
+
+        this.documentos.sort(this.sortBy("Nombre"));
+
+        let _serie = "";
+        this.numerosSerie = [];
+        this.documentos.forEach(element => {
+          if (
+            element["Numtienda"] != _serie &&
+            this.numerosSerie.indexOf(element["Numtienda"]) < 0
+          ) {
+            this.numerosSerie.push(element["Numtienda"]);
+            _serie = element["Numtienda"];
+          }
+        });
+      });
 
     this.getProducts();
 
-    this.inventariosService.currentDataAlmacenes.subscribe(res => {
-      this.almacenes = res;
-      this.almacenes.sort(this.sortBy("Nombre"));
-    });
+    this.inventariosService.currentDataAlmacenes
+      .pipe(takeWhile(() => this.alive))
+      .subscribe(res => {
+        this.almacenes = res;
+        this.almacenes.sort(this.sortBy("Nombre"));
+      });
 
-    this.inventariosService.currentDataTerceros.subscribe(res => {
-      this.terceros = res;
-      this.terceros.sort(this.sortBy("Nombre"));
-    });
+    this.inventariosService.currentDataTerceros
+      .pipe(takeWhile(() => this.alive))
+      .subscribe(res => {
+        this.terceros = res;
+        this.terceros.sort(this.sortBy("Nombre"));
+      });
 
     this.getPackages();
 
@@ -218,15 +232,34 @@ export class MovimientosComponent implements OnInit {
           break;
         }
       }
-      this.inventariosService.getNumSerie(nombre).subscribe(data => {
-        this.numSeries = data.records;
-        this.numSeries.sort(this.dynamicSort("numSerie"));
-      });
+      this.inventariosService
+        .getNumSerie(nombre)
+        .pipe(takeWhile(() => this.alive))
+        .subscribe(data => {
+          this.numSeries = data.records;
+          this.calculateMaximumProducts();
+          this.numSeries.sort(this.dynamicSort("numSerie"));
+        });
     } else {
-      this.inventariosService.getNumSerie(this.productName).subscribe(data => {
-        this.numSeries = data.records;
-        this.numSeries.sort(this.dynamicSort("numSerie"));
-      });
+      this.inventariosService
+        .getNumSerie(this.productName)
+        .pipe(takeWhile(() => this.alive))
+        .subscribe(data => {
+          this.numSeries = data.records;
+          this.calculateMaximumProducts();
+          this.numSeries.sort(this.dynamicSort("numSerie"));
+        });
+    }
+  }
+
+  calculateMaximumProducts() {
+    this.cantidadMaximaProductos = 0;
+    for (let i = 0; i < this.numSeries.length; i++) {
+      if (
+        this.numSeries[i].almacen ==
+        this.movimientoForm.get("AlmacenOrigen").value
+      )
+        this.cantidadMaximaProductos++;
     }
   }
 
@@ -248,11 +281,14 @@ export class MovimientosComponent implements OnInit {
   }
 
   onChanges2(): void {
-    this.movimientoForm.get("Paquete").valueChanges.subscribe(val2 => {
-      if (val2 !== "") {
-        this.packActual(val2);
-      }
-    });
+    this.movimientoForm
+      .get("Paquete")
+      .valueChanges.pipe(takeWhile(() => this.alive))
+      .subscribe(val2 => {
+        if (val2 !== "") {
+          this.packActual(val2);
+        }
+      });
   }
 
   ValidateSerie(cantidadSerie: number): ValidatorFn {
@@ -265,16 +301,20 @@ export class MovimientosComponent implements OnInit {
   }
 
   getProducts() {
-    this.inventariosService.currentDataProductos.subscribe(res => {
-      this.productos = res;
-      this.productos.sort(this.sortBy("Nombre"));
-    });
+    this.inventariosService.currentDataProductos
+      .pipe(takeWhile(() => this.alive))
+      .subscribe(res => {
+        this.productos = res;
+        this.productos.sort(this.sortBy("Nombre"));
+      });
   }
 
   getPackages() {
-    this.inventariosService.currentDataPaquetes.subscribe(res => {
-      this.paquetes = res;
-    });
+    this.inventariosService.currentDataPaquetes
+      .pipe(takeWhile(() => this.alive))
+      .subscribe(res => {
+        this.paquetes = res;
+      });
   }
 
   currentDate() {
@@ -496,8 +536,18 @@ export class MovimientosComponent implements OnInit {
   }
 
   filtrarProductos(alm: string) {
+    if (
+      this.movimientoForm.get("AlmacenDestino").value &&
+      this.movimientoForm.get("AlmacenDestino").value == alm
+    ) {
+      this.movimientoForm.patchValue({ AlmacenDestino: "" });
+    }
+    if (this.numSeries != []) {
+      this.calculateMaximumProducts();
+    }
+    this.movimientoForm.patchValue({ Cantidad: "" });
     this.productos_filtrado = [];
-
+    this.seriesSelected.patchValue([]);
     this.productos.forEach(element => {
       if (element["Zona"] === alm) {
         this.productos_filtrado.push(element);
@@ -520,6 +570,20 @@ export class MovimientosComponent implements OnInit {
     });
     this.filteredOptions = this.productos_filtrado;
     this.filteredPackages = this.pack_nombre;
+  }
+
+  checkEqualsOrigin() {
+    if (
+      this.movimientoForm.get("AlmacenOrigen").value &&
+      this.movimientoForm.get("AlmacenOrigen").value ==
+        this.movimientoForm.get("AlmacenDestino").value
+    ) {
+      this.movimientoForm.patchValue({ AlmacenDestino: "" });
+      this.toastr.warning(
+        "El almacen de origen no puedo ser el mismo que el de destino",
+        "Cuidado"
+      );
+    }
   }
 
   slideToogleChange(e) {
@@ -546,6 +610,9 @@ export class MovimientosComponent implements OnInit {
 
   pushKeyProducts() {
     this.numSeries = [];
+    this.cantidadMaximaProductos = 0;
+    this.seriesSelected.patchValue([]);
+    this.movimientoForm.patchValue({ Cantidad: "" });
     this.filteredOptions = this.filterProducto(
       this.movimientoForm.value["Producto"]
     );
@@ -591,7 +658,7 @@ export class MovimientosComponent implements OnInit {
 
       this.movimientoForm.patchValue({ Precio: 0 });
       this.movimientoForm.patchValue({ Compra: this.precioActual });
-      this.movimientoForm.patchValue({ Cantidad: null });
+      this.movimientoForm.patchValue({ Cantidad: "" });
       this.packFlag = false;
 
       if (this.tipoMovimiento === "ENTRADA") {
@@ -610,7 +677,7 @@ export class MovimientosComponent implements OnInit {
     this.movimientoForm.controls["Precio"].disable();
     this.movimientoForm.patchValue({ Precio: 0 });
     this.lista_items_paquete = [];
-    this.movimientoForm.patchValue({ Cantidad: null });
+    this.movimientoForm.patchValue({ Cantidad: "" });
     this.packFlag = true;
 
     this.paquetes.forEach(element => {
@@ -647,9 +714,18 @@ export class MovimientosComponent implements OnInit {
   precio(cantidad: number) {
     let arraySeries: any[] = [];
 
-    if (cantidad <= this.numSeries.length) {
-      for (let i = 0; i < cantidad; i++) {
-        arraySeries.push(this.numSeries[i].numSerie);
+    if (cantidad <= this.cantidadMaximaProductos) {
+      for (let i = 0; i < this.numSeries.length; i++) {
+        if (arraySeries.length == cantidad) {
+          break;
+        } else {
+          if (
+            this.numSeries[i].almacen ==
+            this.movimientoForm.get("AlmacenOrigen").value
+          ) {
+            arraySeries.push(this.numSeries[i].numSerie);
+          }
+        }
       }
       this.seriesSelected.patchValue(arraySeries);
       if (
@@ -774,8 +850,9 @@ export class MovimientosComponent implements OnInit {
         Usuario: this.uname
       });
     }
-
     this.calcMontoTotal();
+    this.movimientoForm.patchValue({ Cantidad: "" });
+    this.seriesSelected.patchValue([]);
   }
 
   calcMontoTotal() {
@@ -803,7 +880,8 @@ export class MovimientosComponent implements OnInit {
           Producto: element["Producto"],
           Cantidad: parseFloat(element["Cantidad"]),
           Origen: element["AlmacenOrigen"],
-          Destino: element["AlmacenDestino"]
+          Destino: element["AlmacenDestino"],
+          Series: element["Series"]
         });
         _item.push(element["Producto"]);
       }
@@ -846,9 +924,12 @@ export class MovimientosComponent implements OnInit {
       registrar = false;
     }
     if (registrar) {
-      for (var i = 0; i < _resumen.length; i++) {
-        for (var j = 0; j < this.productos.length; j++) {
-          if (_resumen[i]["ID"] === this.productos[j]["Codigo"]) {
+      for (let i = 0; i < _resumen.length; i++) {
+        for (let j = 0; j < this.productos.length; j++) {
+          if (
+            _resumen[i]["ID"] === this.productos[j]["Codigo"] &&
+            _resumen[i]["Origen"] === this.productos[j]["Zona"]
+          ) {
             if (
               this.listaResumen[0]["Movimiento"] === "SALIDA" ||
               this.listaResumen[0]["Movimiento"] === "AJUSTE DE SALIDA"
@@ -870,7 +951,7 @@ export class MovimientosComponent implements OnInit {
               this.stockData["ID"] = this.productos[j]["ID"];
               this.stockData["Cantidad"] = parseFloat(_resumen[i]["Cantidad"]);
               this.inventariosService.actualizarStock(this.stockData);
-            } else if (this.listaResumen[0]["Movimiento"] === "TRANSFERENCIA") {
+            } else if (this.listaResumen[0]["Movimiento"] == "TRANSFERENCIA") {
               if (
                 this.productos[j]["Stock_actual"] >=
                 parseFloat(_resumen[i]["Cantidad"])
@@ -909,8 +990,12 @@ export class MovimientosComponent implements OnInit {
         Correlativo: "",
         AlmacenOrigen: "",
         Producto: "",
-        Paquete: ""
+        Paquete: "",
+        AlmacenDestino: "",
+        Tercero: "",
+        Cantidad: ""
       });
+      this.seriesSelected.patchValue([]);
       this.productName = null;
       this.prodEscogido = undefined;
       this.lista_items_paquete = [];
@@ -927,21 +1012,27 @@ export class MovimientosComponent implements OnInit {
   sumarCantidad(idx: number) {
     this.inventariosService
       .getNumSerie(this.listaResumen[idx]["Producto"])
+      .takeWhile(() => this.alive)
       .subscribe(data => {
         let series = data.records;
         let exists;
         series.sort(this.dynamicSort("numSerie"));
-        this.listaResumen[idx]["Series"];
         for (let i = 0; i < series.length; i++) {
           exists = true;
           for (let j = 0; j < this.listaResumen[idx]["Series"].length; j++) {
             if (series[i].numSerie == this.listaResumen[idx]["Series"][j]) {
               exists = false;
+              break;
+            }
+            if (series[i].almacen != this.listaResumen[idx]["AlmacenOrigen"]) {
+              exists = false;
+              break;
             }
           }
           if (exists) {
             this.listaResumen[idx]["Series"].push(series[i].numSerie);
             this.listaResumen[idx]["Cantidad"] += 1;
+            this.cd.markForCheck();
             return;
           }
         }
@@ -958,11 +1049,18 @@ export class MovimientosComponent implements OnInit {
       this.listaResumen[idx]["Series"].pop();
       this.listaResumen[idx]["Cantidad"] -= 1;
       this.calcMontoTotal();
+      this.cd.markForCheck();
     }
   }
 
   borrarItem(idx: number) {
     this.listaResumen.splice(idx, 1);
     this.calcMontoTotal();
+  }
+
+  ngOnDestroy() {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    this.alive = false;
   }
 }

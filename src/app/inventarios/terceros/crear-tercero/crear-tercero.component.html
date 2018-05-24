@@ -9,8 +9,7 @@
 
             <mat-form-field color="accent" style="width:100%">
                 <mat-select formControlName="TerceroClass" placeholder="Tipo de Tercero">
-                    <mat-option class="w3-indigo w3-hover-gray" *ngFor="let tipo of tipos"
-                                [value]="tipo.nombre">{{ tipo.nombre }}</mat-option>
+                    <mat-option class="w3-indigo w3-hover-gray" *ngFor="let tipo of tipos" [value]="tipo.nombre">{{ tipo.nombre }}</mat-option>
                 </mat-select>
                 <mat-error *ngIf="!crearTerceroForm.valid">
                     Seleccionar un tipo *
@@ -19,8 +18,7 @@
 
             <mat-form-field color="accent" style="width:100%">
                 <mat-select formControlName="IdentiClass" placeholder="Documento">
-                    <mat-option class="w3-indigo w3-hover-gray" *ngFor="let documento of documentos"
-                                [value]="documento.nombre">{{ documento.nombre }}</mat-option>
+                    <mat-option class="w3-indigo w3-hover-gray" *ngFor="let documento of documentos" [value]="documento.nombre">{{ documento.nombre }}</mat-option>
                 </mat-select>
                 <mat-error *ngIf="!crearTerceroForm.valid">
                     Seleccionar un documento *
@@ -38,7 +36,7 @@
             </mat-form-field>
 
             <mat-form-field color="accent" style="width:100%">
-                <input #nombre matInput formControlName="Nombre" (input)="checkByNombre(nombre.value)"type="text" placeholder="Nombre">
+                <input #nombre matInput formControlName="Nombre" (input)="checkByNombre(nombre.value)" type="text" placeholder="Nombre">
                 <mat-error *ngIf="!crearTerceroForm.valid">
                     Nombre requerido *
                 </mat-error>
@@ -53,7 +51,7 @@
                     Dirección requerida *
                 </mat-error>
             </mat-form-field>
-            <br> 
+            <br>
         </div>
         <br>
         <div class="w3-white w3-card-4 w3-padding">
@@ -68,25 +66,18 @@
 
             <mat-form-field color="accent" style="width:100%">
                 <input matInput formControlName="Mail" type="text" placeholder="Mail">
-                
+
             </mat-form-field>
 
             <mat-form-field color="accent" style="width:100%">
                 <input matInput formControlName="Telefono" type="text" placeholder="Teléfono">
-                
+
             </mat-form-field>
-            <br> 
+            <br>
         </div>
         <br>
-        <button mat-raised-button
-                color="warn"
-                routerLink="../../terceros"
-                >CANCELAR</button>
-        <button mat-raised-button
-              type="submit"
-              color="primary"
-              [disabled]="!crearTerceroForm.valid"
-              >CREAR</button>
+        <button mat-raised-button color="warn" routerLink="../../terceros">CANCELAR</button>
+        <button mat-raised-button type="submit" color="primary" [disabled]="!crearTerceroForm.valid">CREAR</button>
     </form>
 
 </div>

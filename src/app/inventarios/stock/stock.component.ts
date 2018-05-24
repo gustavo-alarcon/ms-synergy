@@ -8,6 +8,8 @@ import {
 import { InventariosService } from "./../../servicios/almacenes/inventarios.service";
 import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import { Angular2Csv } from "angular2-csv/Angular2-csv";
+import { SpawnSyncOptionsWithStringEncoding } from "child_process";
+import { takeWhile } from "rxjs/operators";
 
 @Component({
   selector: "app-stock",
@@ -18,10 +20,9 @@ export class StockComponent implements OnInit {
   almacenes: any[] = [];
 
   consulta: boolean = false;
-  consultaProducto : boolean = false;
+  consultaProducto: boolean = false;
   loading: boolean = false;
   queryDone: boolean = false;
-  canSearchProduct : boolean = true;
 
   stock: any[] = [];
   _stock: any[] = [];
@@ -39,9 +40,16 @@ export class StockComponent implements OnInit {
   productos_filtrado: any[] = [];
   productName: string = null;
   numSeries: any[] = [];
-  seriesSelected = new FormControl([]);
+  seriesSelected = new FormControl("");
   productoDisabled: boolean = true;
   productosSeries = [];
+  filteredProducts = [];
+  filteredSeries = [];
+  seriesAutocomplete = [];
+  productoFilter: any = new FormControl();
+  prodEscogido = "";
+  numSerieSelected: string = "";
+  private alive: boolean = true;
 
   constructor(
     private inventariosService: InventariosService,
@@ -56,44 +64,63 @@ export class StockComponent implements OnInit {
       ProductoFiltro: [""]
     });
 
-    this.stockForm.get("ProductoFiltro").disable();
     this.seriesSelected.disable();
 
-    this.inventariosService.currentDataAlmacenes.subscribe(res => {
-      this.almacenes = res;
-      this.almacenes.sort(this.sortBy("Nombre"));
-    });
+    this.inventariosService.currentDataAlmacenes
+      .pipe(takeWhile(() => this.alive))
+      .subscribe(res => {
+        this.almacenes = res;
+        this.almacenes.sort(this.sortBy("Nombre"));
+      });
 
-    this.inventariosService.currentLoading.subscribe(res => {
-      this.loading = res;
-      this.cd.detectChanges();
-    });
+    this.inventariosService.currentLoading
+      .pipe(takeWhile(() => this.alive))
+      .subscribe(res => {
+        this.loading = res;
+        this.cd.markForCheck();
+      });
 
-    this.inventariosService.currentConsultaStockSend.subscribe(res => {
-      this.consulta = res;
-      this.cd.detectChanges();
-    });
+    this.inventariosService.currentConsultaStockSend
+      .pipe(takeWhile(() => this.alive))
+      .subscribe(res => {
+        this.consulta = res;
+        this.cd.markForCheck();
+      });
 
     this.getProducts();
+    this.onChanges();
+  }
+
+  onChanges(): void {
+    this.productoFilter.valueChanges
+      .pipe(takeWhile(() => this.alive))
+      .subscribe(val => {
+        if (val !== "") {
+          this.prodEscogido = val;
+        } else this.prodEscogido = "";
+      });
   }
 
   getProducts() {
-    this.inventariosService.currentDataProductos.subscribe(res => {
-      this.productos = res;
-      this.productos.sort(this.sortBy("Nombre"));
-    });
+    this.inventariosService.currentDataProductos
+      .pipe(takeWhile(() => this.alive))
+      .subscribe(res => {
+        this.productos = res;
+        this.productos.sort(this.sortBy("Nombre"));
+        this.filteredOptions = this.productos;
+      });
   }
 
   filtrarProductos(alm: string) {
-    this.stockForm.controls["ProductoFiltro"].enable();
-    this.productos_filtrado = [];
+    this.stockForm.get("ProductoFiltro").patchValue("");
+    this.seriesSelected.patchValue("");
+    this.productName = "";
+    this.seriesSelected.disable();
     this.productos.forEach(element => {
       if (element["Zona"] === alm) {
         this.productos_filtrado.push(element);
       }
     });
-
-    this.filteredOptions = this.productos_filtrado;
   }
 
   sortBy(key) {
@@ -128,25 +155,37 @@ export class StockComponent implements OnInit {
     this.consultaProducto = false;
     this.inventariosService.consultaStock(this.stockForm.value);
 
-    this.inventariosService.currentDataStock.subscribe(res => {
-      this.stock = res;
-      this._stock = res.slice();
+    this.inventariosService.currentDataStock
+      .pipe(takeWhile(() => this.alive))
+      .subscribe(res => {
+        this.stock = res;
+        this._stock = res.slice();
+        this.filteredProducts = this._stock;
 
-      this.queryDone = true;
+        this.queryDone = true;
 
-      if (this.stock.length < 1 && this.consulta) {
-        this.mensajeKardex = "No se encontraron resultados";
-      } else {
-        this.mensajeKardex = "Genere una consulta";
-      }
-    });
-    this.cd.detectChanges();
+        if (this.stock.length < 1 && this.consulta) {
+          this.mensajeKardex = "No se encontraron resultados";
+        } else {
+          this.mensajeKardex = "Genere una consulta";
+        }
+      });
+    this.cd.markForCheck();
   }
 
   filtrarStock(ref: any) {
     if (ref != "TODOS") {
-      this._stock = this.stock.filter(value => value["Estado"] === ref);
+      this.filteredProducts = this.stock.filter(
+        value => value["Estado"] === ref
+      );
+    } else {
+      this.filteredProducts = this.stock;
     }
+  }
+
+  selectedSerie() {
+    this.numSerieSelected = this.seriesSelected.value;
+    this.seriesAutocomplete = this.filterSerie(this.seriesSelected.value);
   }
 
   selectProduct(): void {
@@ -154,7 +193,6 @@ export class StockComponent implements OnInit {
     this.numSeries = [];
     this.seriesSelected.patchValue([]);
     this.productName = this.stockForm.get("ProductoFiltro").value;
-    this.pushKeyProducts();
     if (this.optionDisplay == 2) {
       for (let i = 0; i < this.filteredOptions.length; i++) {
         if (this.productName == this.filteredOptions[i].Codigo) {
@@ -163,45 +201,61 @@ export class StockComponent implements OnInit {
         }
       }
       if (this.filteredOptions.length != 0) {
-        this.inventariosService.getNumSerie(nombre).subscribe(data => {
-          this.numSeries = data.records;
-          this.numSeries.sort(this.dynamicSort("numSerie"));
-          this.canSearchProduct = false;
-          this.seriesSelected.enable();
-        });
+        this.inventariosService
+          .getNumSerie(nombre)
+          .pipe(takeWhile(() => this.alive))
+          .subscribe(data => {
+            this.numSeries = data.records;
+            this.numSeries.sort(this.dynamicSort("numSerie"));
+            this.seriesSelected.enable();
+          });
       }
     } else {
       if (this.filteredOptions.length != 0) {
         this.inventariosService
           .getNumSerie(this.productName)
+          .pipe(takeWhile(() => this.alive))
           .subscribe(data => {
             this.numSeries = data.records;
             this.numSeries.sort(this.dynamicSort("numSerie"));
-            this.canSearchProduct = false;
+            this.seriesAutocomplete = this.numSeries;
             this.seriesSelected.enable();
           });
       }
     }
+    this.filteredOptions = this.filterProducto(
+      this.stockForm.value["ProductoFiltro"]
+    );
   }
   pushKeyProducts() {
     this.numSeries = [];
     this.seriesSelected.disable();
-    this.canSearchProduct = true;
     this.filteredOptions = this.filterProducto(
       this.stockForm.value["ProductoFiltro"]
     );
   }
 
+  pushKeySeries() {
+    this.numSerieSelected = "";
+    this.seriesAutocomplete = this.filterSerie(this.seriesSelected.value);
+  }
+
   filterProducto(val): string[] {
     if (this.optionDisplay == 1) {
-      return this.productos_filtrado.filter(
+      return this.productos.filter(
         option => option.Nombre.toLowerCase().indexOf(val.toLowerCase()) === 0
       );
     } else {
-      return this.productos_filtrado.filter(
+      return this.productos.filter(
         option => option.Codigo.toLowerCase().indexOf(val.toLowerCase()) === 0
       );
     }
+  }
+
+  filterSerie(val): string[] {
+    return this.numSeries.filter(
+      option => option.numSerie.toLowerCase().indexOf(val.toLowerCase()) === 0
+    );
   }
 
   dynamicSort(property) {
@@ -231,7 +285,7 @@ export class StockComponent implements OnInit {
       useBom: false
     };
 
-    let exportStock = this._stock.slice();
+    let exportStock = this.filteredProducts.slice();
     exportStock.unshift({
       Nombre: "PRODUCTO",
       Unidad: "UNIDAD",
@@ -250,6 +304,7 @@ export class StockComponent implements OnInit {
   }
 
   getProductoSerie() {
+    this.loading = true;
     let filtro;
     this.consulta = false;
     if (this.optionDisplay != 2) {
@@ -264,16 +319,87 @@ export class StockComponent implements OnInit {
             Producto: this.filteredOptions[i].Nombre,
             Series: []
           };
+          break;
         }
       }
     }
-    if (this.seriesSelected.value.length > 0) {
-      filtro.Series = this.seriesSelected.value;
+    if (this.numSerieSelected != "") {
+      filtro.Series.push(this.numSerieSelected);
     }
-    this.inventariosService.getProductoSerie(filtro).subscribe(data => {
-      this.productosSeries = data.records;
-      this.consultaProducto = true;
-      this.cd.detectChanges();
-    });
+    this.inventariosService
+      .getProductoSerie(filtro)
+      .pipe(takeWhile(() => this.alive))
+      .subscribe(data => {
+        for (let i = 0; i < data.records.length; i++) {
+          if(data.records[i].estado == 0){
+            data.records[i].estado = 'En almacen';
+          }
+          else
+            data.records[i].estado = 'Vendido';
+        }
+        this.productosSeries = data.records;
+        this.filteredSeries = this.productosSeries;
+        this.consultaProducto = true;
+        this.loading = false;
+        this.cd.markForCheck();
+      });
+  }
+
+  filterData() {
+    if (this.consulta == true) {
+      this.filteredProducts = this._stock.filter(
+        value =>
+          value["Nombre"]
+            .toLowerCase()
+            .startsWith(this.productoFilter.value.toLowerCase()) ||
+          value["Unidad"]
+            .toLowerCase()
+            .startsWith(this.productoFilter.value.toLowerCase()) ||
+          value["Stock_actual"]
+            .toString()
+            .startsWith(this.productoFilter.value.toLowerCase()) ||
+          value["Estado"]
+            .toLowerCase()
+            .startsWith(this.productoFilter.value.toLowerCase())
+      );
+    }
+    if (this.consultaProducto == true) {
+      this.filteredSeries = this.productosSeries.filter(
+        value =>
+          value["almacen"]
+            .toLowerCase()
+            .startsWith(this.productoFilter.value.toLowerCase()) ||
+          value["documento"]
+            .toLowerCase()
+            .startsWith(this.productoFilter.value.toLowerCase()) ||
+          value["estado"]
+            .toLowerCase()
+            .startsWith(this.productoFilter.value.toLowerCase()) ||
+          value["fecha"]
+            .toLowerCase()
+            .startsWith(this.productoFilter.value.toLowerCase()) ||
+          value["movimiento"]
+            .toLowerCase()
+            .startsWith(this.productoFilter.value.toLowerCase()) ||
+          value["numSerie"]
+            .toLowerCase()
+            .startsWith(this.productoFilter.value.toLowerCase()) ||
+          value["operacion"]
+            .toLowerCase()
+            .startsWith(this.productoFilter.value.toLowerCase()) ||
+          value["usuario"]
+            .toLowerCase()
+            .startsWith(this.productoFilter.value.toLowerCase()) ||
+          value["tercero"]
+            .toLowerCase()
+            .startsWith(this.productoFilter.value.toLowerCase())
+      );
+    }
+  }
+
+  ngOnDestroy() {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    this.alive = false;
   }
 }

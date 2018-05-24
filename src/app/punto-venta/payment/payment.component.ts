@@ -5,7 +5,7 @@ import { PosService } from '../../servicios/pos.service';
 import { ListCustomers } from '../../classes/listCustomers';
 import * as crypto from 'crypto-js';
 import { ToastrService } from 'ngx-toastr';
-import 'rxjs/add/operator/takeWhile';
+import { takeWhile } from "rxjs/operators";
 
 @Component({
   selector: 'app-payment',
@@ -37,11 +37,10 @@ export class PaymentComponent implements OnInit {
   ) {
     this.salesArray = [];
     this.customer = data;
-    console.log(this.customer);
     this.isLoadingResults = true;
     this.posService
       .getDocuments(this.bd)
-      .takeWhile(() => this.alive)
+      .pipe(takeWhile(() => this.alive))
       .subscribe(res => {
         let _serie = "";
         this.numerosSerie = [];
@@ -137,17 +136,17 @@ export class PaymentComponent implements OnInit {
     this.customer.change = this.vuelto;
     this.posService
       .regMovimiento(this.bd, this.customer)
-      .takeWhile(() => this.alive)
+      .pipe(takeWhile(() => this.alive))
       .subscribe(data => {
         for (let i = 0; i < this.salesArray.length; i++) {
           this.posService
             .actualizarStock(this.bd, this.salesArray[i])
-            .takeWhile(() => this.alive)
+            .pipe(takeWhile(() => this.alive))
             .subscribe(data2 => {});
         }
         this.posService
           .updateCorrelativo(this.bd, this.selectedDocument)
-          .takeWhile(() => this.alive)
+          .pipe(takeWhile(() => this.alive))
           .subscribe(data => {});
         this.isLoadingResults = false;
         this.toastr.success("Se realizo la venta con exito", "Exito");

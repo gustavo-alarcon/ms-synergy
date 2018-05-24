@@ -226,6 +226,10 @@ mat-icon {
   grid-area: nine;
 }
 
+.point {
+  grid-area: point;
+}
+
 .zero {
   grid-area: zero0;
 }

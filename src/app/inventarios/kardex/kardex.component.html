@@ -11,85 +11,84 @@
       <div class="w3-row-padding">
 
         <div class="w3-col s12 m4 l4">
-            <mat-form-field color="accent" class="meraki-fill">
-              <input #fecha matInput [matDatepicker]="picker" [max]="timeLimit" placeholder="Fecha" (dateInput)="onInput($event)" (dateChange)="onChange($event)" [value]="now">
-              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-              <mat-datepicker #picker></mat-datepicker>
-              <mat-error *ngIf="!kardexForm.valid">
-                Fecha <strong>requerida</strong> *
-              </mat-error>
-            </mat-form-field>
-            <br>
-            <mat-form-field class="meraki-fill">
-              <mat-select  #almacen formControlName="Almacen" placeholder="Almacen" (change)="filtrarProductos(almacen.value)">
-                <mat-option class="w3-indigo w3-hover-gray" *ngFor="let almacen of almacenes"
-                            [value]="almacen.Nombre">{{ almacen.Nombre }}</mat-option>
-              </mat-select>
-              <mat-error *ngIf="!kardexForm.valid">
-                Almacen <strong>requerido</strong> *
-              </mat-error>
-            </mat-form-field>
-            <br>
-            <mat-form-field class="meraki-fill">
-              <mat-select formControlName="IDProd" placeholder="Producto" >
-                <mat-option class="w3-indigo w3-hover-gray" *ngFor="let producto of productos_filtrado; let i = index"
-                            [value]="producto.ID" (click)="setUnit(producto.ID)">{{ producto.Nombre }}</mat-option>
-              </mat-select>
-              <mat-error *ngIf="!kardexForm.valid">
-                Producto <strong>requerido</strong> *
-              </mat-error>
-            </mat-form-field>
-            <br>
-            <mat-form-field class="meraki-fill">
-              <input matInput type="text" placeholder="Unidad" [value]="kardexForm.value['Unidad']" disabled>
-            </mat-form-field>
-            <br>
-            <mat-checkbox #valorizado class="meraki-font-s5">Reporte valorizado</mat-checkbox>
-            <br>
-            <br>
-            <button type="submit" mat-raised-button color="primary" [disabled]="!kardexForm.valid">Generar consulta</button>
+          <mat-form-field color="accent" class="meraki-fill">
+            <input #fecha matInput [matDatepicker]="picker" [max]="timeLimit" placeholder="Fecha" (dateInput)="onInput($event)" (dateChange)="onChange($event)"
+              [value]="now">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error *ngIf="!kardexForm.valid">
+              Fecha
+              <strong>requerida</strong> *
+            </mat-error>
+          </mat-form-field>
+          <br>
+          <mat-form-field class="meraki-fill">
+            <mat-select #almacen formControlName="Almacen" placeholder="Almacen" (selectionChange)="filtrarProductos(almacen.value)">
+              <mat-option class="w3-indigo w3-hover-gray" *ngFor="let almacen of almacenes" [value]="almacen.Nombre">{{ almacen.Nombre }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="!kardexForm.valid">
+              Almacen
+              <strong>requerido</strong> *
+            </mat-error>
+          </mat-form-field>
+          <br>
+          <mat-form-field class="meraki-fill">
+            <mat-select formControlName="IDProd" placeholder="Producto">
+              <mat-option class="w3-indigo w3-hover-gray" *ngFor="let producto of productos_filtrado; let i = index" [value]="producto.ID"
+                (click)="setUnit(producto.ID)">{{ producto.Nombre }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="!kardexForm.valid">
+              Producto
+              <strong>requerido</strong> *
+            </mat-error>
+          </mat-form-field>
+          <br>
+          <mat-form-field class="meraki-fill">
+            <input matInput type="text" placeholder="Unidad" [value]="kardexForm.value['Unidad']" disabled>
+          </mat-form-field>
+          <br>
+          <mat-checkbox #valorizado class="meraki-font-s5">Reporte valorizado</mat-checkbox>
+          <br>
+          <br>
+          <button type="submit" mat-raised-button color="primary" [disabled]="!kardexForm.valid">Generar consulta</button>
         </div>
 
         <div class="w3-col s12 m8 l8">
           <mat-form-field>
-            <mat-select #sepcel (change)="configExportSep(sepcel.value)" [(value)]="separador" aria-placeholder="Filtro" placeholder="Separador celdas">
-              <mat-option class="w3-indigo w3-hover-gray"
-                          value=",">( , ) Coma</mat-option>
-              <mat-option class="w3-indigo w3-hover-gray"
-                          value=";">( ; ) Punto y coma</mat-option>
-              <mat-option class="w3-indigo w3-hover-gray"
-                          value="\t">( t ) Tabulador</mat-option>
+            <mat-select #sepcel (selectionChange)="configExportSep(sepcel.value)" [(value)]="separador" aria-placeholder="Filtro" placeholder="Separador celdas">
+              <mat-option class="w3-indigo w3-hover-gray" value=",">( , ) Coma</mat-option>
+              <mat-option class="w3-indigo w3-hover-gray" value=";">( ; ) Punto y coma</mat-option>
+              <mat-option class="w3-indigo w3-hover-gray" value="\t">( t ) Tabulador</mat-option>
             </mat-select>
           </mat-form-field>
           <br>
           <mat-form-field>
-            <mat-select #sepdec (change)="configExportDec(sepdec.value)" [(value)]="separadorDecimal" aria-placeholder="Filtro" placeholder="Separador decimal">
-              <mat-option class="w3-indigo w3-hover-gray"
-                          value=",">( , ) Coma</mat-option>
-              <mat-option class="w3-indigo w3-hover-gray"
-                          value=".">( . ) Punto</mat-option>
+            <mat-select #sepdec (selectionChange)="configExportDec(sepdec.value)" [(value)]="separadorDecimal" aria-placeholder="Filtro"
+              placeholder="Separador decimal">
+              <mat-option class="w3-indigo w3-hover-gray" value=",">( , ) Coma</mat-option>
+              <mat-option class="w3-indigo w3-hover-gray" value=".">( . ) Punto</mat-option>
             </mat-select>
           </mat-form-field>
           <br>
-          <button mat-raised-button
-          type="button"
-          color="primary"
-          (click)="exportData()"
-          [disabled]="!queryDone"
-          >Exportar</button><br>
+          <button mat-raised-button type="button" color="primary" (click)="exportData()" [disabled]="!queryDone">Exportar</button>
+          <br>
         </div>
       </div>
       <br>
     </div>
   </form>
   <br>
-  <div *ngIf="consulta" class="w3-container">
-    <h4 class="meraki-font-s5"><strong>Moneda: </strong>{{ moneda }}</h4>
-    <h4 class="meraki-font-s5"><strong>Entrada: </strong>{{ sum_entrada | number:'.2-2' }} {{ moneda }}</h4>
-    <h4 class="meraki-font-s5"><strong>Salida:  </strong>{{ sum_salida | number:'.2-2' }} {{ moneda }}</h4>
-    <h4 class="meraki-font-s5"><strong>Stock Final: </strong>{{ stock_actual }}</h4>
+  <div *ngIf="consulta && kardex.length == 0" class="w3-container">
+    <h4 class="meraki-font-s5">
+      <strong>Moneda: </strong>{{ moneda }}</h4>
+    <h4 class="meraki-font-s5">
+      <strong>Entrada: </strong>{{ sum_entrada | number:'.2-2' }} {{ moneda }}</h4>
+    <h4 class="meraki-font-s5">
+      <strong>Salida: </strong>{{ sum_salida | number:'.2-2' }} {{ moneda }}</h4>
+    <h4 class="meraki-font-s5">
+      <strong>Stock Final: </strong>{{ stock_actual }}</h4>
   </div>
-  <div *ngIf="consulta" class="w3-responsive w3-card-4" style="max-height:100vh">
+  <div *ngIf="consulta && kardex.length == 0" class="w3-responsive w3-card-4" style="max-height:100vh">
     <table class="w3-table-all meraki-font-s5">
       <thead>
         <tr class="w3-small">
@@ -128,14 +127,20 @@
           <td class="w3-border-right">{{ reg.Correlativo }}</td>
           <td class="w3-border-right">{{ reg.Movimiento }}</td>
           <td class="w3-border-right" [ngStyle]="{'color':reg.E_cantidad > 0 ? 'rgb(0,0,0)' : 'rgb(200,200,200)' }" style="text-align:right">{{ reg.E_cantidad | number:'.2-2' }}</td>
-          <td *ngIf="valorizado.checked" class="w3-border-right" [ngStyle]="{'color':reg.E_costo > 0 ? 'rgb(0,0,0)' : 'rgb(200,200,200)' }" style="text-align:right">{{ reg.E_costo | number:'.2-2' }}</td>
-          <td *ngIf="valorizado.checked" class="w3-border-right" [ngStyle]="{'color':reg.E_total > 0 ? 'rgb(0,0,0)' : 'rgb(200,200,200)' }" style="text-align:right">{{ reg.E_total | number:'.2-2' }}</td>
+          <td *ngIf="valorizado.checked" class="w3-border-right" [ngStyle]="{'color':reg.E_costo > 0 ? 'rgb(0,0,0)' : 'rgb(200,200,200)' }"
+            style="text-align:right">{{ reg.E_costo | number:'.2-2' }}</td>
+          <td *ngIf="valorizado.checked" class="w3-border-right" [ngStyle]="{'color':reg.E_total > 0 ? 'rgb(0,0,0)' : 'rgb(200,200,200)' }"
+            style="text-align:right">{{ reg.E_total | number:'.2-2' }}</td>
           <td class="w3-border-right" [ngStyle]="{'color':reg.S_cantidad > 0 ? 'rgb(0,0,0)' : 'rgb(200,200,200)' }" style="text-align:right">{{ reg.S_cantidad | number:'.2-2' }}</td>
-          <td *ngIf="valorizado.checked" class="w3-border-right" [ngStyle]="{'color':reg.S_total > 0 ? 'rgb(0,0,0)' : 'rgb(200,200,200)' }" style="text-align:right">{{ reg.S_costo | number:'.2-2' }}</td>
-          <td *ngIf="valorizado.checked" class="w3-border-right" [ngStyle]="{'color':reg.S_total > 0 ? 'rgb(0,0,0)' : 'rgb(200,200,200)' }" style="text-align:right">{{ reg.S_total | number:'.2-2' }}</td>
+          <td *ngIf="valorizado.checked" class="w3-border-right" [ngStyle]="{'color':reg.S_total > 0 ? 'rgb(0,0,0)' : 'rgb(200,200,200)' }"
+            style="text-align:right">{{ reg.S_costo | number:'.2-2' }}</td>
+          <td *ngIf="valorizado.checked" class="w3-border-right" [ngStyle]="{'color':reg.S_total > 0 ? 'rgb(0,0,0)' : 'rgb(200,200,200)' }"
+            style="text-align:right">{{ reg.S_total | number:'.2-2' }}</td>
           <td class="w3-border-right" [ngStyle]="{'color':reg.Stock > 0 ? 'rgb(0,0,0)' : 'rgb(200,200,200)' }" style="text-align:right">{{ reg.Stock | number:'.2-2' }}</td>
-          <td *ngIf="valorizado.checked" class="w3-border-right" [ngStyle]="{'color':reg.SL_costo > 0 ? 'rgb(0,0,0)' : 'rgb(200,200,200)' }" style="text-align:right">{{ reg.SL_costo | number:'.2-2' }}</td>
-          <td *ngIf="valorizado.checked" class="w3-border-right" [ngStyle]="{'color':reg.SL_total > 0 ? 'rgb(0,0,0)' : 'rgb(200,200,200)' }" style="text-align:right">{{ reg.SL_total | number:'.2-2' }}</td>
+          <td *ngIf="valorizado.checked" class="w3-border-right" [ngStyle]="{'color':reg.SL_costo > 0 ? 'rgb(0,0,0)' : 'rgb(200,200,200)' }"
+            style="text-align:right">{{ reg.SL_costo | number:'.2-2' }}</td>
+          <td *ngIf="valorizado.checked" class="w3-border-right" [ngStyle]="{'color':reg.SL_total > 0 ? 'rgb(0,0,0)' : 'rgb(200,200,200)' }"
+            style="text-align:right">{{ reg.SL_total | number:'.2-2' }}</td>
           <!--td class="w3-border-right" style="text-align:right">{{ reg.Movimiento === 'ENTRADA' || reg.Movimiento === 'AJUSTE DE ENTRADA'? (reg.Cantidad | number:'.2-2'):'' }}</td>
           <td class="w3-border-right" style="text-align:right">{{ reg.Movimiento === 'ENTRADA'? (reg.Compra | number:'.2-2'):'' }}</td>
           <td class="w3-border-right" style="text-align:right">{{ reg.Movimiento === 'ENTRADA'? (reg.Cantidad * reg.Compra | number:'.2-2'):'' }}</td>
@@ -151,7 +156,10 @@
   </div>
   <br>
   <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
-  <div *ngIf="!consulta" class="w3-container w3-padding-large meraki-empty-bg w3-card-2">
+  <div *ngIf="!consulta" class="w3-container w3-padding-large w3-margin-bottom meraki-empty-bg w3-card-2">
     <h2 class="w3-margin w3-center meraki-font-s2">{{ mensajeKardex }}</h2>
+  </div>
+  <div *ngIf="consulta && kardex.length != 0" class="w3-container w3-padding-large w3-margin-bottom meraki-empty-bg w3-card-2">
+    <h2 class="w3-margin w3-center meraki-font-s2">No hubo resultados para la busqueda</h2>
   </div>
 </div>

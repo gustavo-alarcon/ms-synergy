@@ -10,17 +10,19 @@
             <mat-form-field color="accent" style="width:100%">
                 <input #abrev matInput type="text" formControlName="Abrev" (input)="checkByAbrev(abrev.value)" placeholder="Abreviatura">
                 <mat-error *ngIf="!crearDocumentoForm.valid">
-                    Abreviatura <strong>requerida</strong> *.
+                    Abreviatura
+                    <strong>requerida</strong> *.
                 </mat-error>
                 <mat-hint *ngIf="abrevExist">
                     La abreviatura ya existe.
                 </mat-hint>
-            </mat-form-field> 
+            </mat-form-field>
 
             <mat-form-field color="accent" style="width:100%">
                 <input #nombre matInput type="text" formControlName="Nombre" (input)="checkByNombre(nombre.value)" placeholder="Nombre">
                 <mat-error *ngIf="!crearDocumentoForm.valid">
-                    Nombre <strong>requerido</strong> *.
+                    Nombre
+                    <strong>requerido</strong> *.
                 </mat-error>
                 <mat-hint *ngIf="nombreExist">
                     El nombre ya existe.
@@ -29,8 +31,7 @@
 
             <mat-form-field color="accent" style="width:100%">
                 <mat-select formControlName="Naturaleza" placeholder="Naturaleza">
-                    <mat-option class="w3-indigo w3-hover-gray" *ngFor="let nat of naturaleza"
-                                [value]="nat.value">{{ nat.value }}</mat-option>
+                    <mat-option class="w3-indigo w3-hover-gray" *ngFor="let nat of naturaleza" [value]="nat.value">{{ nat.value }}</mat-option>
                 </mat-select>
                 <mat-error *ngIf="!crearDocumentoForm.valid">
                     <strong>Seleccionar</strong> naturaleza del documento *
@@ -39,8 +40,7 @@
 
             <mat-form-field color="accent" style="width:100%">
                 <mat-select formControlName="Tipo" placeholder="Tipo">
-                    <mat-option class="w3-indigo w3-hover-gray" *ngFor="let tipo of tipos"
-                                [value]="tipo.value">{{ tipo.value }}</mat-option>
+                    <mat-option class="w3-indigo w3-hover-gray" *ngFor="let tipo of tipos" [value]="tipo.value">{{ tipo.value }}</mat-option>
                 </mat-select>
                 <mat-error *ngIf="!crearDocumentoForm.valid">
                     <strong>Seleccionar</strong> tipo de documento *
@@ -48,14 +48,15 @@
             </mat-form-field>
 
         </div>
-        <br>  
+        <br>
         <div class="w3-white w3-card-4 w3-padding">
             <h4>Numeración</h4>
 
             <mat-form-field color="accent" style="width:100%">
                 <input matInput type="number" formControlName="Numtienda" placeholder="N° Serie">
                 <mat-error *ngIf="!crearDocumentoForm.valid">
-                    Número de serie <strong>requerido</strong> *.
+                    Número de serie
+                    <strong>requerido</strong> *.
                 </mat-error>
                 <mat-hint>
                     Número de serie del talonario.
@@ -65,7 +66,8 @@
             <mat-form-field color="accent" style="width:100%">
                 <input matInput type="number" formControlName="CorrelativoInicial" placeholder="N° Correlativo">
                 <mat-error *ngIf="!crearDocumentoForm.valid">
-                    Número corelativo <strong>requerido</strong> *.
+                    Número corelativo
+                    <strong>requerido</strong> *.
                 </mat-error>
                 <mat-hint>
                     Número correlativo con que empezará el documento.
@@ -80,14 +82,6 @@
             </mat-form-field>
         </div>
         <br>
-        <button mat-raised-button
-                color="warn"
-                routerLink="../../documentos">CANCELAR</button>
-        <button mat-raised-button
-                type="submit"
-                color="primary"
-                [disabled]="!crearDocumentoForm.valid"
-                >CREAR</button>
+        <button mat-raised-button color="warn" routerLink="../../documentos">CANCELAR</button>
+        <button mat-raised-button type="submit" color="primary" [disabled]="!crearDocumentoForm.valid">CREAR</button>
     </form>
-
-
