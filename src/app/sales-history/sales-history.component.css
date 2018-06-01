@@ -1,181 +1,184 @@
-.limit{
-    margin-top: 72px;
+.limit {
+  margin-top: 72px;
 }
 
-.input{
-    width: 100%;
-    padding: 15px;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
+.input {
+  width: 100%;
+  padding: 15px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .deleted {
-    transition: all .4s;
-    background: rgb(248, 109, 109);
+  transition: all 0.4s;
+  background: rgb(248, 109, 109);
 }
 
-detail-products{
-    max-height: 80vh;
-    overflow: auto;
+detail-products {
+  max-height: 80vh;
+  overflow: auto;
 }
 
-.changeColorFont{
-    color: #fff;
-    transition: all .4s
+.changeColorFont {
+  color: #fff;
+  transition: all 0.4s;
 }
 
-mat-row, mat-header-row{
-    transition: all .4s;
-    padding: 10px 0;
+mat-header-cell {
+  justify-content: center;
 }
 
-mat-form-field{
-    width: 95%;
+mat-row,
+mat-header-row {
+  transition: all 0.4s;
+  padding: 10px 0;
 }
 
-.column{
-    float: left;
-    width: 30%;
+mat-form-field {
+  width: 95%;
+}
+
+.column {
+  float: left;
+  width: 30%;
 }
 
 .red {
-    background: rgb(255, 101, 101);
+  background: rgb(255, 101, 101);
 }
 .green {
-    background: rgb(156, 210, 112);
-  }
-  
-  .blue {
-    background: rgb(100, 126, 189);
-  }
-  
-  .pink {
-    background: rgb(209, 107, 199);
-  }
-
-  .stats{
-      display: flex;
-      flex-direction: row;
-      justify-content: space-around;
-      flex-wrap: wrap;
-  }
-
-  .bubbleContainer{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-    flex-direction: column;
-  }
-
-  .bubble{
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 7px 7px 5px 0px rgba(50, 50, 50, 0.5);
-  }
-
-  .bubbleText{
-    font-weight: bold;
-    color: #fff;
-    font-size: 38px;
-  }
-
-  .button-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  h1{
-      justify-content: center;
-      margin: 30px 10px;
-  }
-
-  span{
-      align-self: center;
-  }  
-
-  .description{
-    text-align: center;
-  }
-
-  mat-icon{
-    margin-right: 10px;
+  background: rgb(156, 210, 112);
 }
 
-.reload{
-    margin-right: 0px;
+.blue {
+  background: rgb(100, 126, 189);
 }
 
-.select{
-    margin: 0px 20px;
-    width: 10%;
+.pink {
+  background: rgb(209, 107, 199);
 }
 
-button{
-    margin: 0px 15px;
+.stats {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  flex-wrap: wrap;
 }
 
-mat-card{
-    padding: 20px 0px;
-    margin: 20px 5vw;
-    border-radius: 10px;
+.bubbleContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  flex-direction: column;
 }
 
-.type::first-letter{
-    text-transform: capitalize;
+.bubble {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 7px 7px 5px 0px rgba(50, 50, 50, 0.5);
 }
-mat-cell{
-    align-items: center;
-    padding: 5px;
-    justify-content: center;
-    display: flex;
-    flex-wrap: wrap;
+
+.bubbleText {
+  font-weight: bold;
+  color: #fff;
+  font-size: 38px;
+}
+
+.button-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+h1 {
+  justify-content: center;
+  margin: 30px 10px;
+}
+
+span {
+  align-self: center;
+}
+
+.description {
+  text-align: center;
+}
+
+mat-icon {
+  margin-right: 10px;
+}
+
+.reload {
+  margin-right: 0px;
+}
+
+.select {
+  margin: 0px 20px;
+  width: 10%;
+}
+
+button {
+  margin: 0px 15px;
+}
+
+mat-card {
+  padding: 20px 0px;
+  margin: 20px 5vw;
+  border-radius: 10px;
+}
+
+.type::first-letter {
+  text-transform: capitalize;
+}
+mat-cell {
+  align-items: center;
+  padding: 5px;
+  justify-content: center;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 table {
-    width: 100%;
-    padding: 5px 5px;
-    border: 2px solid;
-    border-radius: 10px;
-    text-align: center;
+  width: 100%;
+  padding: 5px 5px;
+  border: 2px solid;
+  border-radius: 10px;
+  text-align: center;
 }
 
 .add-comment {
-    opacity: 0.4;
+  opacity: 0.4;
 }
 
 .mat-column-seleccionar {
-    overflow: visible;
+  overflow: visible;
 }
 
+@media screen and (max-width: 1400px) {
+  .input {
+    display: block;
+    padding: 0px;
+    margin: 0px;
+  }
 
+  mat-card {
+    padding: 0px;
+  }
 
-@media screen and (max-width:1400px){
-    .input{
-        display: block;
-        padding: 0px;
-        margin: 0px;
-    }
+  mat-form-field {
+    margin: 10px;
+  }
 
-    mat-card{
-        padding: 0px;
-    }
-
-    mat-form-field{
-        margin: 10px;
-    }
-
-    mat-checkbox-layout{
-        margin-bottom: 5px;
-    }
+  mat-checkbox-layout {
+    margin-bottom: 5px;
+  }
 }
 
 /*@media screen and (max-width: 499px){
@@ -195,5 +198,3 @@ table {
         display: grid;
     }
 }*/
-
-

@@ -9,16 +9,5 @@ export class Client {
     Type: number;
     select: boolean;
 
-    constructor() {
-        this.ID;
-        this.Name;
-        this.Mail;
-        this.Phone;
-        this.Place;
-        this.Birthday;
-        this.Type;
-        this.select;
-    }
-
 }
 

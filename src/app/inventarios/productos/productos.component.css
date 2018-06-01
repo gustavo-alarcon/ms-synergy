@@ -1,43 +1,47 @@
 img {
-    border: 1px solid #ddd; /* Gray border */
-    border-radius: 4px;  /* Rounded border */
-    padding: 5px; /* Some padding */
-    width: 100px; /* Set a small width */
+  border: 1px solid #ddd; /* Gray border */
+  border-radius: 4px; /* Rounded border */
+  padding: 5px; /* Some padding */
+  width: 100px; /* Set a small width */
 }
 
 .imgWrap {
-    cursor: pointer;
-    display: inline-block;
-    border: 1px solid rgb(155, 155, 155);
-    background-color: #fff;
-    transition: all .4s linear;
+  cursor: pointer;
+  display: inline-block;
+  border: 1px solid rgb(155, 155, 155);
+  background-color: #fff;
+  transition: all 0.4s linear;
 }
 
 .imgWrap img {
-    opacity: 1;
-    transition: all .4s linear;
+  opacity: 1;
+  transition: all 0.4s linear;
+}
+
+.marginButton {
+  margin: 15px;
 }
 
 .imgWrap:hover {
-    background-color: rgba(0,0,0,0.3);
-    transition: all .4s linear;
+  background-color: rgba(0, 0, 0, 0.3);
+  transition: all 0.4s linear;
 }
 
 img:hover,
 .imgWrap:hover img {
-    opacity: 0.6;
-    transition: all .4s linear;
+  opacity: 0.6;
+  transition: all 0.4s linear;
 }
 
 td {
-    vertical-align: middle;
+  vertical-align: middle;
 }
 
-.reload{
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 150px;
-    height: 150px;
+.reload {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 150px;
+  height: 150px;
 }

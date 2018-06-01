@@ -78,7 +78,7 @@
     </div>
   </form>
   <br>
-  <div *ngIf="consulta && kardex.length == 0" class="w3-container">
+  <div *ngIf="consulta && kardex.length != 0" class="w3-container">
     <h4 class="meraki-font-s5">
       <strong>Moneda: </strong>{{ moneda }}</h4>
     <h4 class="meraki-font-s5">
@@ -88,7 +88,7 @@
     <h4 class="meraki-font-s5">
       <strong>Stock Final: </strong>{{ stock_actual }}</h4>
   </div>
-  <div *ngIf="consulta && kardex.length == 0" class="w3-responsive w3-card-4" style="max-height:100vh">
+  <div *ngIf="consulta && kardex.length != 0" class="w3-responsive w3-card-4" style="max-height:100vh">
     <table class="w3-table-all meraki-font-s5">
       <thead>
         <tr class="w3-small">
@@ -159,7 +159,7 @@
   <div *ngIf="!consulta" class="w3-container w3-padding-large w3-margin-bottom meraki-empty-bg w3-card-2">
     <h2 class="w3-margin w3-center meraki-font-s2">{{ mensajeKardex }}</h2>
   </div>
-  <div *ngIf="consulta && kardex.length != 0" class="w3-container w3-padding-large w3-margin-bottom meraki-empty-bg w3-card-2">
+  <div *ngIf="consulta && kardex.length == 0" class="w3-container w3-padding-large w3-margin-bottom meraki-empty-bg w3-card-2">
     <h2 class="w3-margin w3-center meraki-font-s2">No hubo resultados para la busqueda</h2>
   </div>
 </div>

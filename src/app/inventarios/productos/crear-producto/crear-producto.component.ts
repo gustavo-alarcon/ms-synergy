@@ -114,7 +114,8 @@ export class CrearProductoComponent implements OnInit {
       Compra: ["", Validators.required],
       Venta: ["", Validators.required],
       Imagen: null,
-      avatar: null
+      avatar: null,
+      Serie: 0
     });
   }
 
@@ -125,7 +126,7 @@ export class CrearProductoComponent implements OnInit {
         Venta: this.crearProductoForm.value["Venta"].toFixed(2)
       });
       this.inventariosService.crearProducto(this.crearProductoForm.value);
-      if (this.images){
+      if (this.images) {
         this.inventariosService
           .guardarImagen(this.images)
           .pipe(takeWhile(() => this.alive))

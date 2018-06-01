@@ -69,6 +69,14 @@
                 </mat-error>
             </mat-form-field>
 
+            <mat-form-field color="accent" style="width:100%">
+                <input matInput type="number" formControlName="Serie" placeholder="Número de serie inicial*">
+                <mat-error *ngIf="!crearProductoForm.valid">
+                    Número de serie inicial
+                    <strong>requerido</strong> *
+                </mat-error>
+            </mat-form-field>
+
             <h5>Stock</h5>
             <mat-form-field color="accent" style="width:23%">
                 <input matInput type="number" formControlName="Stock_inicial" placeholder="Inicial">

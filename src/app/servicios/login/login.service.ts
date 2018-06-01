@@ -51,7 +51,7 @@ export class LoginService {
     private http: Http,
     private router: Router,
     public snackBar: MatSnackBar,
-    private toast: ToastrService,
+    private toast: ToastrService
   ) {}
 
   //GENERALES
@@ -72,6 +72,8 @@ export class LoginService {
       .pipe(takeWhile(() => this.alive))
       .subscribe(
         res => {
+          this.logout();
+          this.clean();
           let res_json = res.json();
           this.loginData = res_json["records"];
           if (this.loginData[0].IDSynergy === "false") {
@@ -88,12 +90,52 @@ export class LoginService {
               JSON.stringify(res_json.records[0].Db),
               "meraki"
             );
-            this.name = crypto.AES.encrypt(JSON.stringify(username), "meraki");
-            localStorage.setItem("web", this.web.toString());
-            localStorage.setItem("db", this.db.toString());
-            localStorage.setItem("user", this.name.toString());
-            this.userInfo.next(this.loginData);
-            this.getCurrentPermissions(this.loginData, "check");
+            if (localStorage.getItem("user")) {
+              let listBytes = null;
+              let list = null;
+              listBytes = crypto.AES.decrypt(
+                localStorage.getItem("user"),
+                "meraki"
+              );
+              list = listBytes.toString(crypto.enc.Utf8);
+              if (JSON.parse(list) == username) {
+                this.name = crypto.AES.encrypt(
+                  JSON.stringify(username),
+                  "meraki"
+                );
+                localStorage.setItem("web", this.web.toString());
+                localStorage.setItem("db", this.db.toString());
+                localStorage.setItem("user", this.name.toString());
+                this.userInfo.next(this.loginData);
+                this.getCurrentPermissions(this.loginData, "check");
+              } else {
+                localStorage.removeItem("web");
+                localStorage.removeItem("db");
+                localStorage.removeItem("user");
+                localStorage.removeItem("page");
+                localStorage.removeItem("list");
+                localStorage.removeItem("tab");
+                this.name = crypto.AES.encrypt(
+                  JSON.stringify(username),
+                  "meraki"
+                );
+                localStorage.setItem("web", this.web.toString());
+                localStorage.setItem("db", this.db.toString());
+                localStorage.setItem("user", this.name.toString());
+                this.userInfo.next(this.loginData);
+                this.getCurrentPermissions(this.loginData, "check");
+              }
+            } else {
+              this.name = crypto.AES.encrypt(
+                JSON.stringify(username),
+                "meraki"
+              );
+              localStorage.setItem("web", this.web.toString());
+              localStorage.setItem("db", this.db.toString());
+              localStorage.setItem("user", this.name.toString());
+              this.userInfo.next(this.loginData);
+              this.getCurrentPermissions(this.loginData, "check");
+            }
           }
         },
         err => {

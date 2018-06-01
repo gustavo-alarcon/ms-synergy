@@ -203,13 +203,11 @@ export class KardexComponent implements OnInit {
 
   onSubmit() {
     this.consulta = false;
-
-    console.log("this.kardexForm.value ", this.kardexForm.value);
+    this.kardex = [];
     this.inventariosService.consultaKardex(this.kardexForm.value);
 
     this.inventariosService.currentDataKardex.subscribe(res => {
-      console.log(res);
-      this.kardex = res.slice();
+      this.kardex = res;
 
       this.kardex.unshift({
         Fecha: "",
@@ -230,11 +228,9 @@ export class KardexComponent implements OnInit {
 
       this.queryDone = true;
 
-      if (this.kardex.length < 1 && this.consulta) {
+      if (this.kardex.length == 0 && this.consulta) {
         this.mensajeKardex = "No se encontraron resultados";
         this.consulta = false;
-      } else {
-        this.mensajeKardex = "Genere una consulta";
       }
 
       this.sum_entrada = 0;

@@ -2,7 +2,7 @@
   <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
 </div>
 <div>
-  <div mat-dialog-title class="header">
+  <div mat-dialog-title>
     <h1 style="width: 100%;">{{imagenData.Nombre}}</h1>
   </div>
   <hr>
@@ -10,12 +10,13 @@
     <div class="imagen">
       <img [class.edit]="editable" *ngIf="imagenData.Imagen != ''" defaultImage='./assets/spinner.gif' lazyLoad="http://www.meraki-s.com/rent/ms-synergy/{{bd}}/img/{{imagenData.Imagen}}"
         alt="Imagen del producto">
-      <img [class.edit]="editable" *ngIf="imagenData.Imagen == ''" defaultImage='./assets/spinner.gif' lazyLoad="./assets/nopic.png" alt="Sin imagen">
+      <img [class.edit]="editable" *ngIf="imagenData.Imagen == ''" defaultImage='./assets/spinner.gif' lazyLoad="./assets/nopic.png"
+        alt="Sin imagen">
     </div>
     <div *ngIf="editable" class="image">
-      <image-upload [buttonCaption]="'Suba la nueva imagen de su producto'" [dropBoxMessage]="'Arraste la nueva imagen de su producto'" [clearButtonCaption]="'Borrar'"
-          [style]="inputFile" [max]="1" (uploadFinished)="imageFinishedUploading($event)" (removed)="onRemoved()"></image-upload>
-  </div>
+      <image-upload [buttonCaption]="'Suba la nueva imagen de su producto'" [dropBoxMessage]="'Arraste la nueva imagen de su producto'"
+        [clearButtonCaption]="'Borrar'" [style]="inputFile" [max]="1" (uploadFinished)="imageFinishedUploading($event)" (removed)="onRemoved()"></image-upload>
+    </div>
   </mat-dialog-content>
   <div mat-dialog-actions align="end">
     <button *ngIf="editable" style="margin-bottom: 15px;" mat-raised-button color="primary" (click)="changeImage()">Cambiar imagen</button>

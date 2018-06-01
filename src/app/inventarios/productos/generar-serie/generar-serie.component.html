@@ -1,0 +1,36 @@
+<div class="loadingSpinner" *ngIf="isLoadingResults">
+  <mat-spinner></mat-spinner>
+</div>
+<div>
+  <div mat-dialog-title class="header">
+    <h1 style="width: 100%;">Generar numeros de serie</h1>
+  </div>
+  <hr>
+  <mat-dialog-content>
+    <h2 *ngIf="productosFiltrados.length == 0">No hay productos sin numero de serie</h2>
+    <table class="w3-table-all" *ngIf="productosFiltrados.length != 0">
+      <thead>
+        <tr>
+          <th class="w3-center w3-border">N°</th>
+          <th class="w3-center w3-border">Producto</th>
+          <th class="w3-center w3-border">N° serie inicial</th>
+        </tr>
+      </thead>
+      <tbody class="meraki-font-s5">
+        <tr *ngFor="let row of productosFiltrados ; let i = index">
+          <td>{{i + 1}}</td>
+          <td>{{row.Nombre}}</td>
+          <td>
+            <mat-form-field color="accent" style="width:100%">
+              <input matInput type="number" placeholder="Numero inicial" [(ngModel)]="productosFiltrados[i].Serie_actual" autocomplete="off">
+            </mat-form-field>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </mat-dialog-content>
+  <div mat-dialog-actions align="end">
+    <button style="margin-bottom: 15px;" mat-raised-button color="primary" [disabled]="productosFiltrados.length == 0" (click)="generarSeries()">Generar</button>
+    <button style="margin-bottom: 15px;" mat-raised-button color="warn" (click)="onNoClick()">Cancelar</button>
+  </div>
+</div>

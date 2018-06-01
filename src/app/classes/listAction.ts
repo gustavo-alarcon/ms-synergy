@@ -17,27 +17,8 @@ export class ListAction {
         IDProducto : any;
         Unidad : any;
         Venta : any;
+        Stock_actual : any;
         listNumSeries? : any[];
         seriesSelected? : any[];
         cantidadMaxima? : number
-    constructor() { 
-        this.product;
-        this.price;
-        this.units;
-        this.id;
-        this.dsc;
-        this.idReal;
-        this.unitPrice;
-        this.AlmacenOrigen;
-        this.Cantidad;
-        this.Moneda;
-        this.Paquete;
-        this.Producto;
-        this.IDProducto;
-        this.Unidad;
-        this.Venta;
-        this.listNumSeries;
-        this.seriesSelected;
-        this.cantidadMaxima;
-    }
 }

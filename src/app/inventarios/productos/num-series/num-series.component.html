@@ -1,0 +1,46 @@
+<div class="holderSpinner" *ngIf="isLoadingResults">
+  <div class="loadingSpinner">
+    <mat-spinner></mat-spinner>
+  </div>
+</div>
+<div mat-dialog-title class="header">
+  <h1 style="width: 100%;">Números de serie</h1>
+</div>
+<hr>
+<mat-dialog-content>
+  <h2 *ngIf="numSerieFiltrados.length == 0 && !isLoadingResults">No hay numeros de serie disponibles</h2>
+  <table class="w3-table-all" *ngIf="numSerieFiltrados.length != 0">
+    <thead>
+      <tr>
+        <th class="w3-center w3-border">N° de serie</th>
+        <th class="w3-center w3-border">Comentario</th>
+      </tr>
+    </thead>
+    <tbody class="meraki-font-s5">
+      <tr *ngFor="let row of numSerieFiltrados ; let i = index">
+        <td *ngIf="numSerieFiltrados[i].almacen == producto.producto.Zona && producto.modificar">
+          <mat-form-field color="accent" style="width:100%">
+            <input matInput type="number" placeholder="N° de serie" [(ngModel)]="numSerieFiltrados[i].numSerie" autocomplete="off">
+          </mat-form-field>
+        </td>
+        <td class="stickMiddle" *ngIf="numSerieFiltrados[i].almacen == producto.producto.Zona && producto.modificar">
+          <mat-form-field color="accent" style="width:100%">
+            <textarea matInput placeholder="Comentario" [(ngModel)]="numSerieFiltrados[i].comentario" autocomplete="off"></textarea>
+          </mat-form-field>
+        </td>
+        <td class="w3-center" *ngIf="numSerieFiltrados[i].almacen == producto.producto.Zona && !producto.modificar">
+          {{numSerieFiltrados[i].numSerie}}
+        </td>
+        <td *ngIf="numSerieFiltrados[i].almacen == producto.producto.Zona && !producto.modificar">
+          <span class="comment" *ngIf="numSerieFiltrados[i].comentario == '' ">-</span>
+          <span class="w3-center" *ngIf="numSerieFiltrados[i].comentario != '' ">{{numSerieFiltrados[i].comentario}}</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</mat-dialog-content>
+<div mat-dialog-actions align="end">
+  <button style="margin-bottom: 15px;" mat-raised-button color="primary" *ngIf="producto.modificar" [disabled]="numSerieFiltrados.length == 0"
+    (click)="guardarCambios()">Generar</button>
+  <button style="margin-bottom: 15px;" mat-raised-button color="warn" (click)="onNoClick()">Cancelar</button>
+</div>

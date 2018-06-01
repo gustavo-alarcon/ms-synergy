@@ -33,6 +33,7 @@ import { takeWhile } from "rxjs/operators";
 import * as pdfMake from "pdfmake/build/pdfmake";
 import * as pdfFonts from "pdfmake/build/vfs_fonts";
 import { Client } from "../ms-text/history/history.component";
+import { ENGINE_METHOD_DIGESTS } from "constants";
 
 @Component({
   selector: "app-punto-venta",
@@ -147,7 +148,7 @@ export class PuntoVentaComponent implements OnInit {
   user = this.nameBytes.toString(crypto.enc.Utf8);
   client: FormControl;
   isLoadingResults = true;
-  isLoadingResultsCheck = false;
+  isLoadingResultsCheck = [];
   listBytes: any = null;
   list: any = null;
   tabBytes: any = null;
@@ -217,6 +218,7 @@ export class PuntoVentaComponent implements OnInit {
             numSeriesSelected: this.listCustomers[this.currentCustomer]
               .listAction[i].seriesSelected
           });
+          this.isLoadingResultsCheck.push(false);
         }
         /*for (
           let i = 0;
@@ -319,6 +321,10 @@ export class PuntoVentaComponent implements OnInit {
     this.client.patchValue(
       this.listCustomers[this.currentCustomer].client.Nombre
     );
+    this.formSelectNumSeries = this.formBuilder.group({
+      numSeriesArray: this.formBuilder.array([])
+    });
+    this.isLoadingResultsCheck = [];
     for (
       let i = 0;
       i < this.listCustomers[this.currentCustomer].listAction.length;
@@ -333,6 +339,7 @@ export class PuntoVentaComponent implements OnInit {
           i
         ].seriesSelected
       });
+      this.isLoadingResultsCheck.push(false);
     }
     let list = crypto.AES.encrypt(JSON.stringify(this.listCustomers), "meraki");
     localStorage.setItem("list", list);
@@ -351,6 +358,26 @@ export class PuntoVentaComponent implements OnInit {
       this.client.patchValue(
         this.listCustomers[this.currentCustomer].client.Nombre
       );
+    }
+    this.formSelectNumSeries = this.formBuilder.group({
+      numSeriesArray: this.formBuilder.array([])
+    });
+    this.isLoadingResultsCheck = [];
+    for (
+      let i = 0;
+      i < this.listCustomers[this.currentCustomer].listAction.length;
+      i++
+    ) {
+      this.addNumSerie();
+      let numSeriesForm = this.formSelectNumSeries.get(
+        "numSeriesArray"
+      ) as FormArray;
+      numSeriesForm.controls[i].patchValue({
+        numSeriesSelected: this.listCustomers[this.currentCustomer].listAction[
+          i
+        ].seriesSelected
+      });
+      this.isLoadingResultsCheck.push(false);
     }
     let list = crypto.AES.encrypt(JSON.stringify(this.listCustomers), "meraki");
     localStorage.setItem("list", list);
@@ -390,8 +417,14 @@ export class PuntoVentaComponent implements OnInit {
                 this.listCustomers[this.currentCustomer].listAction[i].units +
                   int
               ) <=
-              this.listCustomers[this.currentCustomer].listAction[i]
-                .cantidadMaxima
+                this.listCustomers[this.currentCustomer].listAction[i]
+                  .cantidadMaxima &&
+              parseInt(
+                this.listCustomers[this.currentCustomer].listAction[i].units +
+                  int
+              ) <=
+                this.listCustomers[this.currentCustomer].listAction[i]
+                  .Stock_actual
             ) {
               this.listCustomers[this.currentCustomer].listAction[i].units =
                 this.listCustomers[this.currentCustomer].listAction[i].units +
@@ -731,6 +764,7 @@ export class PuntoVentaComponent implements OnInit {
             this.listCustomers[this.currentCustomer].listAction[i].units == ""
           ) {
             this.listCustomers[this.currentCustomer].listAction.splice(i, 1);
+            this.isLoadingResultsCheck.splice(i,1);
             if (
               this.listCustomers[this.currentCustomer].listAction.length > 1
             ) {
@@ -892,6 +926,7 @@ export class PuntoVentaComponent implements OnInit {
             this.listCustomers[this.currentCustomer].listAction[i].dsc == ""
           ) {
             this.listCustomers[this.currentCustomer].listAction.splice(i, 1);
+            this.isLoadingResultsCheck.splice(i,1);
             if (
               this.listCustomers[this.currentCustomer].listAction.length > 1
             ) {
@@ -996,6 +1031,7 @@ export class PuntoVentaComponent implements OnInit {
             ""
           ) {
             this.listCustomers[this.currentCustomer].listAction.splice(i, 1);
+            this.isLoadingResultsCheck.splice(i,1);
             if (
               this.listCustomers[this.currentCustomer].listAction.length > 1
             ) {
@@ -1360,6 +1396,7 @@ export class PuntoVentaComponent implements OnInit {
     this.formSelectNumSeries = this.formBuilder.group({
       numSeriesArray: this.formBuilder.array([])
     });
+    this.isLoadingResultsCheck = [];
     let list = crypto.AES.encrypt(JSON.stringify(this.listCustomers), "meraki");
     localStorage.setItem("list", list);
   }
@@ -1370,186 +1407,247 @@ export class PuntoVentaComponent implements OnInit {
       this.formSelectNumSeries = this.formBuilder.group({
         numSeriesArray: this.formBuilder.array([])
       });
+      this.isLoadingResultsCheck = [];
     }
     localStorage.setItem("tab", JSON.stringify(this.selectedIndex));
   }
 
   addToList(idx) {
-    let i = null;
-    for (let j = 0; j < this.productos_filtrado.length; j++) {
-      if (this.filteredOptions[idx].Codigo == this.productos_filtrado[j].Codigo)
-        i = j;
-    }
-    let alreadyIn = false;
-    //Trabajo con productos
-    if (this.productsOrPackages == 0) {
-      for (
-        let x = 0;
-        x < this.listCustomers[this.currentCustomer].listAction.length;
-        x++
-      ) {
+    if (this.filteredOptions[idx].Stock_actual <= 0) {
+      this.toastr.warning(
+        "No hay stock disponible para vender el producto seleccionado",
+        "Cuidado"
+      );
+    } else {
+      let i = null;
+      for (let j = 0; j < this.productos_filtrado.length; j++) {
         if (
-          this.listCustomers[this.currentCustomer].listAction[x].id ==
-          this.productos_filtrado[i].Codigo
+          this.filteredOptions[idx].Codigo == this.productos_filtrado[j].Codigo
         )
-          alreadyIn = true;
+          i = j;
       }
-      if (!alreadyIn) {
-        this.isLoadingResultsCheck = true;
-        this.posService
-          .getNumSerie(this.bd, this.productos_filtrado[i].Nombre)
-          .pipe(takeWhile(() => this.alive))
-          .subscribe(
-            data => {
-              this.listCustomers[this.currentCustomer].listAction.push({
-                price: this.productos_filtrado[i].Venta,
-                product: this.productos_filtrado[i].Nombre,
-                units: "",
-                id: this.productos_filtrado[i].Codigo,
-                dsc: "",
-                unitPrice: "" + this.productos_filtrado[i].Venta,
-                idReal: this.productos_filtrado[i].ID,
-                package: 0,
-                AlmacenOrigen: this.productos_filtrado[i].Zona,
-                Cantidad: "",
-                Moneda: this.productos_filtrado[i].Moneda,
-                Paquete: "",
-                Producto: this.productos_filtrado[i].Nombre,
-                IDProducto: this.productos_filtrado[i].ID,
-                Unidad: this.productos_filtrado[i].Unidad,
-                Venta: this.productos_filtrado[i].Venta,
-                listNumSeries: data.records,
-                seriesSelected: [],
-                cantidadMaxima: null
-              });
-              for (
-                let i = 0;
-                i <
-                this.listCustomers[this.currentCustomer].listAction[
-                  this.listCustomers[this.currentCustomer].listAction.length - 1
-                ].listNumSeries.length;
-                i++
-              ) {
-                if (
-                  this.listCustomers[this.currentCustomer].listAction[
-                    this.listCustomers[this.currentCustomer].listAction.length -
-                      1
-                  ].listNumSeries[i].almacen == this.selectedWarehouse
-                ) {
-                  this.listCustomers[this.currentCustomer].listAction[
-                    this.listCustomers[this.currentCustomer].listAction.length -
-                      1
-                  ].cantidadMaxima++;
-                }
-              }
-              this.listCustomers[this.currentCustomer].total += +this
-                .listCustomers[this.currentCustomer].listAction[
-                this.listCustomers[this.currentCustomer].listAction.length - 1
-              ].price;
-              this.listCustomers[this.currentCustomer].subtotal =
-                this.listCustomers[this.currentCustomer].total / 1.18;
-              this.listCustomers[this.currentCustomer].taxes =
-                this.listCustomers[this.currentCustomer].total -
-                this.listCustomers[this.currentCustomer].subtotal;
-              this.listCustomers[
-                this.currentCustomer
-              ].lastItemClicked = this.productos_filtrado[i].Codigo;
-              this.listCustomers[this.currentCustomer].total = parseFloat(
-                this.listCustomers[this.currentCustomer].total.toFixed(2)
-              );
-              this.listCustomers[this.currentCustomer].taxes = parseFloat(
-                this.listCustomers[this.currentCustomer].taxes.toFixed(2)
-              );
-              this.listCustomers[this.currentCustomer].subtotal = parseFloat(
-                this.listCustomers[this.currentCustomer].subtotal.toFixed(2)
-              );
-              this.isLoadingResultsCheck = false;
-              this.cd.markForCheck();
-              this.addNumSerie();
-            },
-            err => {
-              console.log(err);
-              this.isLoadingResultsCheck = false;
-              this.cd.markForCheck();
-            }
+      let alreadyIn = false;
+      //Trabajo con productos
+      if (this.productsOrPackages == 0) {
+        for (
+          let x = 0;
+          x < this.listCustomers[this.currentCustomer].listAction.length;
+          x++
+        ) {
+          if (
+            this.listCustomers[this.currentCustomer].listAction[x].id ==
+            this.productos_filtrado[i].Codigo
+          )
+            alreadyIn = true;
+        }
+        if (!alreadyIn) {
+          this.listCustomers[this.currentCustomer].listAction.push({
+            price: this.productos_filtrado[i].Venta,
+            product: this.productos_filtrado[i].Nombre,
+            units: "",
+            id: this.productos_filtrado[i].Codigo,
+            dsc: "",
+            unitPrice: "" + this.productos_filtrado[i].Venta,
+            idReal: this.productos_filtrado[i].ID,
+            package: 0,
+            AlmacenOrigen: this.productos_filtrado[i].Zona,
+            Cantidad: "",
+            Moneda: this.productos_filtrado[i].Moneda,
+            Paquete: "",
+            Producto: this.productos_filtrado[i].Nombre,
+            IDProducto: this.productos_filtrado[i].ID,
+            Unidad: this.productos_filtrado[i].Unidad,
+            Venta: this.productos_filtrado[i].Venta,
+            Stock_actual: this.productos_filtrado[i].Stock_actual,
+            listNumSeries: null,
+            seriesSelected: [],
+            cantidadMaxima: null
+          });
+          this.listCustomers[this.currentCustomer].total += +this
+            .listCustomers[this.currentCustomer].listAction[
+            this.listCustomers[this.currentCustomer].listAction.length - 1
+          ].price;
+          this.listCustomers[this.currentCustomer].subtotal =
+            this.listCustomers[this.currentCustomer].total / 1.18;
+          this.listCustomers[this.currentCustomer].taxes =
+            this.listCustomers[this.currentCustomer].total -
+            this.listCustomers[this.currentCustomer].subtotal;
+          this.listCustomers[
+            this.currentCustomer
+          ].lastItemClicked = this.productos_filtrado[i].Codigo;
+          this.listCustomers[this.currentCustomer].total = parseFloat(
+            this.listCustomers[this.currentCustomer].total.toFixed(2)
           );
-      } else {
-        this.toastr.warning(
-          "El producto ya esta en la lista de venta, haga click en el para aumentar la cantidad",
-          "Cuidado"
-        );
+          this.listCustomers[this.currentCustomer].taxes = parseFloat(
+            this.listCustomers[this.currentCustomer].taxes.toFixed(2)
+          );
+          this.listCustomers[this.currentCustomer].subtotal = parseFloat(
+            this.listCustomers[this.currentCustomer].subtotal.toFixed(2)
+          );
+          this.cd.markForCheck();
+          this.addNumSerie();
+          this.isLoadingResultsCheck.push(true);
+          this.posService
+            .getNumSerie(this.bd, this.productos_filtrado[i].Nombre)
+            .pipe(takeWhile(() => this.alive))
+            .subscribe(
+              data => {
+                this.listCustomers[this.currentCustomer].listAction[this.listCustomers[this.currentCustomer].listAction.length-1].listNumSeries = data.records;
+                for (
+                  let i = 0;
+                  i <
+                  this.listCustomers[this.currentCustomer].listAction[
+                    this.listCustomers[this.currentCustomer].listAction.length -
+                      1
+                  ].listNumSeries.length;
+                  i++
+                ) {
+                  if (
+                    this.listCustomers[this.currentCustomer].listAction[
+                      this.listCustomers[this.currentCustomer].listAction
+                        .length - 1
+                    ].listNumSeries[i].almacen == this.selectedWarehouse
+                  ) {
+                    this.listCustomers[this.currentCustomer].listAction[
+                      this.listCustomers[this.currentCustomer].listAction
+                        .length - 1
+                    ].cantidadMaxima++;
+                  }
+                }
+                this.isLoadingResultsCheck[this.listCustomers[this.currentCustomer].listAction.length-1] = false;
+                this.cd.markForCheck();
+              },
+              err => {
+                console.log(err);
+                this.isLoadingResultsCheck[this.listCustomers[this.currentCustomer].listAction.length-1] = false;
+                this.cd.markForCheck();
+              }
+            );
+        } else {
+          this.toastr.warning(
+            "El producto ya esta en la lista de venta, haga click en el para aumentar la cantidad",
+            "Cuidado"
+          );
+        }
       }
+      //Trabajo con paquetes
+      else {
+        for (
+          let x = 0;
+          x < this.listCustomers[this.currentCustomer].listAction.length;
+          x++
+        ) {
+          if (
+            this.listCustomers[this.currentCustomer].listAction[x].id ==
+            this.pack_nombre[i].ID
+          )
+            alreadyIn = true;
+        }
+        if (!alreadyIn) {
+          this.listCustomers[this.currentCustomer].listAction.push({
+            price: this.pack_nombre[i].Venta,
+            product: this.pack_nombre[i].Nombre,
+            units: "",
+            id: this.pack_nombre[i].ID,
+            dsc: "",
+            unitPrice: "" + this.pack_nombre[i].Venta,
+            products: this.pack_nombre[i].Productos,
+            package: 1,
+            AlmacenOrigen: this.pack_nombre[i].Almacen,
+            Cantidad: "",
+            Moneda: this.pack_nombre[i].Moneda,
+            Paquete: this.pack_nombre[i].Nombre,
+            Producto: this.pack_nombre[i].Nombre,
+            IDProducto: this.pack_nombre[i].IDProducto,
+            Unidad: this.pack_nombre[i].Unidad,
+            Venta: this.pack_nombre[i].Venta,
+            Stock_actual: this.productos_filtrado[i].Stock_actual
+          });
+          this.listCustomers[this.currentCustomer].total += +this.listCustomers[
+            this.currentCustomer
+          ].listAction[
+            this.listCustomers[this.currentCustomer].listAction.length - 1
+          ].price;
+          this.listCustomers[this.currentCustomer].subtotal =
+            this.listCustomers[this.currentCustomer].total / 1.18;
+          this.listCustomers[this.currentCustomer].taxes =
+            this.listCustomers[this.currentCustomer].total * 18 / 100;
+          this.listCustomers[
+            this.currentCustomer
+          ].lastItemClicked = this.pack_nombre[i].ID;
+          this.listCustomers[this.currentCustomer].total = parseFloat(
+            this.listCustomers[this.currentCustomer].total.toFixed(2)
+          );
+          this.listCustomers[this.currentCustomer].taxes = parseFloat(
+            this.listCustomers[this.currentCustomer].taxes.toFixed(2)
+          );
+          this.listCustomers[this.currentCustomer].subtotal = parseFloat(
+            this.listCustomers[this.currentCustomer].subtotal.toFixed(2)
+          );
+        } else {
+          this.toastr.warning(
+            "El paquete ya esta en la lista de venta, haga click en el para aumentar la cantidad",
+            "Cuidado"
+          );
+        }
+      }
+      let list = crypto.AES.encrypt(
+        JSON.stringify(this.listCustomers),
+        "meraki"
+      );
+      localStorage.setItem("list", list);
     }
-    //Trabajo con paquetes
-    else {
-      for (
-        let x = 0;
-        x < this.listCustomers[this.currentCustomer].listAction.length;
-        x++
-      ) {
-        if (
-          this.listCustomers[this.currentCustomer].listAction[x].id ==
-          this.pack_nombre[i].ID
-        )
-          alreadyIn = true;
-      }
-      if (!alreadyIn) {
-        this.listCustomers[this.currentCustomer].listAction.push({
-          price: this.pack_nombre[i].Venta,
-          product: this.pack_nombre[i].Nombre,
-          units: "",
-          id: this.pack_nombre[i].ID,
-          dsc: "",
-          unitPrice: "" + this.pack_nombre[i].Venta,
-          products: this.pack_nombre[i].Productos,
-          package: 1,
-          AlmacenOrigen: this.pack_nombre[i].Almacen,
-          Cantidad: "",
-          Moneda: this.pack_nombre[i].Moneda,
-          Paquete: this.pack_nombre[i].Nombre,
-          Producto: this.pack_nombre[i].Nombre,
-          IDProducto: this.pack_nombre[i].IDProducto,
-          Unidad: this.pack_nombre[i].Unidad,
-          Venta: this.pack_nombre[i].Venta
-        });
-        this.listCustomers[this.currentCustomer].total += +this.listCustomers[
-          this.currentCustomer
-        ].listAction[
-          this.listCustomers[this.currentCustomer].listAction.length - 1
-        ].price;
-        this.listCustomers[this.currentCustomer].subtotal =
-          this.listCustomers[this.currentCustomer].total / 1.18;
-        this.listCustomers[this.currentCustomer].taxes =
-          this.listCustomers[this.currentCustomer].total * 18 / 100;
-        this.listCustomers[
-          this.currentCustomer
-        ].lastItemClicked = this.pack_nombre[i].ID;
-        this.listCustomers[this.currentCustomer].total = parseFloat(
-          this.listCustomers[this.currentCustomer].total.toFixed(2)
-        );
-        this.listCustomers[this.currentCustomer].taxes = parseFloat(
-          this.listCustomers[this.currentCustomer].taxes.toFixed(2)
-        );
-        this.listCustomers[this.currentCustomer].subtotal = parseFloat(
-          this.listCustomers[this.currentCustomer].subtotal.toFixed(2)
-        );
-      } else {
-        this.toastr.warning(
-          "El paquete ya esta en la lista de venta, haga click en el para aumentar la cantidad",
-          "Cuidado"
-        );
-      }
-    }
-    let list = crypto.AES.encrypt(JSON.stringify(this.listCustomers), "meraki");
-    localStorage.setItem("list", list);
   }
 
   valueSerie(i) {
-    this.listCustomers[this.currentCustomer].listAction[
-      i
-    ].units = this.formSelectNumSeries.controls.numSeriesArray.value[
-      i
-    ].numSeriesSelected.length;
+    if (
+      this.listCustomers[this.currentCustomer].listAction[i].Stock_actual > 0
+    ) {
+      this.listCustomers[this.currentCustomer].listAction[
+        i
+      ].units = this.formSelectNumSeries.controls.numSeriesArray.value[
+        i
+      ].numSeriesSelected.length.toString();
+      if (this.verifyValue(i)) {
+        this.listCustomers[this.currentCustomer].listAction[i].price =
+          parseFloat(
+            this.listCustomers[this.currentCustomer].listAction[i].unitPrice
+          ) *
+          parseFloat(
+            this.listCustomers[this.currentCustomer].listAction[i].units
+          );
+        this.listCustomers[this.currentCustomer].listAction[
+          i
+        ].price = parseFloat(
+          this.listCustomers[this.currentCustomer].listAction[i].price
+        ).toFixed(2);
+        if (this.listCustomers[this.currentCustomer].listAction[i].dsc != "") {
+          this.listCustomers[this.currentCustomer].listAction[i].price =
+            parseFloat(
+              this.listCustomers[this.currentCustomer].listAction[i].price
+            ) *
+            (100 -
+              parseFloat(
+                this.listCustomers[this.currentCustomer].listAction[i].dsc
+              )) /
+            100;
+          this.listCustomers[this.currentCustomer].listAction[
+            i
+          ].price = parseFloat(
+            this.listCustomers[this.currentCustomer].listAction[i].price
+          ).toFixed(2);
+        }
+      } else this.listCustomers[this.currentCustomer].listAction[i].price = "";
+      this.calculateTotalAndTaxes();
+    }
+    else{
+      let numSeriesForm = this.formSelectNumSeries.get(
+        "numSeriesArray"
+      ) as FormArray;
+      numSeriesForm.controls[i].patchValue({
+        numSeriesSelected: []
+      });
+    }
   }
 
   openClients() {
@@ -1579,9 +1677,10 @@ export class PuntoVentaComponent implements OnInit {
       i < this.listCustomers[this.currentCustomer].listAction.length;
       i++
     ) {
-      if (this.listCustomers[this.currentCustomer].listAction[i].units == "")
+      if (this.listCustomers[this.currentCustomer].listAction[i].units == "") {
         hasEmptyProducts = true;
-      break;
+        break;
+      }
     }
     if (
       this.listCustomers[this.currentCustomer].listAction.length != 0 &&

@@ -551,9 +551,13 @@ export class InventariosService {
     );
   }
 
-  modificarProducto(data: JSON) {
+  modificarProducto(cambios, original) {
     this.queryLoading(true);
-
+    let data = {
+      cambios: cambios,
+      original: original
+    };
+    console.log(data);
     this.http2
       .post(
         /*"http://www.meraki-s.com/rent/ms-synergy/php/handler-productos-mod.php?db=" */
@@ -565,6 +569,7 @@ export class InventariosService {
       .pipe(takeWhile(() => this.alive))
       .subscribe(
         res => {
+          console.log(res);
           this.toastr.success(res, "Exito");
           this.getProductos();
         },
@@ -597,7 +602,6 @@ export class InventariosService {
   }
 
   transferirProducto(data: any) {
-    console.log("Entro servicio");
     this.queryLoading(true);
     //this.http.post('http://localhost/meraki-rent/ms-synergy/src/app/servicios/almacenes/handler-productos-tra.php?db='+this.db, JSON.stringify(data))
     this.http2
@@ -817,7 +821,32 @@ export class InventariosService {
 
   getHistorial(): Observable<any> {
     return this.http2.get(
-      "http://www.meraki-s.com/rent/ms-synergy/php/handler-movimientos-historial.php?db="+this.db
+      "http://www.meraki-s.com/rent/ms-synergy/php/handler-movimientos-historial.php?db=" +
+        this.db
+    );
+  }
+
+  generarSeries(data) {
+    return this.http2.post(
+      "http://www.meraki-s.com/rent/ms-synergy/php/test/handler-generar-series.php?db=" +
+        this.db,
+      JSON.stringify(data),
+      { responseType: "text" }
+    );
+  }
+
+  editNumSeries(antiguo, nuevo, producto, almacen) {
+    let data = {
+      antiguo: antiguo,
+      nuevo: nuevo,
+      producto: producto,
+      almacen: almacen
+    };
+    return this.http2.post(
+      "http://www.meraki-s.com/rent/ms-synergy/php/test/handler-edit-num-serie.php?db=" +
+        this.db,
+      JSON.stringify(data),
+      { responseType: "text" }
     );
   }
 

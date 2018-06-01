@@ -291,15 +291,15 @@
             </mat-tab-group>
         </div>
         <div class="check" [ngClass]="{expandCheck : hideProducts}">
-            <div class="loadingSpinner" *ngIf="isLoadingResultsCheck">
-                <mat-spinner *ngIf="isLoadingResultsCheck"></mat-spinner>
-            </div>
             <div class="customerMedia">
                 <input type="text" class='clientInCheck' [formControl]="client" style="background: #fdf5e6; text-align: center; color : #555555">
             </div>
             <ul [formGroup]="formSelectNumSeries" style='padding-left: 0;'>
                 <div formArrayName="numSeriesArray" @cardProduct *ngFor="let product of listCustomers[currentCustomer].listAction; let i = index">
                     <li [formGroupName]="i" class="productList" (click)='clickProductList(i)' [ngClass]="{'newBackground' : listCustomers[currentCustomer].lastItemClicked == product.id }">
+                        <div class="loadingSpinner" *ngIf="isLoadingResultsCheck[i]">
+                            <mat-spinner *ngIf="isLoadingResultsCheck[i]"></mat-spinner>
+                        </div>
                         <span class="productName">{{product.product}}</span>
                         <span class="productClass">$ {{product.price == '' ? '0' : product.price}}</span>
                         <div style="display: flex; align-items: center; justify-content: center; width: 90%;">
@@ -367,7 +367,9 @@
                     <ng-template mat-tab-label>
                         <a @tab class="tabName" (click)="onSelectCustomer(i)">
                             {{i+1}}
-                            <mat-icon @tab *ngIf="i != 0" class="tabIcon" (click)="eraseCustomer(i)">highlight_off</mat-icon>
+                        </a>
+                        <a class="delete" @tab *ngIf="i != 0" (click)="eraseCustomer(i)">
+                            <mat-icon class="tabIcon">highlight_off</mat-icon>
                         </a>
                     </ng-template>
                 </mat-tab>

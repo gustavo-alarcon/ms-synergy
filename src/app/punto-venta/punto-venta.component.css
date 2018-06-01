@@ -21,6 +21,13 @@
     "panel products";
 }
 
+.delete {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 mat-grid-tile {
   background: #ded7ca;
   transition: transform 0.3s;
@@ -220,7 +227,6 @@ mat-tab .mat-tab-label-content {
 
 img {
   width: 100%;
-  height: 100%;
 }
 
 .team-member {
@@ -410,6 +416,7 @@ mat-icon {
   color: #555555;
   outline: none;
   transition: all 0.4s;
+  position: relative;
 }
 
 .hide {

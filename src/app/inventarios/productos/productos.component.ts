@@ -4,8 +4,11 @@ import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { takeWhile } from "rxjs/operators";
 import * as crypto from "crypto-js";
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
 import { ImagenComponent } from "./imagen/imagen.component";
+import { GenerarSerieComponent } from "./generar-serie/generar-serie.component";
+import { DeleteConfirmComponent } from "./delete-confirm/delete-confirm.component";
+import { NumSeriesComponent } from "./num-series/num-series.component";
 @Component({
   selector: "app-productos",
   templateUrl: "./productos.component.html",
@@ -39,6 +42,7 @@ export class ProductosComponent implements OnInit {
     Compra: "",
     Venta: ""
   };
+  productoOriginal: any;
   modData_paquete: any = {
     ID: "",
     Paquete: "",
@@ -50,7 +54,8 @@ export class ProductosComponent implements OnInit {
   borrarData: any = {
     Tabla: "",
     ID: "",
-    Producto : ""
+    Producto: "",
+    Zona: ""
   };
 
   loading: boolean = false;
@@ -64,13 +69,15 @@ export class ProductosComponent implements OnInit {
   bytes = crypto.AES.decrypt(localStorage.getItem("db"), "meraki");
   bd = this.bytes.toString(crypto.enc.Utf8);
   bdParsed = JSON.parse(this.bd);
-  imageChanged : boolean = false;
+  imageChanged: boolean = false;
+  almacenes: any[] = [];
+  grupos: any[] = [];
 
   constructor(
     private inventariosService: InventariosService,
     private loginService: LoginService,
     private cd: ChangeDetectorRef,
-    private dialog: MatDialog,
+    private dialog: MatDialog
   ) {
     this.onChanges();
   }
@@ -129,6 +136,19 @@ export class ProductosComponent implements OnInit {
             value: false
           });
         }
+      });
+
+    this.inventariosService.currentDataAlmacenes
+      .pipe(takeWhile(() => this.alive))
+      .subscribe(res => {
+        this.almacenes = res;
+        this.almacenes.sort(this.sortBy("Nombre"));
+      });
+
+    this.inventariosService.currentDataGrupos
+      .pipe(takeWhile(() => this.alive))
+      .subscribe(res => {
+        this.grupos = res;
       });
 
     this.loginService.currentPermissions
@@ -251,13 +271,18 @@ export class ProductosComponent implements OnInit {
     this.modData["Moneda"] = this.productosFiltrados[idx]["Moneda"];
     this.modData["Compra"] = this.productosFiltrados[idx]["Compra"];
     this.modData["Venta"] = this.productosFiltrados[idx]["Venta"];
+    this.productoOriginal = JSON.parse(JSON.stringify(this.modData));
+    this.cd.markForCheck();
   }
 
   saveAction(idx: number) {
     this.modData["Stocka"] =
       <number>this.modData["Stocke"] *
       (1 + <number>this.modData["Offset_stocka"] / 100);
-    this.inventariosService.modificarProducto(this.modData);
+    this.inventariosService.modificarProducto(
+      this.modData,
+      this.productoOriginal
+    );
     this.edit[idx]["value"] = false;
     this.imageChanged = false;
   }
@@ -266,11 +291,12 @@ export class ProductosComponent implements OnInit {
     this.edit[idx]["value"] = false;
   }
 
-  borrarAction(tabla: string, idx: number, producto : string) {
+  borrarAction(tabla: string, idx: number, producto: string, zona: string) {
     this.borrarData["Tabla"] = tabla;
     this.borrarData["ID"] = idx;
     this.borrarData["Producto"] = producto;
-    this.inventariosService.borrarItem(this.borrarData);
+    this.borrarData["Zona"] = zona;
+    this.openConfirmModal(producto);
   }
 
   savePack(idx: number) {
@@ -280,6 +306,18 @@ export class ProductosComponent implements OnInit {
 
   borrarPaq(pack: string) {
     this.inventariosService.borrarPaquete(pack);
+  }
+
+  sortBy(key) {
+    return function(a, b) {
+      if (a[key] > b[key]) {
+        return 1;
+      } else if (a[key] < b[key]) {
+        return -1;
+      }
+      [];
+      return 0;
+    };
   }
 
   editarPaq(idx: number) {
@@ -296,20 +334,61 @@ export class ProductosComponent implements OnInit {
     ];
   }
 
-  openImageModal(i){
+  openImageModal(i) {
     let dataImagen = {
-      imagen : this.productosFiltrados[i],
-      editable : this.edit[i]["value"],
-      bd : this.bdParsed
-    }
+      imagen: this.productosFiltrados[i],
+      editable: this.edit[i]["value"],
+      bd: this.bdParsed
+    };
     let dialogRef = this.dialog.open(ImagenComponent, {
-      width: 'auto',
+      width: "auto",
       data: dataImagen
     });
 
     dialogRef.beforeClose().subscribe(result => {
-      if(result == 'true'){
+      if (result == "true") {
         this.imageChanged = true;
+        this.inventariosService.getProductos();
+      }
+    });
+  }
+
+  openGenSerieModal() {
+    let dialogRef = this.dialog.open(GenerarSerieComponent, {
+      width: "auto"
+    });
+
+    dialogRef.beforeClose().subscribe(result => {
+      if (result == "true") {
+      }
+    });
+  }
+
+  openConfirmModal(producto: string) {
+    let dialogRef = this.dialog.open(DeleteConfirmComponent, {
+      width: "auto",
+      data: producto
+    });
+
+    dialogRef.beforeClose().subscribe(result => {
+      if (result == "true") {
+        this.inventariosService.borrarItem(this.borrarData);
+      }
+    });
+  }
+
+  openSerieModal(i: number, modificar: boolean) {
+    let dialogRef = this.dialog.open(NumSeriesComponent, {
+      width: "auto",
+      data: {
+        producto: this.productosFiltrados[i],
+        modificar: modificar
+      }
+    });
+
+    dialogRef.beforeClose().subscribe(result => {
+      if (result == "true") {
+        this.inventariosService.getProductos();
       }
     });
   }
