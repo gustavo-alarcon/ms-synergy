@@ -89,7 +89,7 @@
     </mat-tab>
 
     <mat-tab label="Productos" *ngIf="perms[0]['pro_p_productos']">
-      <div *ngIf="productosFiltrados.length != 0" class="w3-responsive" style="max-height:85vh">
+      <div *ngIf="data_.length != 0" class="w3-responsive" style="max-height:85vh">
         <mat-form-field color="accent" style="width:100%" *ngIf="selectedIndex == 1">
           <input matInput (keyup)="filterData()" #prod [formControl]="productoFilter" placeholder="Producto" [value]="prodEscogido === '' ? '' : prodEscogido"
             autocomplete="off">

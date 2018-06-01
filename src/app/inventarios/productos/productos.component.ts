@@ -9,6 +9,8 @@ import { ImagenComponent } from "./imagen/imagen.component";
 import { GenerarSerieComponent } from "./generar-serie/generar-serie.component";
 import { DeleteConfirmComponent } from "./delete-confirm/delete-confirm.component";
 import { NumSeriesComponent } from "./num-series/num-series.component";
+import { ToastrService } from "ngx-toastr";
+
 @Component({
   selector: "app-productos",
   templateUrl: "./productos.component.html",
@@ -77,7 +79,8 @@ export class ProductosComponent implements OnInit {
     private inventariosService: InventariosService,
     private loginService: LoginService,
     private cd: ChangeDetectorRef,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private toastr: ToastrService
   ) {
     this.onChanges();
   }
@@ -275,16 +278,35 @@ export class ProductosComponent implements OnInit {
     this.cd.markForCheck();
   }
 
-  saveAction(idx: number) {
-    this.modData["Stocka"] =
-      <number>this.modData["Stocke"] *
-      (1 + <number>this.modData["Offset_stocka"] / 100);
-    this.inventariosService.modificarProducto(
-      this.modData,
-      this.productoOriginal
+  checkObjets() {
+    return (
+      this.productoOriginal.Grupo == this.modData.Grupo &&
+      this.productoOriginal.Zona == this.modData.Zona &&
+      this.productoOriginal.Codigo == this.modData.Codigo &&
+      this.productoOriginal.Nombre == this.modData.Nombre &&
+      this.productoOriginal.Unidad == this.modData.Unidad &&
+      this.productoOriginal.Stock_actual == this.modData.Stock_actual &&
+      this.productoOriginal.Stocke == this.modData.Stocke &&
+      this.productoOriginal.Moneda == this.modData.Moneda &&
+      this.productoOriginal.Compra == this.modData.Compra &&
+      this.productoOriginal.Venta == this.modData.Venta
     );
-    this.edit[idx]["value"] = false;
-    this.imageChanged = false;
+  }
+
+  saveAction(idx: number) {
+    if (!this.checkObjets()) {
+      this.modData["Stocka"] =
+        <number>this.modData["Stocke"] *
+        (1 + <number>this.modData["Offset_stocka"] / 100);
+      this.inventariosService.modificarProducto(
+        this.modData,
+        this.productoOriginal
+      );
+      this.edit[idx]["value"] = false;
+      this.imageChanged = false;
+    } else {
+      this.toastr.warning("No ha hecho ningun cambio", "Primero haga cambios");
+    }
   }
 
   cancelAction(idx: number) {
