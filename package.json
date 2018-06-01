@@ -1,6 +1,6 @@
 {
   "name": "ms-synergy",
-  "version": "1.1.14",
+  "version": "2.1.14",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

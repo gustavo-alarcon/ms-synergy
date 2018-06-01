@@ -56,10 +56,11 @@
           <td *ngIf="edit[i]['value']">{{i + 1}}</td>
           <td *ngIf="edit[i]['value']">
             <!--input class="w3-input" type="text" (input)="modData['TerceroClass'] = $event.target.value" [value]="row.TerceroClass" [placeholder]="row.TerceroClass"-->
-
-            <select #terceroTipo class="w3-input" (change)="modData['TerceroClass'] = terceroTipo.value" [value]="row.TerceroClass">
-              <option *ngFor="let tipo of tipos" [value]="tipo.nombre">{{ tipo.nombre }}</option>
-            </select>
+            <mat-form-field color="accent" style="width:100%">
+              <mat-select #terceroTipo [(ngModel)]="modData['TerceroClass']">
+                <mat-option class="w3-indigo w3-hover-gray" *ngFor="let tipo of tipos" [value]="tipo.nombre">{{ tipo.nombre }}</mat-option>
+              </mat-select>
+            </mat-form-field>
           </td>
           <td *ngIf="edit[i]['value']">
             <input class="w3-input" type="text" (input)="modData['IdentiClass'] = $event.target.value" [value]="row.IdentiClass" [placeholder]="row.IdentiClass">

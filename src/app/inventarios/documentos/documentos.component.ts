@@ -32,6 +32,15 @@ export class DocumentosComponent implements OnInit {
   perms: any = [];
   rows: number;
   cols: number;
+  naturaleza = [
+    { value: "ENTRADA" },
+    { value: "SALIDA" },
+    { value: "TRANSFERENCIA" },
+    { value: "AJUSTE DE ENTRADA" },
+    { value: "AJUSTE DE SALIDA" }
+  ];
+
+  tipos = [{ value: "PROVEEDOR" }, { value: "CLIENTE" }, { value: "INTERNO" }];
 
   constructor(
     private inventariosService: InventariosService,

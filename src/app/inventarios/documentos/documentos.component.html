@@ -60,10 +60,18 @@
             <input class="w3-input" type="text" (input)="modData['Nombre'] = $event.target.value" [value]="row.Nombre" [placeholder]="row.Nombre">
           </td>
           <td *ngIf="edit[i]['value']">
-            <input class="w3-input" type="text" (input)="modData['Tipo'] = $event.target.value" [value]="row.Tipo" [placeholder]="row.Tipo">
+            <mat-form-field color="accent" style="width:100%">
+              <mat-select [(ngModel)]="modData['Tipo']">
+                <mat-option class="w3-indigo w3-hover-gray" *ngFor="let tipo of tipos" [value]="tipo.value">{{ tipo.value }}</mat-option>
+              </mat-select>
+            </mat-form-field>
           </td>
           <td *ngIf="edit[i]['value']">
-            <input class="w3-input" type="text" (input)="modData['Naturaleza'] = $event.target.value" [value]="row.Naturaleza" [placeholder]="row.Naturaleza">
+            <mat-form-field color="accent" style="width:100%">
+              <mat-select [(ngModel)]="modData['Naturaleza']">
+                <mat-option class="w3-indigo w3-hover-gray" *ngFor="let nat of naturaleza" [value]="nat.value">{{ nat.value }}</mat-option>
+              </mat-select>
+            </mat-form-field>
           </td>
           <td *ngIf="edit[i]['value'] && perms[0]['doc_t_serie']">
             <input class="w3-input" type="text" (input)="modData['Numtienda'] = $event.target.value" [value]="row.Numtienda" [placeholder]="row.Numtienda">
@@ -80,8 +88,7 @@
             <input class="w3-input" type="text" (input)="modData['Uso'] = $event.target.value" [value]="row.Uso" [placeholder]="row.Uso">
           </td>
           <td *ngIf="edit[i]['value']" class="w3-padding-small" style="text-align: center">
-            <button mat-mini-fab color="primary" *ngIf="perms[0]['doc_b_guardar']" class="w3-animate-zoom" style="margin:1px"
-              (click)="saveAction(i)">
+            <button mat-mini-fab color="primary" *ngIf="perms[0]['doc_b_guardar']" class="w3-animate-zoom" style="margin:1px" (click)="saveAction(i)">
               <mat-icon>save</mat-icon>
             </button>
             <button mat-mini-fab color="warn" *ngIf="perms[0]['doc_b_borrar']" class="w3-animate-zoom" style="margin:1px" (click)="borrarAction('documentos',row.ID)">
