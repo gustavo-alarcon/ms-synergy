@@ -2124,9 +2124,9 @@ export class PuntoVentaComponent implements OnInit {
         }
       }
     };
-    //pdfMake.createPdf(saleTicket).download("Boleta");
+    pdfMake.createPdf(saleTicket).download("Boleta");
     try {
-      pdfMake.createPdf(saleTicket).open();
+      pdfMake.createPdf(saleTicket).print();
     } catch (e) {
       this.isLoadingResults = false;
       this.toastr.error(
