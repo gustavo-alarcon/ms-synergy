@@ -23,7 +23,7 @@ import { takeWhile } from "rxjs/operators";
 export class ClientsComponent implements OnInit {
   displayedColumns = ["Nombre", "IdentiClass", "Identi", "Direccion"];
   displayedColumns2 = ["Nombre", "IdentiClass", "Identi"];
-  isLoadingResults = true;
+  isLoadingResults = false;
   bytes = crypto.AES.decrypt(localStorage.getItem("db"), "meraki");
   bd = this.bytes.toString(crypto.enc.Utf8);
   clientsSales: Client[];
@@ -75,7 +75,7 @@ export class ClientsComponent implements OnInit {
             Type: data.Type
           });
         }
-        //this.isLoadingResults = false;
+        this.isLoadingResults = false;
         this.dataSource = new MatTableDataSource(this.clientsSales);
         this.dataSource.paginator = this.paginator;
       });

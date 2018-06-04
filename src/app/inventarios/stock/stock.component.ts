@@ -331,11 +331,9 @@ export class StockComponent implements OnInit {
       .pipe(takeWhile(() => this.alive))
       .subscribe(data => {
         for (let i = 0; i < data.records.length; i++) {
-          if(data.records[i].estado == 0){
-            data.records[i].estado = 'En almacen';
-          }
-          else
-            data.records[i].estado = 'Vendido';
+          if (data.records[i].estado != 2) {
+            data.records[i].estado = "En almacen";
+          } else data.records[i].estado = "Vendido";
         }
         this.productosSeries = data.records;
         this.filteredSeries = this.productosSeries;

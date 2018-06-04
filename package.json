@@ -31,7 +31,7 @@
     "@ncstate/sat-popover": "^2.0.0-beta.0",
     "angular-datatables": "^4.4.1",
     "angular2-csv": "^0.2.5",
-    "angular2-image-upload": "^1.0.0-rc.0",
+    "angular2-image-upload": "^1.0.0-rc.1",
     "core-js": "^2.5.1",
     "crypto-js": "^3.1.9-1",
     "datatables.net": "^1.10.16",
@@ -47,7 +47,7 @@
     "pdfmake": "^0.1.36",
     "plotly.js": "^1.31.2",
     "rxjs": "^6.1.0",
-    "rxjs-compat": "^6.1.0",
+    "rxjs-compat": "^6.2.0",
     "web-animations-js": "^2.3.1",
     "zone.js": "^0.8.26"
   },

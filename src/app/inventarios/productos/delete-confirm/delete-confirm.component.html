@@ -1,8 +1,8 @@
 <div>
-  <h1 mat-dialog-title>Confirmar eliminacion del producto {{data}}</h1>
+  <h1 mat-dialog-title>Confirmar eliminación del producto {{data.producto}}</h1>
   <hr>
   <mat-dialog-content>
-    <h2>¿Esta seguro(a) de anular la venta?</h2>
+    <h2>¿Está seguro(a) de eliminar el producto {{data.producto}} ubicado en {{data.zona}}?</h2>
   </mat-dialog-content>
   <div mat-dialog-actions align="center">
     <button style="margin-bottom: 15px;" mat-raised-button color="primary" (click)="onSubmit()">CONFIRMAR</button>

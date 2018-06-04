@@ -318,7 +318,7 @@ export class ProductosComponent implements OnInit {
     this.borrarData["ID"] = idx;
     this.borrarData["Producto"] = producto;
     this.borrarData["Zona"] = zona;
-    this.openConfirmModal(producto);
+    this.openConfirmModal(producto, zona);
   }
 
   savePack(idx: number) {
@@ -386,10 +386,13 @@ export class ProductosComponent implements OnInit {
     });
   }
 
-  openConfirmModal(producto: string) {
+  openConfirmModal(producto: string, zona: string) {
     let dialogRef = this.dialog.open(DeleteConfirmComponent, {
       width: "auto",
-      data: producto
+      data: {
+        producto: producto,
+        zona: zona
+      }
     });
 
     dialogRef.beforeClose().subscribe(result => {

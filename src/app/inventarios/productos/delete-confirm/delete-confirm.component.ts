@@ -1,8 +1,5 @@
-import { Component, OnInit, Inject, ChangeDetectorRef } from "@angular/core";
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
-import { InventariosService } from "../../../servicios/almacenes/inventarios.service";
-import { takeWhile } from "rxjs/operators";
-import { ToastrService } from "ngx-toastr";
+import { Component, OnInit, Inject } from "@angular/core";
+import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
 
 @Component({
   selector: "app-delete-confirm",
@@ -12,9 +9,6 @@ import { ToastrService } from "ngx-toastr";
 export class DeleteConfirmComponent implements OnInit {
   constructor(
     public DialogRef: MatDialogRef<DeleteConfirmComponent>,
-    private inventariosService: InventariosService,
-    private toastr: ToastrService,
-    private cd: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
