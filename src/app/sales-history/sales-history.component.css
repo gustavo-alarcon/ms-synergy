@@ -17,9 +17,11 @@
   background: rgb(248, 109, 109);
 }
 
-detail-products {
+detail-products-invent {
   max-height: 80vh;
   overflow: auto;
+  padding: 0;
+  border-radius: 10px;
 }
 
 .changeColorFont {

@@ -328,14 +328,14 @@ export class MovimientosComponent implements OnInit {
             "-0" +
             (currentDate.getMonth() + 1) +
             "-0" +
-            (31 + 1) % 31;
+            ((31 + 1) % 31);
         } else {
           var limite =
             currentDate.getFullYear() +
             "-" +
             (currentDate.getMonth() + 1) +
             "-0" +
-            (31 + 1) % 31;
+            ((31 + 1) % 31);
         }
       } else {
         if (currentDate.getMonth() + 1 < 10) {
@@ -344,40 +344,40 @@ export class MovimientosComponent implements OnInit {
             "-0" +
             (currentDate.getMonth() + 1) +
             "-" +
-            (31 + 1) % 31;
+            ((31 + 1) % 31);
         } else {
           var limite =
             currentDate.getFullYear() +
             "-" +
             (currentDate.getMonth() + 1) +
             "-" +
-            (31 + 1) % 31;
+            ((31 + 1) % 31);
         }
       }
     } else {
       if (currentDate.getMonth() + 1 < 12) {
-        if ((currentDate.getMonth() + 2) % 13 + 1 < 10) {
+        if (((currentDate.getMonth() + 2) % 13) + 1 < 10) {
           var limite =
             currentDate.getFullYear() +
             "-0" +
-            ((currentDate.getMonth() + 2) % 13 + 1) +
+            (((currentDate.getMonth() + 2) % 13) + 1) +
             "-0" +
             1;
         } else {
           var limite =
             currentDate.getFullYear() +
             "-" +
-            ((currentDate.getMonth() + 2) % 13 + 1) +
+            (((currentDate.getMonth() + 2) % 13) + 1) +
             "-0" +
             1;
         }
       } else {
-        if ((currentDate.getMonth() + 2) % 13 + 1 < 10) {
+        if (((currentDate.getMonth() + 2) % 13) + 1 < 10) {
           var limite =
             currentDate.getFullYear() +
             1 +
             "-0" +
-            ((currentDate.getMonth() + 2) % 13 + 1) +
+            (((currentDate.getMonth() + 2) % 13) + 1) +
             "-0" +
             1;
         } else {
@@ -385,7 +385,7 @@ export class MovimientosComponent implements OnInit {
             currentDate.getFullYear() +
             1 +
             "-" +
-            ((currentDate.getMonth() + 2) % 13 + 1) +
+            (((currentDate.getMonth() + 2) % 13) + 1) +
             "-0" +
             1;
         }
@@ -643,6 +643,7 @@ export class MovimientosComponent implements OnInit {
   }
 
   prodActual(prod: any) {
+    console.log(prod);
     if (prod != undefined) {
       this.prodEscogido = prod;
       this.precioActual = 0;
@@ -727,14 +728,19 @@ export class MovimientosComponent implements OnInit {
           }
         }
       }
-      this.seriesSelected.patchValue(arraySeries);
       if (
         this.tipoMovimiento === "TRANSFERENCIA" ||
         this.tipoMovimiento === "AJUSTE DE ENTRADA" ||
         this.tipoMovimiento === "AJUSTE DE SALIDA"
       ) {
         this.movimientoForm.patchValue({ Precio: 0 });
+        this.seriesSelected.patchValue([]);
       } else {
+        if (this.tipoMovimiento == "ENTRADA") {
+          this.seriesSelected.patchValue([]);
+        } else {
+          this.seriesSelected.patchValue(arraySeries);
+        }
         this.movimientoForm.patchValue({
           Precio: cantidad * this.precioActual
         });

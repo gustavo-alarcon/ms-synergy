@@ -122,7 +122,8 @@ export class InventariosService {
           }
         },
         err => {
-          this.toastr.error("Error de conexión", "Error");
+          this.toastr.error("Error de conexión ", "Error");
+          console.log(err);
           this.queryLoading(false);
         }
       );
@@ -158,7 +159,8 @@ export class InventariosService {
           }, this.simTime);
         },
         err => {
-          this.toastr.error("Error de conexión", "error");
+          this.toastr.error("Error de conexión ", "error");
+          console.log(err);
           this.queryLoading(false);
         }
       );
@@ -183,7 +185,8 @@ export class InventariosService {
           this.router.navigate(["inventarios/almacenes"]);
         },
         err => {
-          this.toastr.error("Error de conexión", "Error");
+          this.toastr.error("Error de conexión ", "Error");
+          console.log(err);
           this.queryLoading(false);
         }
       );
@@ -207,7 +210,8 @@ export class InventariosService {
           this.getAlmacenes();
         },
         err => {
-          this.toastr.error("Error de conexión", "Error");
+          this.toastr.error("Error de conexión ", "Error");
+          console.log(err);
           this.queryLoading(false);
         }
       );
@@ -230,7 +234,8 @@ export class InventariosService {
           }, this.simTime);
         },
         err => {
-          this.toastr.error("Error de conexión", "Error");
+          this.toastr.error("Error de conexión ", "Error");
+          console.log(err);
           this.queryLoading(false);
         }
       );
@@ -255,7 +260,8 @@ export class InventariosService {
           if (page == "0") this.router.navigate(["inventarios/terceros"]);
         },
         err => {
-          this.toastr.error("Error de conexión", "Error");
+          this.toastr.error("Error de conexión ", "Error");
+          console.log(err);
           this.queryLoading(false);
         }
       );
@@ -279,7 +285,8 @@ export class InventariosService {
           this.getTerceros();
         },
         err => {
-          this.toastr.error("Error de conexión", "Error");
+          this.toastr.error("Error de conexión ", "Error");
+          console.log(err);
           this.queryLoading(false);
         }
       );
@@ -302,7 +309,8 @@ export class InventariosService {
           }, this.simTime);
         },
         err => {
-          this.toastr.error("Error de conexión", "Error");
+          this.toastr.error("Error de conexión ", "Error");
+          console.log(err);
           this.queryLoading(false);
         }
       );
@@ -327,7 +335,8 @@ export class InventariosService {
           this.router.navigate(["inventarios/documentos"]);
         },
         err => {
-          this.toastr.error("Error de conexión", "Error");
+          this.toastr.error("Error de conexión ", "Error");
+          console.log(err);
           this.queryLoading(false);
         }
       );
@@ -351,7 +360,8 @@ export class InventariosService {
           this.getDocumentos();
         },
         err => {
-          this.toastr.error("Error de conexión", "Error");
+          this.toastr.error("Error de conexión ", "Error");
+          console.log(err);
           this.queryLoading(false);
         }
       );
@@ -410,7 +420,8 @@ export class InventariosService {
           this.getDocumentos();
         },
         err => {
-          this.toastr.error("Error de conexión", "Error");
+          this.toastr.error("Error de conexión ", "Error");
+          console.log(err);
           this.queryLoading(false);
         }
       );
@@ -433,7 +444,8 @@ export class InventariosService {
           }, this.simTime);
         },
         err => {
-          this.toastr.error("Error de conexión", "Error");
+          this.toastr.error("Error de conexión ", "Error");
+          console.log(err);
           this.queryLoading(false);
         }
       );
@@ -457,7 +469,8 @@ export class InventariosService {
           this.router.navigate(["inventarios/grupos"]);
         },
         err => {
-          this.toastr.error("Error de conexión", "Error");
+          this.toastr.error("Error de conexión ", "Error");
+          console.log(err);
           this.queryLoading(false);
         }
       );
@@ -480,7 +493,8 @@ export class InventariosService {
           this.getGrupos();
         },
         err => {
-          this.toastr.error("Error de conexión", "Error");
+          this.toastr.error("Error de conexión ", "Error");
+          console.log(err);
           this.queryLoading(false);
         }
       );
@@ -504,7 +518,8 @@ export class InventariosService {
           }, this.simTime);
         },
         err => {
-          this.toastr.error("Error de conexión", "Error");
+          this.toastr.error("Error de conexión ", "Error");
+          console.log(err);
           this.queryLoading(false);
         }
       );
@@ -528,7 +543,8 @@ export class InventariosService {
           this.router.navigate(["inventarios/productos"]);
         },
         err => {
-          this.toastr.error("Error de conexión", "Error");
+          this.toastr.error("Error de conexión ", "Error");
+          console.log(err);
           this.queryLoading(false);
         }
       );
@@ -574,7 +590,8 @@ export class InventariosService {
           this.getProductos();
         },
         err => {
-          this.toastr.error("Error de conexión", "Error");
+          this.toastr.error("Error de conexión ", "Error");
+          console.log(err);
           this.queryLoading(false);
         }
       );
@@ -595,7 +612,8 @@ export class InventariosService {
           this.getProductos();
         },
         err => {
-          this.toastr.error("Error de conexión", "Error");
+          this.toastr.error("Error de conexión ", "Error");
+          console.log(err);
           this.queryLoading(false);
         }
       );
@@ -619,7 +637,8 @@ export class InventariosService {
           this.getProductos();
         },
         err => {
-          this.toastr.error("Error de conexión", "Cerrar");
+          this.toastr.error("Error de conexión ", "Cerrar");
+          console.log(err);
           this.queryLoading(false);
         }
       );
@@ -642,7 +661,8 @@ export class InventariosService {
           }, this.simTime);
         },
         err => {
-          this.toastr.error("Error de conexión", "Error");
+          this.toastr.error("Error de conexión ", "Error");
+          console.log(err);
           this.queryLoading(false);
         }
       );
@@ -666,7 +686,8 @@ export class InventariosService {
           this.router.navigate(["inventarios/productos"]);
         },
         err => {
-          this.toastr.error("Error de conexión", "Error");
+          this.toastr.error("Error de conexión ", "Error");
+          console.log(err);
           this.queryLoading(false);
         }
       );
@@ -689,7 +710,8 @@ export class InventariosService {
           this.getPaquetes();
         },
         err => {
-          this.toastr.error("Error de conexión", "Error");
+          this.toastr.error("Error de conexión ", "Error");
+          console.log(err);
           this.queryLoading(false);
         }
       );
@@ -712,7 +734,8 @@ export class InventariosService {
           this.getPaquetes();
         },
         err => {
-          this.toastr.error("Error de conexión", "Error");
+          this.toastr.error("Error de conexión ", "Error");
+          console.log(err);
           this.queryLoading(false);
         }
       );
@@ -738,7 +761,8 @@ export class InventariosService {
           this.router.navigate(["inventarios/movimientos"]);
         },
         err => {
-          this.toastr.error("Error de conexión", "Error");
+          this.toastr.error("Error de conexión ", "Error");
+          console.log(err);
           console.log(err);
           this.queryLoading(false);
         }
@@ -763,7 +787,8 @@ export class InventariosService {
           this.consultaKardexSend.next(true);
         },
         err => {
-          this.toastr.error("Error de conexión", "Error");
+          this.toastr.error("Error de conexión ", "Error");
+          console.log(err);
           this.queryLoading(false);
         }
       );
@@ -787,7 +812,7 @@ export class InventariosService {
           this.consultaStockSend.next(true);
         },
         err => {
-          this.toastr.error("Error de conexión:" + err, "Error");
+          this.toastr.error("Error de conexión :+ err", "Error");
           this.queryLoading(false);
         }
       );

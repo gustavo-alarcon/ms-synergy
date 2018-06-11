@@ -38,7 +38,8 @@ export class StockComponent implements OnInit {
   optionDisplay: number = 1;
   checked: boolean;
   productos_filtrado: any[] = [];
-  productName: string = null;
+  productName: string = "";
+  searchProduct: boolean = false;
   numSeries: any[] = [];
   seriesSelected = new FormControl("");
   productoDisabled: boolean = true;
@@ -60,8 +61,8 @@ export class StockComponent implements OnInit {
   ngOnInit() {
     this.stockForm = this.fb.group({
       Almacen: ["", Validators.required],
-      Serie: [[]],
-      ProductoFiltro: [""]
+      Serie: [],
+      ProductoFiltro: ""
     });
 
     this.seriesSelected.disable();
@@ -107,6 +108,18 @@ export class StockComponent implements OnInit {
       .subscribe(res => {
         this.productos = res;
         this.productos.sort(this.sortBy("Nombre"));
+        for (let i = 0; i < this.productos.length; i++) {
+          let veces = 0;
+          for (let j = 0; j < this.productos.length; j++) {
+            if (this.productos[i].Codigo == this.productos[j].Codigo) {
+              if (veces == 0) {
+                veces++;
+              } else {
+                this.productos.splice(j, 1);
+              }
+            }
+          }
+        }
         this.filteredOptions = this.productos;
       });
   }
@@ -193,6 +206,7 @@ export class StockComponent implements OnInit {
     this.numSeries = [];
     this.seriesSelected.patchValue([]);
     this.productName = this.stockForm.get("ProductoFiltro").value;
+    this.searchProduct = true;
     if (this.optionDisplay == 2) {
       for (let i = 0; i < this.filteredOptions.length; i++) {
         if (this.productName == this.filteredOptions[i].Codigo) {
@@ -229,6 +243,7 @@ export class StockComponent implements OnInit {
   }
   pushKeyProducts() {
     this.numSeries = [];
+    this.searchProduct = false;
     this.seriesSelected.disable();
     this.filteredOptions = this.filterProducto(
       this.stockForm.value["ProductoFiltro"]

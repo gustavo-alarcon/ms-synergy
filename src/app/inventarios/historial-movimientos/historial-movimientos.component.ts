@@ -71,6 +71,7 @@ export class HistorialMovimientosComponent implements OnInit {
       .pipe(takeWhile(() => this.alive))
       .subscribe(
         data => {
+          console.log(data);
           for (let i = 0; i < data.records.length; i++) {
             this.history.push({
               Correlativo: parseInt(data.records[i].Correlativo),
@@ -85,12 +86,20 @@ export class HistorialMovimientosComponent implements OnInit {
               Entregado: data.records[i].Entregado,
               Vuelto: data.records[i].Vuelto,
               TipoIGV: data.records[i].Tipo_igv,
-              TipoPago: data.records[i].Tipo_pago,
-              SubTotal: data.records[i].Sub_total,
-              Cliente: data.records[i].Cliente
+              TipoPago: data.records[i].TipoPago,
+              SubTotal: data.records[i].SubTotal,
+              AlmacenDestino: data.records[i].Almacen_destino,
+              AlmacenOrigen: data.records[i].Almacen_origen,
+              Cantidad: data.records[i].Cantidad,
+              Compra: data.records[i].Compra,
+              Moneda: data.records[i].Moneda,
+              Movimiento: data.records[i].Movimiento,
+              Tercero: data.records[i].Tercero,
+              Venta: data.records[i].Venta,
+              POS: data.records[i].POS
             });
           }
-          this.history.sort(this.dynamicSort("Correlativo"));
+          console.log(this.history);
           this.isLoadingResults = false;
           this.dataSource = new MatTableDataSource(this.history);
           this.dataSource.paginator = this.paginator;

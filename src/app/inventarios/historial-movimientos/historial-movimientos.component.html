@@ -38,19 +38,20 @@
               <mat-header-cell *matHeaderCellDef>Número</mat-header-cell>
               <mat-cell [ngClass]="{changeColorFont : sale.Estado == '1'}" style="display: flex; justify-content: center; align-items: center; flex-wrap : wrap"
                 *matCellDef="let sale; let i=index" [satPopoverAnchorFor]="p">
-                <span>{{sale.Serie}}-{{sale.Correlativo}}</span>
+                <span *ngIf="sale.Documento != 'Union de stock'">{{sale.Serie}}-{{sale.Correlativo}}</span>
                 <button matTooltip="Detalles" matTooltipPosition="above" mat-icon-button style="margin : 0px" (click)="p.open()">
                   <mat-icon style="margin-right: 0px;">keyboard_arrow_down</mat-icon>
                 </button>
                 <sat-popover #p hasBackdrop>
-                  <detail-products [value]="sale.Operacion" [data]="sale"></detail-products>
+                  <detail-products-invent [value]="sale.Operacion" [data]="sale"></detail-products-invent>
                 </sat-popover>
               </mat-cell>
             </ng-container>
             <ng-container matColumnDef="cliente">
               <mat-header-cell *matHeaderCellDef>Cliente</mat-header-cell>
               <mat-cell [ngClass]="{changeColorFont : sale.Estado == '1'}" *matCellDef="let sale; let i=index">
-                {{sale.Cliente}}
+                <span *ngIf="sale.Documento != 'Union de stock'">{{sale.Tercero}}</span>
+                <span *ngIf="sale.Documento == 'Union de stock'">-</span>
               </mat-cell>
             </ng-container>
             <ng-container matColumnDef="eliminar">

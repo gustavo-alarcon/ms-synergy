@@ -9,9 +9,8 @@
       <div class="w3-container w3-white w3-card-4">
         <br>
         <div class="w3-row-padding">
-
           <div class="w3-col s12 m4 l4">
-
+            <h3 class="meraki-font-s5 w3-center">Almacenes</h3>
             <mat-form-field class="meraki-fill">
               <mat-select #almOrigen formControlName="Almacen" aria-placeholder="Almacen" placeholder="Almacen" (selectionChange)="filtrarProductos(almOrigen.value)">
                 <mat-option class="w3-indigo w3-hover-gray" *ngFor="let almacen of almacenes" [value]="almacen.Nombre">{{ almacen.Nombre }}</mat-option>
@@ -40,16 +39,17 @@
             <br>
           </div>
           <div class="w3-col s12 m4 l4">
+            <h3 class="meraki-font-s5 w3-center">Productos</h3>
             <div style="display: flex; align-items: center">
-              <mat-slide-toggle style="margin-right: 5px;" [checked]="checked" matTooltip="Cambia entre nombre y codigo"
-                matTooltipPosition="above" labelPosition='before' (change)="slideToogleChange($event)"></mat-slide-toggle>
+              <mat-slide-toggle style="margin-right: 5px;" [checked]="checked" matTooltip="Cambia entre nombre y codigo" matTooltipPosition="above"
+                labelPosition='before' (change)="slideToogleChange($event)"></mat-slide-toggle>
               <mat-form-field style="width: 80%">
                 <input matInput (keyup.enter)="selectProduct()" (keyup)="pushKeyProducts()" [matAutocomplete]="auto" #prod formControlName="ProductoFiltro"
                   [placeholder]="optionDisplay == 1 ? 'Producto' : 'Codigo'" [value]="productName == null ? '' : productName">
                 <mat-autocomplete #auto="matAutocomplete">
                   <mat-option (click)="selectProduct()" class="w3-indigo w3-hover-gray" *ngFor="let option of filteredOptions" [value]="optionDisplay == 1 ? option.Nombre : option.Codigo">
                     <span style="font-size: 13px;">{{ option.Codigo }}</span> |
-                    <span style="font-size: 13px;">{{ option.Nombre }}</span> |
+                    <span style="font-size: 13px;">{{ option.Nombre }}</span>
                   </mat-option>
                 </mat-autocomplete>
               </mat-form-field>
@@ -64,10 +64,11 @@
               </mat-autocomplete>
             </mat-form-field>
             <br>
-            <button style="width: 100%;" mat-raised-button type="button" color="primary" (click)="getProductoSerie()">Buscar Producto</button>
+            <button style="width: 100%;" mat-raised-button type="button" color="primary" [disabled]="!searchProduct" (click)="getProductoSerie()">Buscar Producto</button>
             <br>
           </div>
           <div class="w3-col s12 m4 l4">
+            <h3 class="meraki-font-s5 w3-center">Exportar</h3>
             <mat-form-field class="meraki-fill">
               <mat-select #sepcel (selectionChange)="configExportSep(sepcel.value)" [(value)]="separador" aria-placeholder="Filtro" placeholder="Separador celdas">
                 <mat-option class="w3-indigo w3-hover-gray" value=",">( , ) Coma</mat-option>
@@ -108,7 +109,7 @@
   <div *ngIf="!consulta && !consultaProducto" class="w3-container w3-padding-large meraki-empty-bg w3-card-2">
     <h2 class="w3-margin w3-center meraki-font-s2">{{ mensajeKardex }}</h2>
   </div>
-  <div *ngIf="consulta" class="w3-responsive w3-card-4" style="max-height:100vh">
+  <div *ngIf="consulta" class="w3-responsive w3-card-4" style="max-height:80vh">
     <table class="w3-table-all">
       <thead>
         <tr>
@@ -139,7 +140,7 @@
       </tbody>
     </table>
   </div>
-  <div *ngIf="consultaProducto" class="w3-responsive w3-card-4" style="max-height:100vh">
+  <div *ngIf="consultaProducto" class="w3-responsive w3-card-4" style="max-height:80vh">
     <table class="w3-table-all">
       <thead>
         <tr>

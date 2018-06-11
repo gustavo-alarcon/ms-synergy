@@ -278,7 +278,7 @@
             </div>
         </div>
         <br>
-        <button type="submit" mat-raised-button color="primary" [disabled]="!movimientoForm.valid || (movimientoForm.get('Cantidad').value > cantidadMaximaProductos) || ( tipoMovimiento == 'TRANSFERENCIA' && movimientoForm.get('AlmacenDestino').value == '')">Añadir a resumen</button>
+        <button type="submit" mat-raised-button color="primary" [disabled]="!movimientoForm.valid || (movimientoForm.get('Cantidad').value > cantidadMaximaProductos &&  tipoMovimiento == 'SALIDA' ) || ( tipoMovimiento == 'TRANSFERENCIA' && movimientoForm.get('AlmacenDestino').value == '')">Añadir a resumen</button>
     </form>
     <div class="w3-row">
         <span class="example-spacer">

@@ -19,18 +19,22 @@ import { takeWhile } from "rxjs/operators";
    <div class="loadingSpinner" *ngIf="isLoadingResults">
       <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
     </div>
-   <table style="text-align : center; width: 100%;">
-      <thead style="border-bottom: 1px solid;">
-          <tr>
-              <th>Numeros de serie</th>
-          </tr>
-      </thead>
-      <tbody>
+   <div>
+    <table style="text-align : center; width: 100%;">
+        <thead style="border-bottom: 1px solid;">
+            <tr>
+                <th>Numero de serie</th>
+                <th>Comentario</th>     
+        </thead>
+        <tbody>
           <tr *ngFor="let serie of numSeries; let i = index">
-              <td>{{serie.numSerie}}</td>
+            <td>{{serie.numSerie}}</td>
+            <td class="comment" *ngIf="serie.comentario == '' ">-</td>
+            <td class="w3-center" *ngIf="serie.comentario != '' ">{{serie.comentario}}</td>
           </tr>
-      </tbody>
-  </table>
+        </tbody>
+    </table>
+  </div>
   `
 })
 export class DetailSeriesComponent implements OnInit {
@@ -69,6 +73,7 @@ export class DetailSeriesComponent implements OnInit {
       .getSalesNumSeries(this.bd, this.operacion, this.data)
       .pipe(takeWhile(() => this.alive))
       .subscribe(data => {
+        console.log(data);
         this.numSeries = data.records;
       });
     // subscribe to cancellations and reset form value

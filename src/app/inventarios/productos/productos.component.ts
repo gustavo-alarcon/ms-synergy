@@ -42,7 +42,9 @@ export class ProductosComponent implements OnInit {
     Stocka: "",
     Moneda: "",
     Compra: "",
-    Venta: ""
+    Venta: "",
+    Usuario: "",
+    Fecha: ""
   };
   productoOriginal: any;
   modData_paquete: any = {
@@ -74,6 +76,7 @@ export class ProductosComponent implements OnInit {
   imageChanged: boolean = false;
   almacenes: any[] = [];
   grupos: any[] = [];
+  uname: string = "";
 
   constructor(
     private inventariosService: InventariosService,
@@ -83,6 +86,12 @@ export class ProductosComponent implements OnInit {
     private toastr: ToastrService
   ) {
     this.onChanges();
+    this.loginService.currentUserInfo
+      .pipe(takeWhile(() => this.alive))
+      .subscribe(res => {
+        this.uname = res[0]["Uname"];
+        this.modData.Usuario = this.uname;
+      });
   }
 
   onChanges(): void {
@@ -298,6 +307,7 @@ export class ProductosComponent implements OnInit {
       this.modData["Stocka"] =
         <number>this.modData["Stocke"] *
         (1 + <number>this.modData["Offset_stocka"] / 100);
+      this.modData.Fecha = new Date();
       this.inventariosService.modificarProducto(
         this.modData,
         this.productoOriginal

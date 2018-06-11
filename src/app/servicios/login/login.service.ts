@@ -6,6 +6,7 @@ import { MatSnackBar } from "@angular/material";
 import * as crypto from "crypto-js";
 import { ToastrService } from "ngx-toastr";
 import { takeWhile } from "rxjs/operators";
+import { HttpClient } from "@angular/common/http";
 
 @Injectable()
 export class LoginService {
@@ -15,6 +16,7 @@ export class LoginService {
   list: any[] = [];
   perm: any[] = [];
   db: string;
+  dbEncrypted: string;
   name: string;
   web: string;
 
@@ -51,7 +53,8 @@ export class LoginService {
     private http: Http,
     private router: Router,
     public snackBar: MatSnackBar,
-    private toast: ToastrService
+    private toast: ToastrService,
+    private httpClient: HttpClient
   ) {}
 
   //GENERALES
@@ -76,6 +79,7 @@ export class LoginService {
           this.clean();
           let res_json = res.json();
           this.loginData = res_json["records"];
+          this.db = res_json.records[0].Db;
           if (this.loginData[0].IDSynergy === "false") {
             this.loginAuth.next(false);
             this.loginSend.next(true);
@@ -86,7 +90,7 @@ export class LoginService {
               JSON.stringify(res_json.records[0].Website),
               "meraki"
             );
-            this.db = crypto.AES.encrypt(
+            this.dbEncrypted = crypto.AES.encrypt(
               JSON.stringify(res_json.records[0].Db),
               "meraki"
             );
@@ -104,7 +108,7 @@ export class LoginService {
                   "meraki"
                 );
                 localStorage.setItem("web", this.web.toString());
-                localStorage.setItem("db", this.db.toString());
+                localStorage.setItem("db", this.dbEncrypted.toString());
                 localStorage.setItem("user", this.name.toString());
                 this.userInfo.next(this.loginData);
                 this.getCurrentPermissions(this.loginData, "check");
@@ -120,7 +124,7 @@ export class LoginService {
                   "meraki"
                 );
                 localStorage.setItem("web", this.web.toString());
-                localStorage.setItem("db", this.db.toString());
+                localStorage.setItem("db", this.dbEncrypted.toString());
                 localStorage.setItem("user", this.name.toString());
                 this.userInfo.next(this.loginData);
                 this.getCurrentPermissions(this.loginData, "check");
@@ -131,7 +135,7 @@ export class LoginService {
                 "meraki"
               );
               localStorage.setItem("web", this.web.toString());
-              localStorage.setItem("db", this.db.toString());
+              localStorage.setItem("db", this.dbEncrypted.toString());
               localStorage.setItem("user", this.name.toString());
               this.userInfo.next(this.loginData);
               this.getCurrentPermissions(this.loginData, "check");
@@ -255,6 +259,31 @@ export class LoginService {
           this.snackBar.open(err, "Cerrar", {
             duration: 5000
           });
+        }
+      );
+  }
+
+  deleteAccount(data) {
+    this.queryLoading(true);
+
+    this.httpClient
+      .post(
+        "http://www.meraki-s.com/rent/ms-synergy/php/test/handler-borrar-usuario.php?db=" +
+          this.db,
+        JSON.stringify(data),
+        { responseType: "text" }
+      )
+      .pipe(takeWhile(() => this.alive))
+      .subscribe(
+        res => {
+          this.toast.success("Se elimino al usuario", "Exito");
+          this.queryLoading(false);
+          this.getAccounts(this.db);
+        },
+        err => {
+          this.toast.error("Error de conexión ", "Error");
+          console.log(err);
+          this.queryLoading(false);
         }
       );
   }

@@ -104,6 +104,7 @@ import { MainNavComponent } from "./main-nav/main-nav.component";
 import { GenerarSerieComponent } from "./inventarios/productos/generar-serie/generar-serie.component";
 import { DeleteConfirmComponent } from "./inventarios/productos/delete-confirm/delete-confirm.component";
 import { NumSeriesComponent } from "./inventarios/productos/num-series/num-series.component";
+import { DetailProductsInventComponent } from './inventarios/historial-movimientos/detail-products-invent/detail-products-invent.component';
 
 @NgModule({
   declarations: [
@@ -155,7 +156,8 @@ import { NumSeriesComponent } from "./inventarios/productos/num-series/num-serie
     DetailSeriesComponent,
     GenerarSerieComponent,
     DeleteConfirmComponent,
-    NumSeriesComponent
+    NumSeriesComponent,
+    DetailProductsInventComponent
   ],
   imports: [
     BrowserModule,

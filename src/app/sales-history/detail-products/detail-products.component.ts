@@ -49,9 +49,9 @@ import { takeWhile } from "rxjs/operators";
       </tbody>
   </table>
   <hr/>
-  <span class='listSubTotal'>Sub-total: $ {{data.SubTotal}}</span>
-  <span class='listIGV'>IGV: $ {{data.IGV}}</span>
-  <span class='listTotal'>Total: $ {{data.Total}}</span>
+  <span class='listSubTotal'>Sub-total: <span class="lightFont">$ {{data.SubTotal}}</span></span>
+  <span class='listIGV'>IGV: <span class="lightFont">$ {{data.IGV}}</span></span>
+  <span class='listTotal'>Total: <span class="lightFont">$ {{data.Total}}</span></span>
   <hr/>
   <span class='listSubTotal'>Tipo: {{type}}</span>
   <span class='listIGV'>Recibido: $ {{data.Entregado}}</span>
@@ -91,6 +91,7 @@ export class DetailProductsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    console.log(this.data);
     this.paymentType();
     this.posService
       .getSalesData(this.bd, this.operacion)
