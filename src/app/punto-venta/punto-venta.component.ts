@@ -27,6 +27,7 @@ import {
   stagger
 } from "@angular/animations";
 import { ListCustomers } from "../classes/listCustomers";
+import { N2t } from "../classes/n2t";
 import { PosService } from "../servicios/pos.service";
 import * as crypto from "crypto-js";
 import { takeWhile } from "rxjs/operators";
@@ -1588,7 +1589,6 @@ export class PuntoVentaComponent implements OnInit {
                 this.cd.markForCheck();
               },
               err => {
-                console.log(err);
                 this.isLoadingResultsCheck[
                   this.listCustomers[this.currentCustomer].listAction.length - 1
                 ] = false;
@@ -1777,7 +1777,7 @@ export class PuntoVentaComponent implements OnInit {
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
           let lastClient;
-          this.generatePDF();
+          this.generatePDF(result);
           if (this.currentCustomer != 0) {
             this.listCustomers.splice(this.currentCustomer, 1);
             this.currentCustomer = this.currentCustomer - 1;
@@ -1854,7 +1854,7 @@ export class PuntoVentaComponent implements OnInit {
             alignment: "left",
           },
           {  
-            text: totalDsc,
+            text: "S/." + totalDsc,
             alignment: "right",
             fontSize: 3, 
             margin: [0, 0, 3,0]
@@ -1864,10 +1864,23 @@ export class PuntoVentaComponent implements OnInit {
     }
   }
 
+  getVuelto(vuelto){
+    if(vuelto != ''){
+      return { 
+          text: "VUELTO: S/."+ vuelto, 
+          fontSize: 3 , 
+          lineHeight: 1.2 
+        };
+      }
+      else {
+        return {};
+      }
+    }
+
   table(data) {
     return {
       table: {
-        widths: [10, 20, 7, 8, 8, 9],
+        widths: [10, 17, 8, 9, 9, 9],
         headerRows: 1,
         body: this.buildTableBody(data)
       },
@@ -1941,9 +1954,75 @@ export class PuntoVentaComponent implements OnInit {
     return body;
   }
 
-  generatePDF() {
+  clienteEmpresa(){
+    if(this.listCustomers[this.currentCustomer].client.IdentiClass != 'RUC' ){
+      return {
+        text:
+          "SR(A). " +
+          this.listCustomers[this.currentCustomer].client.Nombre +
+          "\n\n",
+        alignment: "left",
+        fontSize: 3,
+        lineHeight: 1.2
+      }
+    } else {
+      return [ 
+        {
+        text:
+          "Nombre(RS): " +
+          this.listCustomers[this.currentCustomer].client.Nombre +
+          "\n",
+        alignment: "left",
+        fontSize: 3,
+        lineHeight: 1.2
+      },
+      {
+        text:
+          "RUC: " +
+          this.listCustomers[this.currentCustomer].client.Identi +
+          "\n",
+        alignment: "left",
+        fontSize: 3,
+        lineHeight: 1.2
+      },
+      {
+        text:
+          "Dirección: " +
+          this.listCustomers[this.currentCustomer].client.Direccion +
+          "\n",
+        alignment: "left",
+        fontSize: 3,
+        lineHeight: 1.2
+      }
+    ]
+    }
+  }
+
+  generatePDF(result) {
+    let numero;
+    let decimal = null;
+    let total : any = parseFloat(
+      this.listCustomers[this.currentCustomer].total.toString()
+    ).toFixed(2);
+    if(total % 1 != 0){
+      let num = total.toString();
+      num = num.split('.');
+      numero = num[0];
+      decimal  = num[1];
+    }
+    else{
+      numero = total;
+    }
+    numero = parseInt(numero);
     let date = this.currentDate();
-    var saleTicket = {
+    let n2t = new N2t();
+    let totalText : string = n2t.convertirLetras(numero);
+    totalText = totalText.toUpperCase();
+    totalText = totalText.trim();
+    if(decimal != null) {
+      totalText += " CON " + decimal + "/100";
+    }
+    let saleTicket = {
       content: [
         {
           image:
@@ -1970,10 +2049,9 @@ export class PuntoVentaComponent implements OnInit {
           lineHeight: 1.2
         },
         {
-          text: "BOLETA ELECTRÓNICA: B092 - 0952482\n\n",
+          text: "BOLETA ELECTRÓNICA: " + result.serie + " - " + result.correlativo + "\n\n",
           alignment: "center",
           fontSize: 3,
-          bold: true,
           lineHeight: 1.2
         },
         { text: "Tienda TDA 410 \n", alignment: "left", fontSize: 3 },
@@ -1985,7 +2063,7 @@ export class PuntoVentaComponent implements OnInit {
         {
           text:
             "FECHA DE EMISION: " +
-            date.getDay() +
+            date.getDate() +
             "/" +
             (date.getMonth() + 1) +
             "/" +
@@ -2002,37 +2080,44 @@ export class PuntoVentaComponent implements OnInit {
           lineHeight: 1.2
         },
         {
-          text: "OPERACION: 461",
+          text: "OPERACION: " + result.operacion,
           alignment: "left",
           fontSize: 3,
           lineHeight: 1.2
         },
         {
+          text : "--------------------------------------------------------",
+          fontSize: 3,
+          lineHeight: 1.2
+        },
+        /*{
           text: "CAJA/TURNO : 4/2",
           alignment: "left",
           fontSize: 3,
           lineHeight: 1.2
-        },
+        },*/
+        this.clienteEmpresa(),
         {
-          text:
-            "SR(A). " +
-            this.listCustomers[this.currentCustomer].client.Nombre +
-            "\n\n",
-          alignment: "left",
+          text : "--------------------------------------------------------",
           fontSize: 3,
           lineHeight: 1.2
         },
         this.table([
-          { text: "Codigo", fontSize: 3 },
-          { text: "Decripcion", fontSize: 3 },
+          { text: "Cod.", fontSize: 3 },
+          { text: "Descrip.", fontSize: 3 },
           { text: "Mon.", fontSize: 3 },
           { text: "Cant.", fontSize: 3 },
-          { text: "P Unit.", fontSize: 3 },
+          { text: "P. Unit.", fontSize: 3 },
           { text: "Imp.", fontSize: 3 }
         ]),
+        {
+          text : "--------------------------------------------------------",
+          fontSize: 3,
+          lineHeight: 1.2
+        },
         this.calculateDsc(),
         {
-          text:"\nTotal: $ " + this.listCustomers[this.currentCustomer].total + "\n",
+          text:"Total: S/." + this.listCustomers[this.currentCustomer].total + "\n",
           alignment: "right",
           fontSize: 3, 
           margin: [0, 0, 3,0],
@@ -2047,7 +2132,7 @@ export class PuntoVentaComponent implements OnInit {
               lineHeight: 1.2
             },
             {  
-              text: this.listCustomers[this.currentCustomer].subtotal,
+              text: "S/." + this.listCustomers[this.currentCustomer].subtotal,
               alignment: "right",
               fontSize: 3, 
               margin: [0, 0, 3,0],
@@ -2064,7 +2149,7 @@ export class PuntoVentaComponent implements OnInit {
               lineHeight: 1.2
             },
             {  
-              text: this.listCustomers[this.currentCustomer].taxes,
+              text: "S/." + this.listCustomers[this.currentCustomer].taxes,
               alignment: "right",
               fontSize: 3, 
               margin: [0, 0, 3,0],
@@ -2081,7 +2166,7 @@ export class PuntoVentaComponent implements OnInit {
               lineHeight: 1.2
             },
             {  
-              text: this.listCustomers[this.currentCustomer].total,
+              text: "S/." + this.listCustomers[this.currentCustomer].total,
               alignment: "right",
               fontSize: 3, 
               margin: [0, 0, 3,0],
@@ -2089,10 +2174,9 @@ export class PuntoVentaComponent implements OnInit {
             }
           ]
         },
-        { text: "\nSON : SETECIENTOS CUARENTA CON 42/100 SOLES", fontSize: 3 , lineHeight: 1.2},
-        { text: "\nTC CREDITO BCP : 340.00", fontSize: 3 , lineHeight: 1.2},
-        { text: "\nEFECTIVO 301.00", fontSize: 3 , lineHeight: 1.2 },
-        { text: "\nVUELTO: $ 0.60", fontSize: 3 , lineHeight: 1.2 },
+        { text: "\nSON : " + totalText + " SOLES", fontSize: 3 , lineHeight: 1.2},
+        { text: "ENTREGADO: S/." + result.entregado, fontSize: 3 , lineHeight: 1.2 },
+        this.getVuelto(result.vuelto),
         {
           columns: [
             {
@@ -2110,8 +2194,9 @@ export class PuntoVentaComponent implements OnInit {
             }
           ]
         },
-        { text: "\nBoleta electronica", alignment: "center", fontSize: 2 , lineHeight: 1.2}
+        { text: "\n\nBoleta electrónica\n\n", alignment: "center", fontSize: 3 , lineHeight: 1.2}
       ],
+      defaultStyle: { font: 'IBM' },
       pageSize: {
         width: 104.88,
         height: "auto"
@@ -2124,7 +2209,7 @@ export class PuntoVentaComponent implements OnInit {
         }
       }
     };
-    pdfMake.createPdf(saleTicket).download("Boleta");
+    pdfMake.createPdf(saleTicket).download("Boleta " + result.serie + " - " + result.correlativo);
     try {
       pdfMake.createPdf(saleTicket).print();
     } catch (e) {

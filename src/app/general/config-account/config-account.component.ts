@@ -27,7 +27,35 @@ export class ConfigAccountComponent implements OnInit {
     Tabla: null,
     ID: null
   };
+  inputFile = {
+    selectButton: {
+      "background-color": "#fff",
+      "border-radius": "10px",
+      color: "#000"
+    },
+    clearButton: {
+      "background-color": "#FFF",
+      "border-radius": "10px",
+      color: "#000",
+      "margin-left": "10px"
+    },
+    layout: {
+      "background-color": "#e7d0e7",
+      "border-radius": "25px",
+      color: "rgb(133, 81, 81)",
+      "font-size": "10px",
+      margin: "15px"
+    },
+    previewPanel: {
+      "background-color": "rgb(188, 142, 188)",
+      "border-radius": "0 0 10px 10px",
+      display: "flex",
+      "justify-content": "center"
+    }
+  };
   modAccountForm: FormGroup;
+  clientForm: FormGroup;
+  newImage;
 
   constructor(
     private loginService: LoginService,
@@ -36,6 +64,16 @@ export class ConfigAccountComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.clientForm = this.fb.group({
+      ruc: [null, Validators.compose([Validators.required])],
+      rs: [null, Validators.compose([Validators.required])],
+      nombreComercial: [null, Validators.compose([Validators.required])],
+      direccion: [null, Validators.compose([Validators.required])],
+      tel1: [null, Validators.compose([Validators.required])],
+      tel2: [null, Validators.compose([Validators.required])],
+      nombreSucursal: [null, Validators.compose([Validators.required])]
+    });
+
     this.modAccountForm = this.fb.group({
       ID: "",
       IDSynergy: "",
@@ -423,5 +461,13 @@ export class ConfigAccountComponent implements OnInit {
     } else if (value === false || value === 0) {
       return 0;
     }
+  }
+
+  imageFinishedUploading(file) {
+    this.newImage = file.file;
+  }
+
+  onRemoved() {
+    this.newImage = null;
   }
 }

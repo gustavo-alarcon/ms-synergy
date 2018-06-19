@@ -1,303 +1,457 @@
 <div class="w3-row w3-sand" style="min-height:100vh;width:100%">
-  <div class="w3-container w3-white w3-card-4 w3-animate-left"
-    style="margin-left:5vw;margin-right:5vw;border-radius:0px 0px 10px 10px">
+  <div class="w3-container w3-white w3-card-4 w3-animate-left" style="margin-left:5vw;margin-right:5vw;border-radius:0px 0px 10px 10px">
     <div class="row middle-xs w3-bar" style="padding:12px 24px">
-      <mat-icon style="margin-right:5px">settings_box</mat-icon><span class="w3-xlarge meraki-font-s5"> Configuración</span> 
+      <mat-icon style="margin-right:5px">settings_box</mat-icon>
+      <span class="w3-xlarge meraki-font-s5"> Configuración</span>
     </div>
   </div>
 
   <div class="w3-row" style="margin-top:10px">
-      <div class="w3-col s1 m1 l1"><p></p></div>
-      <div class="w3-col s10 m10 l10">
-        <br>
-        <button mat-raised-button
-                color="primary"
-                routerLink="crear-account"
-                style="display:inline-block">Crear cuenta</button>
-        <br>
-        <br>
-        <router-outlet></router-outlet>
-        <br>
-        <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
-        <div class="w3-responsive w3-card-4">
-          <table class="w3-table-all">
-            <thead>
-              <tr>
-                <th>N°</th>
-                <th>Nombre</th>
-                <th>Apellido</th>
-                <th>Correo</th>
-                <th>Editar</th>
-              </tr>
-            </thead>
-      
-            <tbody>
-              <tr *ngFor="let account of accountList; let i = index">
-                <td>{{ i + 1 }}</td>
-                <td>{{ account.Name }}</td>
-                <td>{{ account.Lastname }}</td>
-                <td>{{ account.Mail }}</td>
-                <td *ngIf="!edit[i]['value']" ><button mat-mini-fab
-                                                        color="accent"
-                                                        class="w3-animate-zoom"
-                                                        (click)="editAction(i,account.ID)"><mat-icon>settings_box</mat-icon></button></td>
-                <td *ngIf="edit[i]['value']" ><button mat-mini-fab
-                                                      color="warn"
-                                                      class="w3-animate-zoom"
-                                                      (click)="borrarAction(account.ID)"><mat-icon>delete</mat-icon></button>
-                                              <button mat-mini-fab
-                                                      color="accent"
-                                                      class="w3-animate-zoom"
-                                                      (click)="cancelAction(i)"><mat-icon>clear</mat-icon></button></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div *ngIf="loading" class="w3-container w3-padding-large meraki-empty-bg" style="width:100%">
-          <h2 class="w3-margin w3-center meraki-font-s2"><mat-icon class="w3-margin" style="font-size: 36px">settings_box</mat-icon>Cargando ...</h2>
-        </div>
-        <div *ngIf="accountList.length == 0 && !loading" class="w3-container w3-padding-large meraki-empty-bg" style="width:100%">
-          <h2 class="w3-margin w3-center meraki-font-s2"><mat-icon class="w3-margin" style="font-size: 36px">settings_box</mat-icon>No hay cuentas registradas</h2>
-        </div>
-        <br>
-        <div class="w3-row w3-animate-bottom" *ngIf="editMode">
-          <h2 class="meraki-font-s5 w3-animate-bottom" style="display:inline-block;margin-right:2px">Editar</h2>
-          <span><button mat-mini-fab
-                        color="primary"
-                        class="w3-animate-bottom"
-                        (click)="saveAction()"><mat-icon>save</mat-icon></button>
-                <button mat-mini-fab
-                        color="accent"
-                        class="w3-animate-bottom"
-                        (click)="closeEditAction()"><mat-icon>clear</mat-icon></button></span>
-          <form [formGroup]="modAccountForm" autocomplete="off">
-            <mat-accordion>                       
-              <mat-expansion-panel class="w3-border">
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    General
-                  </mat-panel-title>
-                  <mat-panel-description>
-                    Información y datos de cuenta
-                  </mat-panel-description>
-                </mat-expansion-panel-header>
-                
-                <div class="w3-row">
-                  <div class="w3-third">
-                    <mat-form-field color="accent" style="width:49%">
-                      <input matInput placeholder="Nombre" formControlName="Name">
-                    </mat-form-field>
-                    
-                    <mat-form-field color="accent" style="width:49%">
-                      <input matInput placeholder="Apellido" formControlName="Lastname">
-                    </mat-form-field>
-                  </div>
-                  <div class="w3-third">
-                    <mat-form-field color="accent" style="width:49%">
-                      <input matInput placeholder="Usuario" formControlName="Uname">
-                    </mat-form-field>
-                    
-                    <mat-form-field color="accent" style="width:49%">
-                      <input matInput placeholder="Password" formControlName="Password">
-                    </mat-form-field>
-                  </div>
-                  <div class="w3-third">
-                    <mat-form-field color="accent" style="width:49%">
-                      <input matInput type="mail" placeholder="Correo" formControlName="Mail">
-                    </mat-form-field>
-                    
-                    <mat-form-field color="accent" style="width:49%">
-                      <mat-select placeholder="Nivel" formControlName="Type">
-                        <mat-option class="w3-indigo" value="1">1</mat-option>
-                        <mat-option class="w3-indigo" value="2">2</mat-option>
-                      </mat-select>
-                    </mat-form-field>
-                  </div>
-                </div>
-                
-              </mat-expansion-panel>
-
-              <mat-expansion-panel class="w3-border">
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    Inventarios
-                  </mat-panel-title>
-                  <mat-panel-description>
-                    Permisos de visualización
-                  </mat-panel-description>
-                </mat-expansion-panel-header>
-                
-                
-                  <h4 class="meraki-font-s5 w3-border-bottom w3-border-pink">Almacenes<span><mat-checkbox style="display:inline-block;margin-left:5px;margin-bottom:5px" formControlName="alm_seccion"></mat-checkbox></span></h4>
-                  
-                  <div class="w3-row">
-
-                    <div class="w3-quarter">
-                      <h5 class="meraki-font-s5 w3-text-dark-grey">Botones</h5>
-                      
-                        <mat-checkbox formControlName="alm_b_crear">Crear nuevo</mat-checkbox><br>
-                        <mat-checkbox formControlName="alm_b_editar">Editar</mat-checkbox><br>
-                        <mat-checkbox formControlName="alm_b_guardar">Guardar</mat-checkbox><br>
-                        <mat-checkbox formControlName="alm_b_borrar">Borrar</mat-checkbox><br>
-
-                    </div>
-                    <div class="w3-quarter">
-                      <h5 class="meraki-font-s5 w3-text-dark-grey">Tabla (Columnas)</h5>
-                      
-                        <mat-checkbox formControlName="alm_t_direccion">Dirección</mat-checkbox><br>
-                        <mat-checkbox formControlName="alm_t_supervisor">Supervisor</mat-checkbox><br>
-                        <mat-checkbox formControlName="alm_t_mail">Mail</mat-checkbox><br>
-                        <mat-checkbox formControlName="alm_t_telefono">Teléfono</mat-checkbox><br>
-                      
-                    </div>
-                    <div class="w3-quarter"><p></p></div>
-                    <div class="w3-quarter"><p></p></div>
-
-                  </div>
-
-                  <h4 class="meraki-font-s5 w3-border-bottom w3-border-pink">Terceros<span><mat-checkbox style="display:inline-block;margin-left:5px;margin-bottom:5px" formControlName="ter_seccion"></mat-checkbox></span></h4>
-                  <div class="w3-row">
-                    <div class="w3-quarter">
-                      <h5 class="meraki-font-s5 w3-text-dark-grey">Botones</h5>
-                      
-                        <mat-checkbox formControlName="ter_b_crear">Crear nuevo</mat-checkbox><br>
-                        <mat-checkbox formControlName="ter_b_editar">Editar</mat-checkbox><br>
-                        <mat-checkbox formControlName="ter_b_guardar">Guardar</mat-checkbox><br>
-                        <mat-checkbox formControlName="ter_b_borrar">Borrar</mat-checkbox><br>
-                    </div>
-                    <div class="w3-quarter">
-                      <h5 class="meraki-font-s5 w3-text-dark-grey">Tabla (Columnas)</h5>
-                      
-                        <mat-checkbox formControlName="ter_t_direccion">Dirección</mat-checkbox><br>
-                        <mat-checkbox formControlName="ter_t_contacto">Contacto</mat-checkbox><br>
-                        <mat-checkbox formControlName="ter_t_mail">Mail</mat-checkbox><br>
-                        <mat-checkbox formControlName="ter_t_telefono">Teléfono</mat-checkbox><br>
-                      
-                    </div>
-                    <div class="w3-quarter"><p></p></div>
-                    <div class="w3-quarter"><p></p></div>
-
-                  </div>
-
-                  <h4 class="meraki-font-s5 w3-border-bottom w3-border-pink">Documentos<span><mat-checkbox style="display:inline-block;margin-left:5px;margin-bottom:5px" formControlName="doc_seccion"></mat-checkbox></span></h4>
-                  <div class="w3-row">
-                    <div class="w3-quarter">
-                      <h5 class="meraki-font-s5 w3-text-dark-grey">Botones</h5>
-                      
-                        <mat-checkbox formControlName="doc_b_crear">Crear nuevo</mat-checkbox><br>
-                        <mat-checkbox formControlName="doc_b_editar">Editar</mat-checkbox><br>
-                        <mat-checkbox formControlName="doc_b_guardar">Guardar</mat-checkbox><br>
-                        <mat-checkbox formControlName="doc_b_borrar">Borrar</mat-checkbox><br>
-                      
-                    </div>
-                    <div class="w3-quarter">
-                      <h5 class="meraki-font-s5 w3-text-dark-grey">Tabla (Columnas)</h5>
-                      
-                        <mat-checkbox formControlName="doc_t_serie">Serie</mat-checkbox><br>
-                        <mat-checkbox formControlName="doc_t_correlativoInicial">Correlativo inicial</mat-checkbox><br>
-                        <mat-checkbox formControlName="doc_t_correlativoActual">Correlativo actual</mat-checkbox><br>
-                        <mat-checkbox formControlName="doc_t_modo">Modo de uso</mat-checkbox><br>
-                      
-                    </div>
-                    <div class="w3-quarter"><p></p></div>
-                    <div class="w3-quarter"><p></p></div>
-                  </div>
-
-                  <h4 class="meraki-font-s5 w3-border-bottom w3-border-pink">Grupos de productos<span><mat-checkbox style="display:inline-block;margin-left:5px;margin-bottom:5px" formControlName="gru_seccion"></mat-checkbox></span></h4>
-                  <div class="w3-row">
-                    <div class="w3-quarter">
-                      <h5 class="meraki-font-s5 w3-text-dark-grey">Botones</h5>
-                      
-                        <mat-checkbox formControlName="gru_b_crear">crear nuevo</mat-checkbox><br>
-                        <mat-checkbox formControlName="gru_b_editar">Editar</mat-checkbox><br>
-                        <mat-checkbox formControlName="gru_b_guardar">Guardar</mat-checkbox><br>
-                        <mat-checkbox formControlName="gru_b_borrar">Borrar</mat-checkbox><br>
-                      
-                    </div>
-                    <div class="w3-quarter"><p></p></div>
-                    <div class="w3-quarter"><p></p></div>
-                    <div class="w3-quarter"><p></p></div>
-                    
-                  </div>
-
-                  <h4 class="meraki-font-s5 w3-border-bottom w3-border-pink">Productos<span><mat-checkbox style="display:inline-block;margin-left:5px;margin-bottom:5px" formControlName="pro_seccion"></mat-checkbox></span></h4>
-                  <div class="w3-row">
-                    <div class="w3-quarter">
-                      <h5 class="meraki-font-s5 w3-text-dark-grey">Botones</h5>
-                      
-                        <mat-checkbox formControlName="pro_b_crearPaquete">crear nuevo paquete</mat-checkbox><br>
-                        <mat-checkbox formControlName="pro_b_editarPaquete">Editar paquete</mat-checkbox><br>
-                        <mat-checkbox formControlName="pro_b_guardarPaquete">Guardar paquete</mat-checkbox><br>
-                        <mat-checkbox formControlName="pro_b_borrarPaquete">Borrar paquete</mat-checkbox><br>
-                        <mat-checkbox formControlName="pro_b_crearProducto">crear nuevo producto</mat-checkbox><br>
-                        <mat-checkbox formControlName="pro_b_editarProducto">Editar producto</mat-checkbox><br>
-                        <mat-checkbox formControlName="pro_b_guardarProducto">Guardar producto</mat-checkbox><br>
-                        <mat-checkbox formControlName="pro_b_borrarProducto">Borrar producto</mat-checkbox><br>
-                      
-                    </div>
-                    <div class="w3-quarter">
-                      <h5 class="meraki-font-s5 w3-text-dark-grey">Pestañas</h5>
-                      
-                        <mat-checkbox formControlName="pro_p_paquetes">paquetes</mat-checkbox><br>
-                        <mat-checkbox formControlName="pro_p_productos">productos</mat-checkbox><br>
-                      
-                    </div>
-                    <div class="w3-quarter">
-                      <h5 class="meraki-font-s5 w3-text-dark-grey">Desplegable Paquetes (Columnas)</h5>
-                      
-                        <mat-checkbox formControlName="pro_d_cantidad">cantidad</mat-checkbox><br>
-                        <mat-checkbox formControlName="pro_d_precio">precio unitario</mat-checkbox><br>
-              precio
-                    </div>
-                    <div class="w3-quarter">
-                      <h5 class="meraki-font-s5 w3-text-dark-grey">Tabla Productos (Columnas)</h5>
-                      
-                        <mat-checkbox formControlName="pro_t_stockInicial">stock inicial</mat-checkbox><br>
-                        <mat-checkbox formControlName="pro_t_stockActual">stock actual</mat-checkbox><br>
-                        <mat-checkbox formControlName="pro_t_stockEmergencia">stock emergencia</mat-checkbox><br>
-                        <mat-checkbox formControlName="pro_t_stockAlerta">stock alerta</mat-checkbox><br>
-                        <mat-checkbox formControlName="pro_t_moneda">moneda</mat-checkbox><br>
-                        <mat-checkbox formControlName="pro_t_precioCompra">precio compra</mat-checkbox><br>
-                        <mat-checkbox formControlName="pro_t_precioVenta">precio venta</mat-checkbox><br>
-                      
-                    </div>
-                  </div>
-
-                  <h4 class="meraki-font-s5 w3-border-bottom w3-border-pink">Registro de movmientos<span><mat-checkbox style="display:inline-block;margin-left:5px;margin-bottom:5px" formControlName="reg_seccion"></mat-checkbox></span></h4>
-                  <div class="w3-row">
-                    <div class="w3-quarter">
-                      <h5 class="meraki-font-s5 w3-text-dark-grey">Documentos</h5>
-                      
-                        <mat-checkbox formControlName="reg_doc_entrada">entrada</mat-checkbox><br>
-                        <mat-checkbox formControlName="reg_doc_salida">salida</mat-checkbox><br>
-                        <mat-checkbox formControlName="reg_doc_transferencia">transferencia</mat-checkbox><br>
-                        <mat-checkbox formControlName="reg_doc_ajusteEntrada">ajuste de entrada</mat-checkbox><br>
-                        <mat-checkbox formControlName="reg_doc_ajusteSalida">ajuste de salida</mat-checkbox><br>
-                      
-                    </div>
-                    <div class="w3-quarter">
-                      <h5 class="meraki-font-s5 w3-text-dark-grey">Precio de compra</h5>
-                      
-                        <mat-checkbox formControlName="reg_t_paqPrecioCompra">paquetes</mat-checkbox><br>
-                        <mat-checkbox formControlName="reg_t_prodPrecioCompra">productos</mat-checkbox><br>
-                      
-                    </div>
-                  </div>
-
-                  <h4 class="meraki-font-s5 w3-border-bottom w3-border-pink">Reporte de Kardex<span><mat-checkbox style="display:inline-block;margin-left:5px;margin-bottom:5px" formControlName="kardex_seccion"></mat-checkbox></span></h4>
-                  <h4 class="meraki-font-s5 w3-border-bottom w3-border-pink">Reporte de Stock<span><mat-checkbox style="display:inline-block;margin-left:5px;margin-bottom:5px" formControlName="stock_seccion"></mat-checkbox></span></h4>
-                  <h4 class="meraki-font-s5 w3-border-bottom w3-border-pink">Reporte de Movimientos<span><mat-checkbox style="display:inline-block;margin-left:5px;margin-bottom:5px" formControlName="movimientos_seccion"></mat-checkbox></span></h4>
-                
-              </mat-expansion-panel>
-            </mat-accordion>
-          </form>
-        </div>
-        
+    <div class="w3-col s1 m1 l1">
+      <p></p>
+    </div>
+    <div class="w3-col s10 m10 l10">
+      <div class="w3-row w3-border-bottom">
+        <span class="meraki-spacer"></span>
+        <h3 class="meraki-font-s5 w3-right">Datos de la empresa</h3>
       </div>
-      <div class="w3-col s1 m1 l1"><p></p></div>
+      <br>
+      <mat-card [formGroup]="clientForm">
+        <mat-form-field class="full-width">
+          <input matInput placeholder="RUC" formControlName="ruc">
+          <mat-icon matSuffix>account_circle</mat-icon>
+        </mat-form-field>
+        <br/>
+        <mat-form-field class="full-width">
+          <input matInput placeholder="Razon social" formControlName="rs">
+          <mat-icon matSuffix>email</mat-icon>
+        </mat-form-field>
+        <mat-form-field class="full-width">
+          <input matInput placeholder="Nombre comercial" formControlName="nombreComercial">
+          <mat-icon matSuffix>account_circle</mat-icon>
+        </mat-form-field>
+        <br/>
+        <mat-form-field class="full-width">
+          <input matInput placeholder="Direccion" formControlName="direccion">
+          <mat-icon matSuffix>email</mat-icon>
+        </mat-form-field>
+        <mat-form-field class="full-width">
+          <input matInput type="number" placeholder="Telefono 1" formControlName="tel1">
+          <mat-icon matSuffix>email</mat-icon>
+        </mat-form-field>
+        <mat-form-field class="full-width">
+          <input matInput type="number" placeholder="Telefono 2" formControlName="tel2">
+          <mat-icon matSuffix>email</mat-icon>
+        </mat-form-field>
+        <mat-form-field class="full-width">
+          <input matInput placeholder="Nombre sucursal" formControlName="nombreSucursal">
+          <mat-icon matSuffix>email</mat-icon>
+        </mat-form-field>
+        <div class="image">
+          <image-upload [buttonCaption]="'Suba el logo de su empresa'" [dropBoxMessage]="'Arraste el logo de su empresa'" [clearButtonCaption]="'Borrar'"
+            [style]="inputFile" [max]="1" (uploadFinished)="imageFinishedUploading($event)" (removed)="onRemoved()"></image-upload>
+        </div>
+        <button mat-raised-button color="primary" style="display:inline-block; width: 100%;" [disabled]="!clientForm.valid">Actualizar datos</button>
+      </mat-card>
+      <br>
+      <div class="w3-row w3-border-bottom">
+        <span class="meraki-spacer"></span>
+        <h3 class="meraki-font-s5 w3-right">Usuarios de la empresa</h3>
+      </div>
+      <br>
+      <button mat-raised-button color="primary" routerLink="crear-account" style="display:inline-block">Crear cuenta</button>
+      <br>
+      <br>
+      <router-outlet></router-outlet>
+      <br>
+      <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+      <div class="w3-responsive w3-card-4">
+        <table class="w3-table-all">
+          <thead>
+            <tr>
+              <th>N°</th>
+              <th>Nombre</th>
+              <th>Apellido</th>
+              <th>Correo</th>
+              <th>Editar</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let account of accountList; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>{{ account.Name }}</td>
+              <td>{{ account.Lastname }}</td>
+              <td>{{ account.Mail }}</td>
+              <td *ngIf="!edit[i]['value']">
+                <button mat-mini-fab color="accent" class="w3-animate-zoom" (click)="editAction(i,account.ID)">
+                  <mat-icon>settings_box</mat-icon>
+                </button>
+              </td>
+              <td *ngIf="edit[i]['value']">
+                <button mat-mini-fab color="warn" class="w3-animate-zoom" (click)="borrarAction(account.ID)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <button mat-mini-fab color="accent" class="w3-animate-zoom" (click)="cancelAction(i)">
+                  <mat-icon>clear</mat-icon>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div *ngIf="loading" class="w3-container w3-padding-large meraki-empty-bg" style="width:100%">
+        <h2 class="w3-margin w3-center meraki-font-s2">
+          <mat-icon class="w3-margin" style="font-size: 36px">settings_box</mat-icon>Cargando ...</h2>
+      </div>
+      <div *ngIf="accountList.length == 0 && !loading" class="w3-container w3-padding-large meraki-empty-bg" style="width:100%">
+        <h2 class="w3-margin w3-center meraki-font-s2">
+          <mat-icon class="w3-margin" style="font-size: 36px">settings_box</mat-icon>No hay cuentas registradas</h2>
+      </div>
+      <br>
+      <div class="w3-row w3-animate-bottom" *ngIf="editMode">
+        <h2 class="meraki-font-s5 w3-animate-bottom" style="display:inline-block;margin-right:2px">Editar</h2>
+        <span>
+          <button mat-mini-fab color="primary" class="w3-animate-bottom" (click)="saveAction()">
+            <mat-icon>save</mat-icon>
+          </button>
+          <button mat-mini-fab color="accent" class="w3-animate-bottom" (click)="closeEditAction()">
+            <mat-icon>clear</mat-icon>
+          </button>
+        </span>
+        <form [formGroup]="modAccountForm" autocomplete="off">
+          <mat-accordion>
+            <mat-expansion-panel class="w3-border">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  General
+                </mat-panel-title>
+                <mat-panel-description>
+                  Información y datos de cuenta
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+
+              <div class="w3-row">
+                <div class="w3-third">
+                  <mat-form-field color="accent" style="width:49%">
+                    <input matInput placeholder="Nombre" formControlName="Name">
+                  </mat-form-field>
+
+                  <mat-form-field color="accent" style="width:49%">
+                    <input matInput placeholder="Apellido" formControlName="Lastname">
+                  </mat-form-field>
+                </div>
+                <div class="w3-third">
+                  <mat-form-field color="accent" style="width:49%">
+                    <input matInput placeholder="Usuario" formControlName="Uname">
+                  </mat-form-field>
+
+                  <mat-form-field color="accent" style="width:49%">
+                    <input matInput placeholder="Password" formControlName="Password">
+                  </mat-form-field>
+                </div>
+                <div class="w3-third">
+                  <mat-form-field color="accent" style="width:49%">
+                    <input matInput type="mail" placeholder="Correo" formControlName="Mail">
+                  </mat-form-field>
+
+                  <mat-form-field color="accent" style="width:49%">
+                    <mat-select placeholder="Nivel" formControlName="Type">
+                      <mat-option class="w3-indigo" value="1">1</mat-option>
+                      <mat-option class="w3-indigo" value="2">2</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+
+            </mat-expansion-panel>
+
+            <mat-expansion-panel class="w3-border">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Inventarios
+                </mat-panel-title>
+                <mat-panel-description>
+                  Permisos de visualización
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+
+
+              <h4 class="meraki-font-s5 w3-border-bottom w3-border-pink">Almacenes
+                <span>
+                  <mat-checkbox style="display:inline-block;margin-left:5px;margin-bottom:5px" formControlName="alm_seccion"></mat-checkbox>
+                </span>
+              </h4>
+
+              <div class="w3-row">
+
+                <div class="w3-quarter">
+                  <h5 class="meraki-font-s5 w3-text-dark-grey">Botones</h5>
+
+                  <mat-checkbox formControlName="alm_b_crear">Crear nuevo</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="alm_b_editar">Editar</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="alm_b_guardar">Guardar</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="alm_b_borrar">Borrar</mat-checkbox>
+                  <br>
+
+                </div>
+                <div class="w3-quarter">
+                  <h5 class="meraki-font-s5 w3-text-dark-grey">Tabla (Columnas)</h5>
+
+                  <mat-checkbox formControlName="alm_t_direccion">Dirección</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="alm_t_supervisor">Supervisor</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="alm_t_mail">Mail</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="alm_t_telefono">Teléfono</mat-checkbox>
+                  <br>
+
+                </div>
+                <div class="w3-quarter">
+                  <p></p>
+                </div>
+                <div class="w3-quarter">
+                  <p></p>
+                </div>
+
+              </div>
+
+              <h4 class="meraki-font-s5 w3-border-bottom w3-border-pink">Terceros
+                <span>
+                  <mat-checkbox style="display:inline-block;margin-left:5px;margin-bottom:5px" formControlName="ter_seccion"></mat-checkbox>
+                </span>
+              </h4>
+              <div class="w3-row">
+                <div class="w3-quarter">
+                  <h5 class="meraki-font-s5 w3-text-dark-grey">Botones</h5>
+
+                  <mat-checkbox formControlName="ter_b_crear">Crear nuevo</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="ter_b_editar">Editar</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="ter_b_guardar">Guardar</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="ter_b_borrar">Borrar</mat-checkbox>
+                  <br>
+                </div>
+                <div class="w3-quarter">
+                  <h5 class="meraki-font-s5 w3-text-dark-grey">Tabla (Columnas)</h5>
+
+                  <mat-checkbox formControlName="ter_t_direccion">Dirección</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="ter_t_contacto">Contacto</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="ter_t_mail">Mail</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="ter_t_telefono">Teléfono</mat-checkbox>
+                  <br>
+
+                </div>
+                <div class="w3-quarter">
+                  <p></p>
+                </div>
+                <div class="w3-quarter">
+                  <p></p>
+                </div>
+
+              </div>
+
+              <h4 class="meraki-font-s5 w3-border-bottom w3-border-pink">Documentos
+                <span>
+                  <mat-checkbox style="display:inline-block;margin-left:5px;margin-bottom:5px" formControlName="doc_seccion"></mat-checkbox>
+                </span>
+              </h4>
+              <div class="w3-row">
+                <div class="w3-quarter">
+                  <h5 class="meraki-font-s5 w3-text-dark-grey">Botones</h5>
+
+                  <mat-checkbox formControlName="doc_b_crear">Crear nuevo</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="doc_b_editar">Editar</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="doc_b_guardar">Guardar</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="doc_b_borrar">Borrar</mat-checkbox>
+                  <br>
+
+                </div>
+                <div class="w3-quarter">
+                  <h5 class="meraki-font-s5 w3-text-dark-grey">Tabla (Columnas)</h5>
+
+                  <mat-checkbox formControlName="doc_t_serie">Serie</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="doc_t_correlativoInicial">Correlativo inicial</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="doc_t_correlativoActual">Correlativo actual</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="doc_t_modo">Modo de uso</mat-checkbox>
+                  <br>
+
+                </div>
+                <div class="w3-quarter">
+                  <p></p>
+                </div>
+                <div class="w3-quarter">
+                  <p></p>
+                </div>
+              </div>
+
+              <h4 class="meraki-font-s5 w3-border-bottom w3-border-pink">Grupos de productos
+                <span>
+                  <mat-checkbox style="display:inline-block;margin-left:5px;margin-bottom:5px" formControlName="gru_seccion"></mat-checkbox>
+                </span>
+              </h4>
+              <div class="w3-row">
+                <div class="w3-quarter">
+                  <h5 class="meraki-font-s5 w3-text-dark-grey">Botones</h5>
+
+                  <mat-checkbox formControlName="gru_b_crear">crear nuevo</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="gru_b_editar">Editar</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="gru_b_guardar">Guardar</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="gru_b_borrar">Borrar</mat-checkbox>
+                  <br>
+
+                </div>
+                <div class="w3-quarter">
+                  <p></p>
+                </div>
+                <div class="w3-quarter">
+                  <p></p>
+                </div>
+                <div class="w3-quarter">
+                  <p></p>
+                </div>
+
+              </div>
+
+              <h4 class="meraki-font-s5 w3-border-bottom w3-border-pink">Productos
+                <span>
+                  <mat-checkbox style="display:inline-block;margin-left:5px;margin-bottom:5px" formControlName="pro_seccion"></mat-checkbox>
+                </span>
+              </h4>
+              <div class="w3-row">
+                <div class="w3-quarter">
+                  <h5 class="meraki-font-s5 w3-text-dark-grey">Botones</h5>
+
+                  <mat-checkbox formControlName="pro_b_crearPaquete">crear nuevo paquete</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="pro_b_editarPaquete">Editar paquete</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="pro_b_guardarPaquete">Guardar paquete</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="pro_b_borrarPaquete">Borrar paquete</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="pro_b_crearProducto">crear nuevo producto</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="pro_b_editarProducto">Editar producto</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="pro_b_guardarProducto">Guardar producto</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="pro_b_borrarProducto">Borrar producto</mat-checkbox>
+                  <br>
+
+                </div>
+                <div class="w3-quarter">
+                  <h5 class="meraki-font-s5 w3-text-dark-grey">Pestañas</h5>
+
+                  <mat-checkbox formControlName="pro_p_paquetes">paquetes</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="pro_p_productos">productos</mat-checkbox>
+                  <br>
+
+                </div>
+                <div class="w3-quarter">
+                  <h5 class="meraki-font-s5 w3-text-dark-grey">Desplegable Paquetes (Columnas)</h5>
+
+                  <mat-checkbox formControlName="pro_d_cantidad">cantidad</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="pro_d_precio">precio unitario</mat-checkbox>
+                  <br> precio
+                </div>
+                <div class="w3-quarter">
+                  <h5 class="meraki-font-s5 w3-text-dark-grey">Tabla Productos (Columnas)</h5>
+
+                  <mat-checkbox formControlName="pro_t_stockInicial">stock inicial</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="pro_t_stockActual">stock actual</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="pro_t_stockEmergencia">stock emergencia</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="pro_t_stockAlerta">stock alerta</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="pro_t_moneda">moneda</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="pro_t_precioCompra">precio compra</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="pro_t_precioVenta">precio venta</mat-checkbox>
+                  <br>
+
+                </div>
+              </div>
+
+              <h4 class="meraki-font-s5 w3-border-bottom w3-border-pink">Registro de movmientos
+                <span>
+                  <mat-checkbox style="display:inline-block;margin-left:5px;margin-bottom:5px" formControlName="reg_seccion"></mat-checkbox>
+                </span>
+              </h4>
+              <div class="w3-row">
+                <div class="w3-quarter">
+                  <h5 class="meraki-font-s5 w3-text-dark-grey">Documentos</h5>
+
+                  <mat-checkbox formControlName="reg_doc_entrada">entrada</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="reg_doc_salida">salida</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="reg_doc_transferencia">transferencia</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="reg_doc_ajusteEntrada">ajuste de entrada</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="reg_doc_ajusteSalida">ajuste de salida</mat-checkbox>
+                  <br>
+
+                </div>
+                <div class="w3-quarter">
+                  <h5 class="meraki-font-s5 w3-text-dark-grey">Precio de compra</h5>
+
+                  <mat-checkbox formControlName="reg_t_paqPrecioCompra">paquetes</mat-checkbox>
+                  <br>
+                  <mat-checkbox formControlName="reg_t_prodPrecioCompra">productos</mat-checkbox>
+                  <br>
+
+                </div>
+              </div>
+
+              <h4 class="meraki-font-s5 w3-border-bottom w3-border-pink">Reporte de Kardex
+                <span>
+                  <mat-checkbox style="display:inline-block;margin-left:5px;margin-bottom:5px" formControlName="kardex_seccion"></mat-checkbox>
+                </span>
+              </h4>
+              <h4 class="meraki-font-s5 w3-border-bottom w3-border-pink">Reporte de Stock
+                <span>
+                  <mat-checkbox style="display:inline-block;margin-left:5px;margin-bottom:5px" formControlName="stock_seccion"></mat-checkbox>
+                </span>
+              </h4>
+              <h4 class="meraki-font-s5 w3-border-bottom w3-border-pink">Reporte de Movimientos
+                <span>
+                  <mat-checkbox style="display:inline-block;margin-left:5px;margin-bottom:5px" formControlName="movimientos_seccion"></mat-checkbox>
+                </span>
+              </h4>
+
+            </mat-expansion-panel>
+          </mat-accordion>
+        </form>
+      </div>
+
+    </div>
+    <div class="w3-col s1 m1 l1">
+      <p></p>
+    </div>
   </div>
-  <div style="height:50vh"><p></p></div>
-  
 </div>
-
-

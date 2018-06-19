@@ -226,16 +226,16 @@
                 </div>
                 <div class="payment teclado" (click)="openPayment()">
                     <mat-icon>payment</mat-icon>
-                    <span class='nameIcon'>Payment</span>
+                    <span class='nameIcon'>Pagar</span>
                 </div>
                 <div class="qty" (click)="changeOperationType(1)" [ngClass]="{operationFocused : operationOption == 1, teclado : operationOption != 1}">
-                    Qty
+                    Cant
                 </div>
                 <div class="disc" (click)="changeOperationType(2)" [ngClass]="{operationFocused : operationOption == 2, teclado : operationOption != 2}">
-                    Disc
+                    Desc
                 </div>
                 <div class="price2" (click)="changeOperationType(3)" [ngClass]="{operationFocused : operationOption == 3, teclado : operationOption != 3}">
-                    Price
+                    Precio
                 </div>
                 <div (click)="backspace()" class="teclado back">
                     <mat-icon>backspace</mat-icon>

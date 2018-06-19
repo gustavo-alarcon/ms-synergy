@@ -1,7 +1,13 @@
 
 mat-cell{
     padding: 5px;
+    justify-content: center;
 }
+
+mat-header-cell{
+    justify-content: center;
+}
+
 
 mat-row:hover{
     background: rgb(201, 199, 199);

@@ -16,46 +16,61 @@ import { takeWhile } from "rxjs/operators";
   selector: "detail-products",
   styleUrls: ["./detail-products.component.scss"],
   template: `
-   <div class="loadingSpinner" *ngIf="isLoadingResults">
-      <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
-    </div>
-   <table style="text-align : center; width: 100%;">
-      <thead style="border-bottom: 1px solid;">
-          <tr>
-              <th>Paquete</th>
-              <th>Producto</th>
-              <th>Cantidad</th>
-              <th>Precio U.</th>
-              <th>Precio</th>
-              <th>Num. Series</th>
-          </tr>
-      </thead>
-      <tbody>
-          <tr *ngFor="let product of products; let i = index"  [satPopoverAnchorFor]="p">
-              <td>{{product.Paquete == '' ? '-' : product.Paquete}}</td>
-              <td>{{product.Producto}}</td>
-              <td>{{product.Cantidad}}</td>
-              <td>{{product.Venta}}</td>
-              <td>{{product.Venta * product.Cantidad}}</td>
-              <td>
-                <button matTooltip="Detalles" matTooltipPosition="above" mat-icon-button style="margin : 0px" (click)="p.open()">
-                  <mat-icon style="margin-right: 0px;">keyboard_arrow_down</mat-icon>
-                </button>
-                <sat-popover #p hasBackdrop>
-                  <detail-series [value]="operacion" [data]="product.Producto"></detail-series>
-                </sat-popover>
-              </td>
-          </tr>
-      </tbody>
-  </table>
-  <hr/>
-  <span class='listSubTotal'>Sub-total: <span class="lightFont">$ {{data.SubTotal}}</span></span>
-  <span class='listIGV'>IGV: <span class="lightFont">$ {{data.IGV}}</span></span>
-  <span class='listTotal'>Total: <span class="lightFont">$ {{data.Total}}</span></span>
-  <hr/>
-  <span class='listSubTotal'>Tipo: {{type}}</span>
-  <span class='listIGV'>Recibido: $ {{data.Entregado}}</span>
-  <span class='listTotal'>Cambio: $ {{data.Vuelto}}</span>
+  <div>
+    <h2 class="header">
+    <span class="marginRight">{{data.Fecha}}</span>
+    <span>Documento: {{data.Documento}}</span>
+    <span class="marginLeft">Número: {{data.Serie}}-{{data.Correlativo}}</span>
+   </h2>
+   <div>
+    <div class="descripPadding">Almacen de origen:<span class="marginText">{{data.AlmacenOrigen}}</span></div>
+    <div class="descripPadding">Recepciona:<span class="marginText">{{data.Usuario}}</span></div>
+    <div class="descripPadding">Operacion:<span class="marginText">{{data.Operacion}}</span></div>
+   </div>
+   <div class="paddingTable">
+     <table style="text-align : center; width: 100%;">
+        <thead style="border-bottom: 1px solid;">
+            <tr>
+                <th>Paquete</th>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio U.</th>
+                <th>Precio</th>
+                <th>Num. Series</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let product of products; let i = index">
+                <td>{{product.Paquete == '' ? '-' : product.Paquete}}</td>
+                <td>{{product.Producto}}</td>
+                <td>{{product.Cantidad}}</td>
+                <td>{{product.Venta}}</td>
+                <td>{{product.Venta * product.Cantidad}}</td>
+                <td>
+                  <div [satPopoverAnchorFor]="p">
+                    <button matTooltip="Detalles" matTooltipPosition="above" mat-icon-button style="margin : 0px" (click)="p.open()">
+                      <mat-icon style="margin-right: 0px;">keyboard_arrow_down</mat-icon>
+                    </button>
+                    <sat-popover #p hasBackdrop>
+                      <detail-series [value]="operacion" [data]="product.Producto"></detail-series>
+                    </sat-popover>
+                  </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+   </div>
+   <div>
+     <hr/>
+      <span class='listSubTotal'>Sub-total: <span class="lightFont">$ {{data.SubTotal}}</span></span>
+      <span class='listIGV'>IGV: <span class="lightFont">$ {{data.IGV}}</span></span>
+      <span class='listTotal'>Total: <span class="lightFont">$ {{data.Total}}</span></span>
+      <hr/>
+      <span class='listSubTotal'>Tipo: {{type}}</span>
+      <span class='listIGV'>Recibido: $ {{data.Entregado}}</span>
+      <span class='listTotal'>Cambio: $ {{data.Vuelto}}</span>
+   </div>
+  </div>
   `
 })
 export class DetailProductsComponent implements OnInit {
@@ -91,7 +106,6 @@ export class DetailProductsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log(this.data);
     this.paymentType();
     this.posService
       .getSalesData(this.bd, this.operacion)

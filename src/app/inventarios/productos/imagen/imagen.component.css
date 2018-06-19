@@ -1,6 +1,5 @@
 img {
-  width: 40vw;
-  height: 40vh;
+  max-width: 100%;
 }
 
 .edit {

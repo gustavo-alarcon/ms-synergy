@@ -1,16 +1,16 @@
-import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material';
-import { MatDialogRef, MatDialog } from '@angular/material';
-import { PosService } from '../../servicios/pos.service';
-import { ListCustomers } from '../../classes/listCustomers';
-import * as crypto from 'crypto-js';
-import { ToastrService } from 'ngx-toastr';
+import { Component, OnInit, Inject, OnDestroy } from "@angular/core";
+import { MAT_DIALOG_DATA } from "@angular/material";
+import { MatDialogRef, MatDialog } from "@angular/material";
+import { PosService } from "../../servicios/pos.service";
+import { ListCustomers } from "../../classes/listCustomers";
+import * as crypto from "crypto-js";
+import { ToastrService } from "ngx-toastr";
 import { takeWhile } from "rxjs/operators";
 
 @Component({
-  selector: 'app-payment',
-  templateUrl: './payment.component.html',
-  styleUrls: ['./payment.component.css']
+  selector: "app-payment",
+  templateUrl: "./payment.component.html",
+  styleUrls: ["./payment.component.css"]
 })
 export class PaymentComponent implements OnInit {
   customer: ListCustomers;
@@ -79,7 +79,7 @@ export class PaymentComponent implements OnInit {
   }
 
   onNoClick() {
-    this.DialogRef.close(false);
+    this.DialogRef.close();
   }
 
   addPayment(int) {
@@ -121,7 +121,7 @@ export class PaymentComponent implements OnInit {
   confirm() {
     return (
       this.entregado == "" ||
-      parseInt(this.entregado) < this.customer.total ||
+      parseFloat(this.entregado) < this.customer.total ||
       this.paymentType == "" ||
       this.selectedDocument == "" ||
       this.serieSeleccionado == "" ||
@@ -147,10 +147,18 @@ export class PaymentComponent implements OnInit {
         this.posService
           .updateCorrelativo(this.bd, this.selectedDocument)
           .pipe(takeWhile(() => this.alive))
-          .subscribe(data => {});
+          .subscribe(data3 => {});
         this.isLoadingResults = false;
         this.toastr.success("Se realizo la venta con exito", "Exito");
-        this.DialogRef.close(true);
+        this.DialogRef.close({
+          serie: this.serieSeleccionado,
+          correlativo: this.correlativo,
+          documento: this.selectedDocument,
+          tipoPago: this.paymentType,
+          operacion: data,
+          entregado: this.entregado,
+          vuelto: this.vuelto
+        });
       });
   }
 
@@ -190,14 +198,14 @@ export class PaymentComponent implements OnInit {
             "-0" +
             (currentDate.getMonth() + 1) +
             "-0" +
-            (31 + 1) % 31;
+            ((31 + 1) % 31);
         } else {
           var limite =
             currentDate.getFullYear() +
             "-" +
             (currentDate.getMonth() + 1) +
             "-0" +
-            (31 + 1) % 31;
+            ((31 + 1) % 31);
         }
       } else {
         if (currentDate.getMonth() + 1 < 10) {
@@ -206,40 +214,40 @@ export class PaymentComponent implements OnInit {
             "-0" +
             (currentDate.getMonth() + 1) +
             "-" +
-            (31 + 1) % 31;
+            ((31 + 1) % 31);
         } else {
           var limite =
             currentDate.getFullYear() +
             "-" +
             (currentDate.getMonth() + 1) +
             "-" +
-            (31 + 1) % 31;
+            ((31 + 1) % 31);
         }
       }
     } else {
       if (currentDate.getMonth() + 1 < 12) {
-        if ((currentDate.getMonth() + 2) % 13 + 1 < 10) {
+        if (((currentDate.getMonth() + 2) % 13) + 1 < 10) {
           var limite =
             currentDate.getFullYear() +
             "-0" +
-            ((currentDate.getMonth() + 2) % 13 + 1) +
+            (((currentDate.getMonth() + 2) % 13) + 1) +
             "-0" +
             1;
         } else {
           var limite =
             currentDate.getFullYear() +
             "-" +
-            ((currentDate.getMonth() + 2) % 13 + 1) +
+            (((currentDate.getMonth() + 2) % 13) + 1) +
             "-0" +
             1;
         }
       } else {
-        if ((currentDate.getMonth() + 2) % 13 + 1 < 10) {
+        if (((currentDate.getMonth() + 2) % 13) + 1 < 10) {
           var limite =
             currentDate.getFullYear() +
             1 +
             "-0" +
-            ((currentDate.getMonth() + 2) % 13 + 1) +
+            (((currentDate.getMonth() + 2) % 13) + 1) +
             "-0" +
             1;
         } else {
@@ -247,7 +255,7 @@ export class PaymentComponent implements OnInit {
             currentDate.getFullYear() +
             1 +
             "-" +
-            ((currentDate.getMonth() + 2) % 13 + 1) +
+            (((currentDate.getMonth() + 2) % 13) + 1) +
             "-0" +
             1;
         }

@@ -87,10 +87,10 @@ export class SalesHistoryComponent implements OnInit {
               TipoIGV: data.records[i].Tipo_igv,
               TipoPago: data.records[i].Tipo_pago,
               SubTotal: data.records[i].Sub_total,
+              AlmacenOrigen: data.records[i].Almacen_origen,
               Cliente: data.records[i].Cliente
             });
           }
-          this.history.sort(this.dynamicSort("Correlativo"));
           this.isLoadingResults = false;
           this.dataSource = new MatTableDataSource(this.history);
           this.dataSource.paginator = this.paginator;

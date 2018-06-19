@@ -29,7 +29,9 @@ import { takeWhile } from "rxjs/operators";
       <div class="descripPadding">Almacen de origen:<span class="marginText">{{data.AlmacenOrigen}}</span></div>
       <div class="descripPadding" *ngIf="data.Movimiento == 'TRANSFERENCIA'">Almacen de destino:<span class="marginText">{{data.AlmacenDestino}}</span></div>
       <div class="descripPadding">Recepciona:<span class="marginText">{{data.Usuario}}</span></div>
-      <div class="descripPadding">Operacion:<span class="marginText">{{data.Movimiento}}</span></div>
+      <div class="descripPadding">Operacion:<span class="marginText">{{data.Operacion}}</span></div>
+      <div class="descripPadding">Tipo de movimiento:<span class="marginText">{{data.Movimiento}}</span></div>
+
      </div>
      <div class="paddingTable">
        <table style="text-align : center; width: 100%;">
@@ -136,7 +138,6 @@ export class DetailProductsInventComponent implements OnInit {
       .getSalesData(this.bd, this.operacion)
       .pipe(takeWhile(() => this.alive))
       .subscribe(data => {
-        console.log(data);
         this.products = data.records;
         if (this.data.Movimiento == "SALIDA" && this.data.POS == "false") {
           for (let i = 0; i < this.products.length; i++) {
